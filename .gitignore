@@ -32,4 +32,4 @@
 *.app
 
 # Bin folder
-bin/*
+bin/
