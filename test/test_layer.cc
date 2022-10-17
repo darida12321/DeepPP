@@ -1,5 +1,5 @@
-#include "layer.h"
-#include "network.h"
+#include "../include/layer.h"
+#include "../include/network.h"
 #include <cmath>
 #include <iostream>
 

@@ -15,7 +15,7 @@ bin/network.o: include/network.h src/network.cc bin/layer.o | bin
 	g++ -c src/network.cc -o bin/network.o
 	
 bin/test_layer: bin/layer.o bin/network.o | bin
-	g++ -o bin/test_layer
+	g++ test/test_layer.cc bin/layer.o bin/network.o -o bin/test_layer
 
 
 .PHONY: clean
