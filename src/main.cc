@@ -1,6 +1,6 @@
 #include <cmath>
 #include <iostream>
-// #include "layer.h"
+#include "layer.h"
 #include "network.h"
 
 double act_func(double x) {
