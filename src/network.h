@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "layer.cc"
+#include "layer.h"
 #include "../Eigen/Dense"
 
 using Eigen::MatrixXd;
