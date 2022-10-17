@@ -7,8 +7,8 @@ all: bin/layer
 bin:
 	mkdir bin
 
-bin/layer: layer.cc | bin
-	$(CC) $(CFLAGS) layer.cc -o bin/layer
+bin/layer: src/layer.cc | bin
+	$(CC) $(CFLAGS) src/layer.cc -o bin/layer
 
 .PHONY: clean
 clean:
