@@ -4,6 +4,9 @@
 #include "layer.cc"
 #include "../Eigen/Dense"
 
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+
 class Network {
 public:
     Network(std::vector<Layer>);
