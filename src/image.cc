@@ -6,34 +6,61 @@
 class ImageSet {
     public:
         ImageSet() {
-            std::ifstream trainingLabels_("../img/t10k-labels-idx1-ubyte");
-            std::ifstream trainingImages_("../img/t10k-labels-idx3-ubyte");
+            std::ifstream trainingLabels("../img/train-labels-idx1-ubyte");
+            std::ifstream trainingImages("../img/train-images-idx3-ubyte");
 
-            trainingLabels_.seekg(8, std::ios_base::beg); 
-            trainingImages_.seekg(16, std::ios_base::beg);
+            trainingLabels.seekg(8, std::ios_base::beg); 
+            trainingImages.seekg(16, std::ios_base::beg);
 
             for (int i = 0; i < TRAIN_SIZE; i++) {
-                labels_.push_back(trainingLabels_.get());
+                char cl;
+                char ci;
+                trainingLabels.get(cl);
+                trainLabels_.push_back(cl);
                 
-                Eigen::Matrix<char, IMG_SIZE, 1> img;
-                for (int j = 0; j < IMG_SIZE; j++) {
-                    img << trainingImages_.get();
+                Eigen::Matrix<char, 28 * 28, 1> img;
+                for (int j = 0; j < 28 * 28; j++) {
+                    trainingImages.get(ci);
+                    img(j) = ci;
                 }
-
+                trainImages_.push_back(img);
             }
         }
 
-        
+        Eigen::Matrix<char, 28 * 28, 1> GetImage(int index) {
+            return trainImages_[index];
+        }
+
+        void PrintImage(int index) {
+            Eigen::Matrix<char, 28 * 28, 1> img = trainImages_[index];
+            int label = trainLabels_[index]; 
+            for (int i = 0; i < 28; i++) {
+                for (int j = 0; j < 28; j++) {
+                    if ((unsigned int) img(28 * i + j) > 128) {
+                        std::cout << "@@";
+                    } else {
+                        std::cout << "  ";
+                    }
+                }
+                std::cout << std::endl;
+            }
+            std::cout << "label: " << label << std::endl;
+        }
 
     private:
-        std::vector<char> labels_;
-
         static const int TEST_SIZE = 10000;
         static const int TRAIN_SIZE = 60000;
-        static const int IMG_SIZE = 28 * 28;
+
+        std::vector<char> trainLabels_;
+        std::vector<Eigen::Matrix<char, 28 * 28, 1>> trainImages_;
 };
 
-// For test purposes only
+// for test purposes only
 int main() {
+    ImageSet* is = new ImageSet();
+    for(int i = 0; i < 10; i++) {
+        is->PrintImage(i);
+    }
+
     return EXIT_SUCCESS;
 }
