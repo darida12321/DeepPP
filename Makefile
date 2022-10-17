@@ -11,8 +11,11 @@ bin:
 bin/layer.o: include/layer.h src/layer.cc | bin
 	g++ -c src/layer.cc -o bin/layer.o
 
-bin/network.o: include/network.h src/network.cc bin/layer | bin
+bin/network.o: include/network.h src/network.cc bin/layer.o | bin
 	g++ -c src/network.cc -o bin/network.o
+	
+bin/test_layer: bin/layer.o bin/network.o | bin
+	g++ -o bin/test_layer
 
 
 .PHONY: clean
