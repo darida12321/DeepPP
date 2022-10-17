@@ -1,2 +1,2 @@
-# Meta-
-Meta programming Neural Network
+DeepPP
+deep neural network with c++ metaprogramming
