@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "layer.h"
-#include "../Eigen/Dense"
+#include "../lib/Eigen/Dense"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

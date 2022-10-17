@@ -1,5 +1,5 @@
-#include "layer.h"
-#include "../Eigen/Dense"
+#include "../include/layer.h"
+#include "../lib/Eigen/Dense"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
