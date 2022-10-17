@@ -1,4 +1,4 @@
-#include "../include/network.h"
+#include <network.h>
 
 Network::Network(std::vector<Layer> layers): layers_(layers) {}
 

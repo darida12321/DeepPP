@@ -1,8 +1,8 @@
 #pragma once
 
+#include <Eigen/Dense>
+#include <layer.h>
 #include <vector>
-#include "layer.h"
-#include "../lib/Eigen/Dense"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

@@ -1,0 +1,6 @@
+-I
+./lib/eigen
+-I
+./lib/googletest/googletest/include
+-I
+./include

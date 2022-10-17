@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../lib/Eigen/Dense"
+#include <Eigen/Dense>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
