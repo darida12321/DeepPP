@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Eigen/src/Core/Matrix.h"
 #include <Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -16,6 +17,7 @@ private:
   VectorXd bias_;
   std::function<double(double)> act_func_; // activator functionon
   std::function<double(double)>
-      act_func_der_; // activator functionon derivative
-  VectorXd act_derivatives_;
+      act_func_der_;         // activator functionon derivative
+  VectorXd act_derivatives_; // for back propagation
+  VectorXd last_input_;      // for back propagation
 };
