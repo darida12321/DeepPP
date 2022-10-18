@@ -58,13 +58,3 @@ class ImageSet {
         std::vector<char> trainLabels_;
         std::vector<Eigen::Matrix<char, 28 * 28, 1>> trainImages_;
 };
-
-// for test purposes only
-int main() {
-    ImageSet* is = new ImageSet();
-    for(int i = 0; i < 10; i++) {
-        is->PrintImage(i);
-    }
-
-    return EXIT_SUCCESS;
-}
