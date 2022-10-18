@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22.1)
 project(DeepPPTest)
 
 set(Sources
-    test_layer.cc
+    test_layer.cpp
 )
 
 add_executable(${PROJECT_NAME} ${Sources})
