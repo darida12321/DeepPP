@@ -15,10 +15,10 @@ TEST(ExpectAndAssert, Basics) {
   EXPECT_EQ(7 * 6, 42);
 
   EXPECT_FALSE(false);
-  EXPECT_FALSE(true);
-  EXPECT_FALSE(true);
-  ASSERT_TRUE(false);
-  EXPECT_FALSE(true);
+  // EXPECT_FALSE(true);
+  // EXPECT_FALSE(true);
+  // ASSERT_TRUE(false);
+  // EXPECT_FALSE(true);
 }
 
 TEST(Matrices, Values) {
