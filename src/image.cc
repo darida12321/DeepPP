@@ -31,6 +31,10 @@ class ImageSet {
             return trainImages_[index];
         }
 
+        int GetLabel(int index) {
+            return trainLabels_[index];
+        }
+
         void PrintImage(int index) {
             Eigen::Matrix<char, 28 * 28, 1> img = trainImages_[index];
             int label = trainLabels_[index]; 
