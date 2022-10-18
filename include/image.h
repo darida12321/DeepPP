@@ -8,7 +8,7 @@ const int TRAIN_SIZE = 60000;
 const int IMG_WIDTH = 28;
 const int IMG_HEIGHT = 28;
 
-typedef ImgVector Eigen::Matrix<char, IMG_WIDTH * IMG_HEIGHT, 1>;
+typedef Eigen::Matrix<char, IMG_WIDTH * IMG_HEIGHT, 1> ImgVector;
 
 class ImageSet {
     public:

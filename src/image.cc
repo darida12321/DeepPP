@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <Eigen/Dense>
-#include "image.h"
+#include <image.h>
 
 ImageSet::ImageSet() {
     std::ifstream trainingLabels("../img/train-labels-idx1-ubyte");

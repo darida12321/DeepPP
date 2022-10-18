@@ -7,10 +7,12 @@ set(Headers
     include/activation_function.h
     include/layer.h
     include/network.h
+    include/image.h
 )
 set(Sources
     src/layer.cc 
     src/network.cc
+    src/image.cc
 )
 
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
