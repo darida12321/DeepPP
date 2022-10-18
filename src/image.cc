@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include "../Eigen/Dense"
+#include <Eigen/Dense>
 #include "image.h"
 
 ImageSet::ImageSet() {
