@@ -31,10 +31,11 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          path: bin
+          path: bin/test/
         # Build your program with the given configuration
 
   test:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifact
