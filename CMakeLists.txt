@@ -10,9 +10,9 @@ set(Headers
     include/image.h
 )
 set(Sources
-    src/layer.cc 
-    src/network.cc
-    src/image.cc
+    src/layer.cpp 
+    src/network.cpp
+    src/image.cpp
 )
 
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
