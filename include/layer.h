@@ -14,5 +14,8 @@ public:
 private:
   MatrixXd weights_;
   VectorXd bias_;
-  std::function<double(double)> act_func_; // activator function
+  std::function<double(double)> act_func_; // activator functionon
+  std::function<double(double)>
+      act_func_der_; // activator functionon derivative
+  VectorXd act_derivatives_;
 };
