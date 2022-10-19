@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Eigen/src/Core/Matrix.h"
+#include "Eigen/Core"
 #include <Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -8,7 +8,7 @@ using Eigen::VectorXd;
 
 class Layer {
 public:
-  Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func);
+  Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func, std::function<double(double)> act_func_der);
   VectorXd forwardProp(VectorXd in);
   VectorXd backProp(VectorXd err, double stepSize);
 

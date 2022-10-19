@@ -1,4 +1,4 @@
-#include "Eigen/src/Core/Matrix.h"
+#include "Eigen/Core"
 #include <network.h>
 
 Network::Network(std::vector<Layer> layers) : layers_(layers) {}
