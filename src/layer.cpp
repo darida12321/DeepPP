@@ -20,7 +20,7 @@ VectorXd Layer::forwardProp(VectorXd in) {
 }
 
 // Precondition: err = dC/da {where C = cost, a = this layer's activation}
-VectorXd Layer::backProp(VectorXd err, double step) {
+VectorXd Layer::backProp(VectorXd err, double stepSize) {
   // calculate dC/dz where z is the activation before applying act_func
   VectorXd tmp = err.cwiseProduct(act_derivatives_);
 
@@ -28,8 +28,8 @@ VectorXd Layer::backProp(VectorXd err, double step) {
   VectorXd propagated = weights_.transpose() * tmp;
 
   // adjust weights and biases
-  weights_ -= step * tmp * last_input_.transpose();
-  bias_ -= step * tmp;
+  weights_ -= stepSize * tmp * last_input_.transpose();
+  bias_ -= stepSize * tmp;
 
   return propagated;
 }

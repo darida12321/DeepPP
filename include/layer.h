@@ -10,7 +10,7 @@ class Layer {
 public:
   Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func);
   VectorXd forwardProp(VectorXd in);
-  VectorXd backProp(VectorXd err);
+  VectorXd backProp(VectorXd err, double stepSize);
 
 private:
   MatrixXd weights_;

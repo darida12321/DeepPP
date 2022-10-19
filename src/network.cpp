@@ -10,10 +10,10 @@ VectorXd Network::forwardProp(VectorXd in) {
   }
   return curr;
 }
-VectorXd Network::backProp(VectorXd err) {
+VectorXd Network::backProp(VectorXd err, double stepSize) {
   VectorXd curr = err;
   for (int i = layers_.size() - 1; i >= 0; i--) {
-    curr = layers_[i].backProp(curr);
+    curr = layers_[i].backProp(curr, stepSize);
   }
   return err;
 }
