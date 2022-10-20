@@ -10,9 +10,14 @@ Layer::Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func,
     : weights_(m), bias_(b), act_func_(act_func), act_func_der_(act_func_der) {}
 
 VectorXd Layer::forwardProp(VectorXd in) {
-  last_input_ = in; // record input for use in back propagation
+  VectorXd newV = weights_ * in + bias_;
+  return newV.unaryExpr(act_func_);
+}
+
+VectorXd Layer::forwardPropAndStore(VectorXd in) {
   VectorXd newV = weights_ * in + bias_;
 
+  last_input_ = in; // record input for use in back propagation
   // calculate derivatives of activation function for use in back propagation
   act_derivatives_ = newV.unaryExpr(act_func_der_);
 
