@@ -1,5 +1,6 @@
 #include <Eigen/Dense>
 #include <layer.h>
+#include <ostream>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

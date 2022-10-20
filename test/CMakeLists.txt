@@ -4,6 +4,7 @@ project(DeepPPTest)
 
 set(Sources
     test_layer.cpp
+    test_backprop.cpp
     test_mnist.cpp
 )
 

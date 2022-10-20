@@ -61,5 +61,5 @@ void ImageSet::PrintImage(int index) {
         }
         std::cout << std::endl;
     }
-    std::cout << "label: " << label << std::endl;
+    std::cout << "label: " << std::endl << label << std::endl;
 }
