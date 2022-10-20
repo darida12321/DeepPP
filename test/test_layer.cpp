@@ -8,42 +8,47 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-// Demonstrate some basic assertions.
-TEST(ExpectAndAssert, Basics) {
-  // Expect two strings not to be equal.
-  EXPECT_STRNE("hello", "world");
-  // Expect equality.
-  EXPECT_EQ(7 * 6, 42);
+class LayerForwardPropTest:public::testing::Test {
+  protected:
+    MatrixXd zeroMatrix_ {
+      {0, 0, 0},
+      {0, 0, 0},
+      {0, 0, 0}
+    };
 
-  EXPECT_FALSE(false);
-  // EXPECT_FALSE(true);
-  // EXPECT_FALSE(true);
-  // ASSERT_TRUE(false);
-  // EXPECT_FALSE(true);
+    MatrixXd idMatrix_ {
+      {1, 0, 0},
+      {0, 1, 0},
+      {0, 0, 1}
+    };
+
+    VectorXd zeroVector_ {{0, 0, 0}};
+
+    VectorXd v1_ {{1, 1, 1}};
+    VectorXd v2_ {{0.5, 0.5, 0.5}};
+};
+
+TEST_F(LayerForwardPropTest, ZeroMatrixRelu) {
+  Layer layer(zeroMatrix_, zeroVector_, relu, relu_derivative);
+  EXPECT_EQ(layer.forwardProp(v1_), zeroVector_);
 }
 
-TEST(Matrices, Values) {
-    MatrixXd m(2,2);
-    m(0,0) = 3;
-    m(1,0) = 2.5;
-    m(0,1) = -1;
-    m(1,1) = m(1,0) + m(0,1);
-
-    EXPECT_EQ(m(0, 0), 3);
-    EXPECT_EQ(m(1, 0), 2.5);
-    EXPECT_EQ(m(0, 1), -1);
-    EXPECT_EQ(m(1, 1), 1.5);
+TEST_F(LayerForwardPropTest, ZeroMatrixSigmoid) {
+  Layer layer(zeroMatrix_, zeroVector_, sigmoid, sigmoid_derivative);
+  EXPECT_EQ(layer.forwardProp(v1_), v2_);
 }
 
-TEST(LayerForwardProp, ZeroMatrix) {
-  MatrixXd m {
-    {0, 0, 0},
-    {0, 0, 0},
-    {0, 0, 0}
-  };
-  VectorXd b {{0, 0, 0}};
-  VectorXd v {{1, 1, 1}};
+TEST_F(LayerForwardPropTest, IdMatrixRelu) {
+  Layer layer(idMatrix_, zeroVector_, relu, relu_derivative);
+  EXPECT_EQ(layer.forwardProp(v1_), v1_);
+}
 
-  Layer layer(m, b, relu, relu_derivative);
-  EXPECT_EQ(layer.forwardProp(v), b);
+TEST_F(LayerForwardPropTest, biasOffset1) {
+  Layer layer(zeroMatrix_, v1_, relu, relu_derivative);
+  EXPECT_EQ(layer.forwardProp(v1_), v1_);
+}
+
+TEST_F(LayerForwardPropTest, biasOffset2) {
+  Layer layer(idMatrix_, v2_, relu, relu_derivative);
+  EXPECT_EQ(layer.forwardProp(v2_), v1_);
 }
