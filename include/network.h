@@ -12,6 +12,7 @@ public:
   Network(std::vector<Layer>);
   VectorXd forwardProp(VectorXd);
   void trainOne(VectorXd, VectorXd, double);
+  Layer getLayer(size_t);
 
 private:
   VectorXd forwardPropAndStore(VectorXd);

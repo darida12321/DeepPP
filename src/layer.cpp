@@ -39,3 +39,9 @@ VectorXd Layer::backProp(VectorXd err, double stepSize) {
 
   return propagated;
 }
+MatrixXd Layer::getWeights() {
+    return weights_;
+}
+VectorXd Layer::getBias() {
+    return bias_;
+}

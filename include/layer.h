@@ -14,6 +14,8 @@ public:
   VectorXd forwardPropAndStore(VectorXd in);
   VectorXd forwardProp(VectorXd in);
   VectorXd backProp(VectorXd err, double stepSize);
+  MatrixXd getWeights();
+  VectorXd getBias();
 
 private:
   MatrixXd weights_;

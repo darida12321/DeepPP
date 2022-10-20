@@ -29,3 +29,6 @@ void Network::trainOne(VectorXd in, VectorXd exp_out, double stepSize) {
   VectorXd err = forwardPropAndStore(in) - exp_out;
   backProp(err, stepSize);
 }
+Layer Network::getLayer(size_t i) {
+    return layers_[i];
+}
