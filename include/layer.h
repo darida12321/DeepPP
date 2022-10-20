@@ -17,7 +17,7 @@ private:
   VectorXd bias_;
   std::function<double(double)> act_func_; // activator functionon
   std::function<double(double)>
-      act_func_der_;         // activator functionon derivative
+      act_func_der_;         // activator function derivative
   VectorXd act_derivatives_; // for back propagation
   VectorXd last_input_;      // for back propagation
 };

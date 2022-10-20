@@ -6,6 +6,7 @@
 #include <activation_function.h>
 #include <Eigen/Dense>
 using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
 // Demonstrate some basic assertions.
 TEST(ExpectAndAssert, Basics) {
@@ -34,28 +35,15 @@ TEST(Matrices, Values) {
     EXPECT_EQ(m(1, 1), 1.5);
 }
 
-// int main() {
-//   MatrixXd l1_weights(2, 2);
-//   l1_weights(0, 0) = 1;
-//   l1_weights(1, 0) = 0;
-//   l1_weights(0, 1) = 0;
-//   l1_weights(1, 1) = 1;
-//
-//   VectorXd l1_bias(2);
-//   l1_bias(0) = 2;
-//   l1_bias(1) = 3;
-//
-//   Layer layer1(l1_weights, l1_bias, relu);
-//
-//   std::vector<Layer> layers{layer1};
-//   Network network(layers);
-//
-//   VectorXd input(2);
-//   input(0) = 1;
-//   input(1) = 2;
-//   VectorXd out = network.forwardProp(input);
-//   std::cout << "Output: " << std::endl << out << std::endl;
-//
-//   std::cout << "I wanna die" << std::endl;
-//   return 0;
-// }
+TEST(LayerForwardProp, ZeroMatrix) {
+  MatrixXd m {
+    {0, 0, 0},
+    {0, 0, 0},
+    {0, 0, 0}
+  };
+  VectorXd b {{0, 0, 0}};
+  VectorXd v {{1, 1, 1}};
+
+  Layer layer(m, b, relu, relu_derivative);
+  EXPECT_EQ(layer.forwardProp(v), b);
+}
