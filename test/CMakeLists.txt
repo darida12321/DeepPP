@@ -4,6 +4,7 @@ project(DeepPPTest)
 
 set(Sources
     test_layer.cpp
+    test_mnist.cpp
 )
 
 add_executable(${PROJECT_NAME} ${Sources})
