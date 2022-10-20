@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Eigen/src/Core/Matrix.h"
 #include <Eigen/Dense>
 #include <layer.h>
 #include <vector>
@@ -12,10 +11,10 @@ class Network {
 public:
   Network(std::vector<Layer>);
   VectorXd forwardProp(VectorXd);
-  void trainOne(VectorXd, VectorXd);
+  void trainOne(VectorXd, VectorXd, double);
 
 private:
   VectorXd forwardPropAndStore(VectorXd);
-  VectorXd backProp(VectorXd, VectorXd, double);
+  VectorXd backProp(VectorXd, double);
   std::vector<Layer> layers_;
 };

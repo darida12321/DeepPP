@@ -25,7 +25,7 @@ VectorXd Network::backProp(VectorXd err, double stepSize) {
   }
   return err;
 }
-VectorXd Network::trainOne(VectorXd in, VectorXd exp_out, double stepSize) {
+void Network::trainOne(VectorXd in, VectorXd exp_out, double stepSize) {
   VectorXd err = forwardPropAndStore(in) - exp_out;
   backProp(err, stepSize);
 }
