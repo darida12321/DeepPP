@@ -34,7 +34,7 @@ TEST(LayerBackPropTest, SimpleNudge){
 
     // Train the network
     network.trainOne(in, out, 1);
-    ASSERT_EQ(network.getLayer(0).getWeights()(0,0), 1.04);
+    ASSERT_LE(abs(network.getLayer(0).getWeights()(0,0) - 1.04), 0.001);
     ASSERT_LE(abs(network.getLayer(0).getBias()(0) - 0.7), 0.001);
 }
 
@@ -57,14 +57,12 @@ TEST(LayerBackPropTest, DeepNudge){
 
     // Train the network
     network.trainOne(in, out, 1);
-    std::cout << "W1: " << network.getLayer(0).getWeights()(0, 0) << std::endl;
-    std::cout << "B1: " << network.getLayer(0).getBias()(0) << std::endl;
-    std::cout << "W2: " << network.getLayer(1).getWeights()(0, 0) << std::endl;
-    std::cout << "B2: " << network.getLayer(1).getBias()(0) << std::endl;
-    std::cout << "W3: " << network.getLayer(2).getWeights()(0, 0) << std::endl;
-    std::cout << "B3: " << network.getLayer(2).getBias()(0) << std::endl;
-    // ASSERT_EQ(network.getLayer(0).getWeights()(0,0), 1.04);
-    // ASSERT_LE(abs(network.getLayer(0).getBias()(0) - 0.7), 0.001);
+    ASSERT_LE(abs(network.getLayer(0).getWeights()(0,0) - 0.9456), 0.001); // TODO check
+    ASSERT_LE(abs(network.getLayer(0).getBias()(0) - 0.228), 0.001); // TODO check
+    ASSERT_LE(abs(network.getLayer(1).getWeights()(0,0) - 1.904), 0.001);
+    ASSERT_LE(abs(network.getLayer(1).getBias()(0) - 0.164), 0.001); // TODO check
+    ASSERT_LE(abs(network.getLayer(2).getWeights()(0,0) - -0.956), 0.001);
+    ASSERT_LE(abs(network.getLayer(2).getBias()(0) - 0.12), 0.001);
 }
 // std::vector<VectorXd> createDataVector(std::vector<double> data) {
 //     std::vector<VectorXd> out;
