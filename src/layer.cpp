@@ -17,8 +17,8 @@ VectorXd Layer::forwardProp(VectorXd in) {
 }
 
 void Layer::applyAccumulatedChange(int sampleSize){
-    weights_ += backprop_weight_acc_ / sampleSize;
-    bias_ += backprop_bias_acc_ / sampleSize;
+    weights_ += backprop_weight_acc_;
+    bias_ += backprop_bias_acc_;
     backprop_weight_acc_.setZero();
     backprop_bias_acc_.setZero();
 }
@@ -40,6 +40,7 @@ VectorXd Layer::backProp(VectorXd gradient, double stepSize) {
 
   // calculate dC/da for previous layer
   VectorXd propagated = weights_.transpose() * tmp;
+  // VectorXd propagated = weights_ * tmp;
 
   // adjust weights and biases
   backprop_weight_acc_ -= stepSize * tmp * last_input_.transpose();

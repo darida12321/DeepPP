@@ -31,38 +31,51 @@ void printPrediction(VectorXd out) {
 }
 
 // TEST(MnistTest, ReadData) {
-//     ImageSet image;
-//
-//     MatrixXd w1 = MatrixXd::Random(700, 28*28);
-//     VectorXd b1 = VectorXd::Random(700);
+//     MatrixXd w1 = MatrixXd::Random(16, 28*28);
+//     VectorXd b1 = VectorXd::Random(16);
 //     Layer layer1(w1, b1, sigmoid, sigmoid_derivative);
-//     MatrixXd w2 = MatrixXd::Random(400, 700);
-//     VectorXd b2 = VectorXd::Random(400);
+//     MatrixXd w2 = MatrixXd::Random(16, 16);
+//     VectorXd b2 = VectorXd::Random(16);
 //     Layer layer2(w2, b2, sigmoid, sigmoid_derivative);
-//     MatrixXd w3 = MatrixXd::Random(10, 400);
+//     MatrixXd w3 = MatrixXd::Random(10, 16);
 //     VectorXd b3 = VectorXd::Random(10);
-//     // Layer layer3(w3, b3, relu, relu_derivative);
 //     Layer layer3(w3, b3, sigmoid, sigmoid_derivative);
 //     Network network(std::vector<Layer>{layer1, layer2, layer3});
 //
+//     ImageSet image;
 //
-//     std::cout << "XXXXX TRAINING XXXXX" << std::endl;
-//     for(int i = 0; i < 300; i++) {
-//         int index = i%20;
-//         network.trainOne(image.GetImage(index), image.GetLabel(index), 0.05);
-//         std::cout << getPrediction(image.GetLabel(index)) << " ";
-//         if (i%20 == 19) { std::cout << std::endl; }
-//     }std::cout << std::endl;
+//     int training_size = 500;
+//     for (int j = 0; j < 30; j++) {
+//         std::vector<VectorXd> in1;
+//         std::vector<VectorXd> out1;
+//         for (int i = 0; i < training_size; i++) {
+//             in1.push_back(image.GetImage(j*training_size + i));
+//             out1.push_back(image.GetLabel(j*training_size + i));
+//         }
 //
-//     // image.PrintImage(1000);
+//         double cost = network.getCost(in1, out1);
+//         std::cout << cost << std::endl;
+//         while (true) {
+//             network.train(in1, out1, 5);
+//             double cost = network.getCost(in1, out1);
+//             std::cout << cost << std::endl;
+//             if (cost < 0.85) {
+//                 break;
+//             }
+//         }
+//
+//         for (int i = 0; i < 5; i++) {
+//             int index = 50000+i;
+//             printPrediction(network.forwardProp(image.GetImage(index)));
+//             std::cout << " Actual: " << getPrediction(image.GetLabel(index)) << std::endl;
+//         }
+//     }
+//
 //     std::cout << "XXXXX THE PREDICTIONS XXXXX" << std::endl;
 //     for (int i = 0; i < 10; i++) {
-//         int index = i;
+//         int index = 80+i;
 //         printPrediction(network.forwardProp(image.GetImage(index)));
 //         std::cout << " Actual: " << getPrediction(image.GetLabel(index)) << std::endl;
 //     }
-//
-//
-//
-//     std::cout << "This is a test" << std::endl;
+//     // image.PrintImage(1000);
 // }
