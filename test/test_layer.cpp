@@ -29,7 +29,7 @@ class LayerForwardPropTest:public::testing::Test {
 };
 
 TEST_F(LayerForwardPropTest, MediumNetwork) {
-    // Create 1-1 neural network
+    // Create 2-2 neural network
     MatrixXd w1(2, 2); w1 << 1, 2, 3, 4;
     VectorXd b1(2); b1 << 0, -1;
     Layer layer1(w1, b1, linear, linear_derivative);
