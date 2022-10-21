@@ -29,6 +29,9 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out, dou
     for (int i = 0; i < in.size(); i++) {
         backProp(in[i], exp_out[i], stepSize);
     }
+    for (int i = 0; i < layers_.size(); i++) {
+        layers_[i].applyAccumulatedChange(in.size());
+    }
 }
 
 void train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out) {

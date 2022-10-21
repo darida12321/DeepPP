@@ -8,11 +8,19 @@ using Eigen::VectorXd;
 // constructor
 Layer::Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func,
              std::function<double(double)> act_func_der)
-    : weights_(m), bias_(b), act_func_(act_func), act_func_der_(act_func_der) {}
+    : weights_(m), bias_(b), act_func_(act_func), act_func_der_(act_func_der)
+    , backprop_weight_acc_(m - m), backprop_bias_acc_(b-b){} //TODO to do VERY
 
 VectorXd Layer::forwardProp(VectorXd in) {
   VectorXd newV = weights_ * in + bias_;
   return newV.unaryExpr(act_func_);
+}
+
+void Layer::applyAccumulatedChange(int sampleSize){
+    weights_ += backprop_weight_acc_ / sampleSize;
+    bias_ += backprop_bias_acc_ / sampleSize;
+    backprop_weight_acc_.setZero();
+    backprop_bias_acc_.setZero();
 }
 
 VectorXd Layer::forwardPropAndStore(VectorXd in) {
@@ -26,16 +34,16 @@ VectorXd Layer::forwardPropAndStore(VectorXd in) {
 }
 
 // Precondition: err = dC/da {where C = cost, a = this layer's activation}
-VectorXd Layer::backProp(VectorXd err, double stepSize) {
+VectorXd Layer::backProp(VectorXd gradient, double stepSize) {
   // calculate dC/dz where z is the activation before applying act_func
-  VectorXd tmp = err.cwiseProduct(act_derivatives_);
+  VectorXd tmp = gradient.cwiseProduct(act_derivatives_);
 
   // calculate dC/da for previous layer
   VectorXd propagated = weights_.transpose() * tmp;
 
   // adjust weights and biases
-  weights_ -= stepSize * tmp * last_input_.transpose();
-  bias_ -= stepSize * tmp;
+  backprop_weight_acc_ -= stepSize * tmp * last_input_.transpose();
+  backprop_bias_acc_ -= stepSize * tmp;
 
   return propagated;
 }

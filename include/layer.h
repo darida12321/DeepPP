@@ -13,7 +13,8 @@ public:
         std::function<double(double)> act_func_der);
   VectorXd forwardPropAndStore(VectorXd in);
   VectorXd forwardProp(VectorXd in);
-  VectorXd backProp(VectorXd err, double stepSize);
+  VectorXd backProp(VectorXd gradient, double stepSize);
+  void applyAccumulatedChange(int sampleSize);
   MatrixXd getWeights();
   VectorXd getBias();
 
@@ -24,4 +25,7 @@ private:
   std::function<double(double)> act_func_der_; // activator function derivative
   VectorXd act_derivatives_;                   // for back propagation
   VectorXd last_input_;                        // for back propagation
+  MatrixXd backprop_weight_acc_;
+  VectorXd backprop_bias_acc_;
+  
 };
