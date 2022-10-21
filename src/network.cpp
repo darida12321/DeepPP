@@ -1,6 +1,7 @@
 #include "Eigen/Core"
 #include "Eigen/src/Core/Matrix.h"
 #include <network.h>
+#include <iostream>
 
 // Constructor for the layer
 Network::Network(std::vector<Layer> layers) : layers_(layers) {}
@@ -19,9 +20,15 @@ double Network::getCost(std::vector<VectorXd> in, std::vector<VectorXd> exp_out)
     double error = 0;
     for (int i = 0; i < in.size(); i++) {
         VectorXd diff = forwardProp(in[i]).array() - exp_out[i].array();
-        error = (diff.array() * diff.array()).sum();
+        error += (diff.array() * diff.array()).sum();
     }
     return error/in.size();
+}
+
+void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out, double stepSize) {
+    for (int i = 0; i < in.size(); i++) {
+        backProp(in[i], exp_out[i], stepSize);
+    }
 }
 
 void train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out) {
