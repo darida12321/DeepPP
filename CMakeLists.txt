@@ -25,6 +25,8 @@ target_include_directories(${PROJECT_NAME}
 
 enable_testing()
 add_subdirectory(lib/googletest)
+add_subdirectory(lib/benchmark)
 add_subdirectory(test)
+add_subdirectory(benchmark)
 
 
