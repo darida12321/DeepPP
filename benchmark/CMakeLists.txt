@@ -4,6 +4,7 @@ project(DeepPPBenchmark)
 
 set(Sources 
 	sample_benchmark.cpp
+	network_benchmark.cpp
 )
 
 add_executable(${PROJECT_NAME} ${Sources})
