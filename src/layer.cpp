@@ -7,14 +7,14 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 // constructor
-Layer::Layer(MatrixXd m, VectorXd b, std::function<double(double)> act_func,
-             std::function<double(double)> act_func_der)
+Layer::Layer(MatrixXd m, VectorXd b, std::function<VectorXd(VectorXd)> act_func,
+             std::function<VectorXd(VectorXd)> act_func_der)
     : weights_(m), bias_(b), act_func_(act_func), act_func_der_(act_func_der)
     , backprop_weight_acc_(m - m), backprop_bias_acc_(b-b){} //TODO to do VERY
 
 VectorXd Layer::forwardProp(VectorXd in) {
   VectorXd newV = weights_ * in + bias_;
-  return newV.unaryExpr(act_func_);
+  return act_func_(newV);
 }
 
 void Layer::applyAccumulatedChange(int sampleSize){
@@ -29,9 +29,9 @@ VectorXd Layer::forwardPropAndStore(VectorXd in) {
 
   last_input_ = in; // record input for use in back propagation
   // calculate derivatives of activation function for use in back propagation
-  act_derivatives_ = newV.unaryExpr(act_func_der_);
+  act_derivatives_ = act_func_der_(newV);
 
-  return newV.unaryExpr(act_func_);
+  return act_func_(newV);
 }
 
 // Precondition: err = dC/da {where C = cost, a = this layer's activation}
