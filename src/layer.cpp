@@ -1,3 +1,4 @@
+#include <iostream>
 #include <Eigen/Dense>
 #include <layer.h>
 #include <ostream>

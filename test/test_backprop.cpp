@@ -91,18 +91,13 @@ TEST(LayerBackPropTest, MultiNeuronNudge){
     EXPECT_NEAR(network.getLayer(2).getWeights()(0, 1), 7.397, 0.001);
     EXPECT_NEAR(network.getLayer(2).getWeights()(1, 1), 0.055, 0.001);
 
-
-    std::cout << network.getLayer(1).getWeights() << std::endl;
-    std::cout << network.getLayer(1).getBias() << std::endl;
     // Layer 1 bias
-    EXPECT_NEAR(network.getLayer(1).getBias()(0), 5.276, 0.001);
-    EXPECT_NEAR(network.getLayer(1).getBias()(1), -13.64, 0.001);
+    EXPECT_NEAR(network.getLayer(1).getBias()(0), 4.110, 0.001);
+    EXPECT_NEAR(network.getLayer(1).getBias()(1), -7.420, 0.001);
     // Layer 1 weights
-    EXPECT_NEAR(network.getLayer(1).getWeights()(0, 0), 8.7106, 0.001);
-    EXPECT_NEAR(network.getLayer(1).getWeights()(1, 0), -24.509, 0.001);
+    EXPECT_NEAR(network.getLayer(1).getWeights()(0, 0), 6.554, 0.001);
+    EXPECT_NEAR(network.getLayer(1).getWeights()(1, 0), -11.802, 0.001);
     EXPECT_NEAR(network.getLayer(1).getWeights()(0, 1), -2, 0.001);
     EXPECT_NEAR(network.getLayer(1).getWeights()(1, 1), 1, 0.001);
-
-    // TODO check biases
 }
 
