@@ -19,7 +19,17 @@ inline VectorXd softmax(VectorXd x) {
   return exps.array() / exps.sum();
 }
 inline VectorXd softmax_derivative(VectorXd x) {
-
+  MatrixXd jacobian(x.rows(), x.rows());
+  for (int i = 0; i < x.rows(); i++) {
+    for (int j = 0; j < x.rows(); j++) {
+      if (i == j) {
+        jacobian(i, j) = x(i) * (1 - x(i));
+      } else {
+        jacobian(i, j) = - x(i) * x(j);
+      }
+    }
+  }
+  return jacobian * sigmoid(x);
 }
 
 inline VectorXd relu(VectorXd x) {
