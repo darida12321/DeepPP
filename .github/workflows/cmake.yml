@@ -17,10 +17,13 @@ jobs:
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
     container:
-      image: deeppp:latest
+      image: gcc:11.2
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setup Container
+        run: apt-get -y update && apt-get install -y no-install-recommends git build-essential cmake
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
