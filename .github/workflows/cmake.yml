@@ -33,21 +33,11 @@ jobs:
       - name: Build
         run: ./build.sh
 
-      # - name: Upload Artifact
-      # uses: actions/upload-artifact@v3
-      # with:
-      # path: bin/test/
-      # Build your program with the given configuration
-
       - name: Test
         # working-directory: ${{github.workspace}}/build
         # Execute tests defined by the CMake configuration.
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: ./test.sh
 
-  # test:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download Artifact
-  #       uses: actions/download-artifact@v3
+      - name: Benchmark
+        run: ./benchmark.sh
