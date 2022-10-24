@@ -8,15 +8,17 @@ const int TRAIN_SIZE = 60000;
 const int IMG_WIDTH = 28;
 const int IMG_HEIGHT = 28;
 
-typedef Eigen::Matrix<char, IMG_WIDTH * IMG_HEIGHT, 1> ImgVector;
+typedef Eigen::Vector<double, IMG_WIDTH * IMG_HEIGHT> ImgVector;
+typedef Eigen::Vector<double, 10> ImgLabel;
 
 class ImageSet {
     public:
         ImageSet();
         ImgVector GetImage(int index);
-        int GetLabel(int index);
+        ImgLabel GetLabel(int index);
         void PrintImage(int index);
     private:
-        std::vector<char> trainLabels_;
+        std::vector<ImgLabel> trainLabels_;
         std::vector<ImgVector> trainImages_;
+        ImgLabel CharToLabel(char);
 };

@@ -4,9 +4,21 @@
 #include <Eigen/Dense>
 #include <image.h>
 
+ImgLabel ImageSet::CharToLabel(char c) {
+    ImgLabel label;
+    for (int i = 0; i < 10; i++) {
+        if (c == i) {
+            label(i) = 1.0;
+        } else {
+            label(i) = 0.0;
+        }
+    }
+    return label;
+}
+
 ImageSet::ImageSet() {
-    std::ifstream trainingLabels("../img/train-labels-idx1-ubyte");
-    std::ifstream trainingImages("../img/train-images-idx3-ubyte");
+    std::ifstream trainingLabels("img/train-labels-idx1-ubyte");
+    std::ifstream trainingImages("img/train-images-idx3-ubyte");
 
     trainingLabels.seekg(8, std::ios_base::beg); 
     trainingImages.seekg(16, std::ios_base::beg);
@@ -15,7 +27,7 @@ ImageSet::ImageSet() {
         char cl;
         char ci;
         trainingLabels.get(cl);
-        trainLabels_.push_back(cl);
+        trainLabels_.push_back(CharToLabel(cl));
         
         ImgVector img;
         for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
@@ -31,14 +43,14 @@ ImgVector ImageSet::GetImage(int index) {
     return trainImages_[index];
 }
 
-int ImageSet::GetLabel(int index) {
+ImgLabel ImageSet::GetLabel(int index) {
     return trainLabels_[index];
 }
 
 
 void ImageSet::PrintImage(int index) {
     ImgVector img = trainImages_[index];
-    int label = trainLabels_[index]; 
+    ImgLabel label = trainLabels_[index]; 
     for (int i = 0; i < IMG_HEIGHT; i++) {
         for (int j = 0; j < IMG_WIDTH; j++) {
             if ((unsigned int) img(IMG_WIDTH * i + j) > 128) {
@@ -49,5 +61,5 @@ void ImageSet::PrintImage(int index) {
         }
         std::cout << std::endl;
     }
-    std::cout << "label: " << label << std::endl;
+    std::cout << "label: " << std::endl << label << std::endl;
 }

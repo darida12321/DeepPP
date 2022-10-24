@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.22.1)
-set(CMAKE_CXX_STANDARD 14)
+cmake_minimum_required(VERSION 3.0)
+set(CMAKE_CXX_STANDARD 20)
 
 project(DeepPP)
 
@@ -25,6 +25,8 @@ target_include_directories(${PROJECT_NAME}
 
 enable_testing()
 add_subdirectory(lib/googletest)
+add_subdirectory(lib/benchmark)
 add_subdirectory(test)
+add_subdirectory(benchmark)
 
 
