@@ -10,28 +10,37 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-// TODO: use EXPECT_DOUBLE_EQ
-
-TEST(LayerBackPropTest, SimpleNudge) {
+TEST(LayerBackPropTest, Relu) {
   // Create 1-1 neural network
-  MatrixXd w1{{1}};
-  VectorXd b1{{0.5}};
-  Network network(std::vector<MatrixXd>{w1}, std::vector<VectorXd>{b1}, linear,
-                  linear_derivative);
+  MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
+  VectorXd b1(2); b1 << 1, 1;
+  Network network(std::vector<MatrixXd>{w1, w1}, std::vector<VectorXd>{b1, b1},
+      relu, relu_derivative);
 
   // Create example data point
-  VectorXd in1{{0.2}};
-  VectorXd out1{{0.8}};
+  VectorXd in1(2); in1 << 1.0, 1.0;
+  VectorXd out1(2); out1 << 3.0, 3.0;
   std::vector<VectorXd> in{in1};
   std::vector<VectorXd> out{out1};
 
   // Train the network
-  // std::cout << "Here with bias " << network.getWeights()[0](0,0) <<
-  // std::endl;
   network.train(in, out, 1);
-  EXPECT_NEAR(network.getWeights()[0](0, 0), 1.04, 0.001);
-  EXPECT_NEAR(network.getBiases()[0](0), 0.7, 0.001);
+
+  // Expect output
+  EXPECT_NEAR(network.getWeights()[0](0, 0), -7, 0.001);
+  EXPECT_NEAR(network.getWeights()[0](1, 0), -7, 0.001);
+  EXPECT_NEAR(network.getWeights()[0](0, 1), -7, 0.001);
+  EXPECT_NEAR(network.getWeights()[0](1, 1), -7, 0.001);
+  EXPECT_NEAR(network.getBiases()[0](0), -7, 0.001);
+  EXPECT_NEAR(network.getBiases()[0](1), -7, 0.001);
+  EXPECT_NEAR(network.getWeights()[1](0, 0), -11, 0.001);
+  EXPECT_NEAR(network.getWeights()[1](1, 0), -11, 0.001);
+  EXPECT_NEAR(network.getWeights()[1](0, 1), -11, 0.001);
+  EXPECT_NEAR(network.getWeights()[1](1, 1), -11, 0.001);
+  EXPECT_NEAR(network.getBiases()[1](0), -3, 0.001);
+  EXPECT_NEAR(network.getBiases()[1](1), -3, 0.001);
 }
+
 //
 // TEST(LayerBackPropTest, DeepNudge){
 //     // Create 1-1-1 neural network
