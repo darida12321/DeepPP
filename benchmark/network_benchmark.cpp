@@ -1,9 +1,10 @@
-#include <cmath>
-#include <network.h>
 #include <activation_function.h>
-#include <Eigen/Dense>
-#include <vector>
 #include <benchmark/benchmark.h>
+#include <network.h>
+
+#include <Eigen/Dense>
+#include <cmath>
+#include <vector>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
