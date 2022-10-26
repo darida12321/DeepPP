@@ -62,3 +62,21 @@ void Network::backProp(VectorXd in, VectorXd exp_out, double stepSize) {
   }
 }
 
+// Get a vector containing weight matrices for all layers
+std::vector<MatrixXd> Network::getWeights() {
+    std::vector<MatrixXd> weights;
+    for (Layer l : layers_) {
+        weights.push_back(l.getWeights());
+    }
+    return weights;
+}
+
+// Get a vector containing bias vectors for all layers
+std::vector<VectorXd> Network::getBiases() {
+    std::vector<VectorXd> biases;
+    for (Layer l : layers_) {
+        biases.push_back(l.getBias());
+    }
+    return biases;
+}
+

@@ -14,6 +14,8 @@ public:
   double getCost(std::vector<VectorXd>, std::vector<VectorXd>);
   void train(std::vector<VectorXd>, std::vector<VectorXd>, double);
   Layer getLayer(size_t);
+  std::vector<MatrixXd> getWeights();
+  std::vector<VectorXd> getBiases();
 
 private:
   VectorXd forwardPropAndStore(VectorXd);
