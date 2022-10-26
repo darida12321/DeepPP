@@ -61,7 +61,7 @@ TEST(MnistTest, ReadData) {
     //     double cost = network.getCost(in1, out1);
     //     std::cout << cost << std::endl;
     //     for (int i = 0; i < 100; i++) {
-    //       network.train(in1, out1, 0.0001);
+    //       network.train(in1, out1, 0.01);
     //       double cost = network.getCost(in1, out1);
     //       std::cout << cost << std::endl;
     //       // if (cost < 0.85) {
