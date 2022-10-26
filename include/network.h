@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Eigen/Dense>
-#include <layer.h>
 #include <vector>
 
 using Eigen::MatrixXd;

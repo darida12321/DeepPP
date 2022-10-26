@@ -5,12 +5,10 @@ project(DeepPP)
 
 set(Headers
     include/activation_function.h
-    include/layer.h
     include/network.h
     include/image.h
 )
 set(Sources
-    src/layer.cpp 
     src/network.cpp
     src/image.cpp
 )

@@ -3,7 +3,7 @@
 project(DeepPPTest)
 
 set(Sources
-    test_layer.cpp
+    test_forwardprop.cpp
     test_backprop.cpp
     test_mnist.cpp
 )

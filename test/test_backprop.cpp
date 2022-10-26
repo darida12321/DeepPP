@@ -1,7 +1,6 @@
 #include <cmath>
 #include <iostream>
 #include <gtest/gtest.h>
-#include <layer.h>
 #include <network.h>
 #include <activation_function.h>
 #include <Eigen/Dense>
