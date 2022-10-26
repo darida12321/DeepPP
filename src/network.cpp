@@ -4,13 +4,25 @@
 #include <iostream>
 
 // Constructor for the layer
-Network::Network(std::vector<Layer> layers) : layers_(layers) {}
+Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases, 
+    std::function<VectorXd(VectorXd)> act_func,
+    std::function<VectorXd(VectorXd)> act_func_der)
+    : weights_(weights), biases_(biases), act_func_(act_func), act_func_der_(act_func_der) {
+}
+Network::Network(std::vector<int> sizes, std::function<VectorXd(VectorXd)> act_func,
+      std::function<VectorXd(VectorXd)> act_func_der)
+      : act_func_(act_func), act_func_der_(act_func_der) {
+  for (int i = 0; i < sizes.size()-1; i++){
+    weights_.push_back(MatrixXd::Random(sizes[i+1], sizes[i]));
+    biases_.push_back(VectorXd::Random(sizes[i+1]));
+  }
+}
 
 // Propogate the values forward through the layers
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
-  for (int i = 0; i < layers_.size(); i++) {
-    curr = layers_[i].forwardProp(curr);
+  for (int i = 0; i < weights_.size(); i++) {
+    curr = act_func_(weights_[i] * curr + biases_[i]);
   }
   return curr;
 }
@@ -26,57 +38,61 @@ double Network::getCost(std::vector<VectorXd> in, std::vector<VectorXd> exp_out)
 }
 
 void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out, double stepSize) {
-    for (int i = 0; i < in.size(); i++) {
-        backProp(in[i], exp_out[i], stepSize);
-    }
-    for (int i = 0; i < layers_.size(); i++) {
-        layers_[i].applyAccumulatedChange(in.size());
-    }
-}
-
-void train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out) {
-    for (int i = 0; i < in.size(); i++) {
-    }
-}
-
-
-// Getter for a layer
-Layer Network::getLayer(size_t i) {
-    return layers_[i];
-}
-
-// Propogate the values forward and store data for backpropogation
-VectorXd Network::forwardPropAndStore(VectorXd in) {
-  VectorXd curr = in;
-  for (int i = 0; i < layers_.size(); i++) {
-    curr = layers_[i].forwardPropAndStore(curr);
+  // Accumulate the changes in the gradient
+  std::vector<MatrixXd> backprop_weight_acc;
+  std::vector<VectorXd> backprop_bias_acc;
+  for (int i = 0; i < weights_.size(); i++) {
+    backprop_weight_acc.push_back(weights_[i]-weights_[i]);
+    backprop_bias_acc.push_back(biases_[i]-biases_[i]);
   }
-  return curr;
-}
 
-// Apply backpropogation to the layer
-void Network::backProp(VectorXd in, VectorXd exp_out, double stepSize) {
-  VectorXd gradient = 2*(forwardPropAndStore(in) - exp_out);
-  for (int i = layers_.size() - 1; i >= 0; i--) {
-    gradient = layers_[i].backProp(gradient, stepSize);
+  // For each data point, accumulate the changes
+  for (int i = 0; i < in.size(); i++) {
+    std::vector<VectorXd> a(weights_.size());
+    std::vector<VectorXd> dadz(weights_.size());
+    
+    // Forward propogation
+    VectorXd prop = in[i];
+    for (int i = 0; i < weights_.size(); i++) {
+      VectorXd newV = weights_[i] * prop + biases_[i];
+
+      // Record data for backpropogation
+      a[i] = prop;
+      dadz[i] = act_func_der_(newV);
+
+      // Get the forward propogated value
+      prop = act_func_(newV);
+    }
+
+    // Backward propogation
+    VectorXd dcda = 2*(prop - exp_out[i]);
+    for (int i = weights_.size() - 1; i >= 0; i--) {
+      VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
+
+      // calculate dC/da for previous layer
+      dcda = weights_[i].transpose() * dcdz;
+
+      // adjust weights and biases
+      backprop_weight_acc[i] -= stepSize * dcdz.cwiseProduct(a[i]);
+      backprop_bias_acc[i] -= stepSize * dcdz;
+    }
+  }
+
+  // Apply the accumulated changes
+  for (int i = 0; i < weights_.size(); i++) {
+    // weights_[i] += backprop_weight_acc[i]/in.size();
+    // biases_[i] += backprop_bias_acc[i]/in.size();
+    weights_[i] += backprop_weight_acc[i];
+    biases_[i] += backprop_bias_acc[i];
   }
 }
 
 // Get a vector containing weight matrices for all layers
-std::vector<MatrixXd> Network::getWeights() {
-    std::vector<MatrixXd> weights;
-    for (Layer l : layers_) {
-        weights.push_back(l.getWeights());
-    }
-    return weights;
+std::vector<MatrixXd>& Network::getWeights() {
+    return weights_;
 }
 
 // Get a vector containing bias vectors for all layers
-std::vector<VectorXd> Network::getBiases() {
-    std::vector<VectorXd> biases;
-    for (Layer l : layers_) {
-        biases.push_back(l.getBias());
-    }
-    return biases;
+std::vector<VectorXd>& Network::getBiases() {
+    return biases_;
 }
-

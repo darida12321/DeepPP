@@ -31,16 +31,16 @@ void printPrediction(VectorXd out) {
 }
 
 TEST(MnistTest, ReadData) {
-    MatrixXd w1 = MatrixXd::Random(10, 28*28);
-    VectorXd b1 = VectorXd::Random(10);
-    Layer layer1(w1, b1, sigmoid, sigmoid_derivative);
-    MatrixXd w2 = MatrixXd::Random(10, 10);
-    VectorXd b2 = VectorXd::Random(10);
-    Layer layer2(w2, b2, sigmoid, sigmoid_derivative);
-    MatrixXd w3 = MatrixXd::Random(10, 10);
-    VectorXd b3 = VectorXd::Random(10);
-    Layer layer3(w3, b3, softmax, softmax_derivative);
-    Network network(std::vector<Layer>{layer1, layer2, layer3});
+    // MatrixXd w1 = MatrixXd::Random(10, 28*28);
+    // VectorXd b1 = VectorXd::Random(10);
+    // Layer layer1(w1, b1, sigmoid, sigmoid_derivative);
+    // MatrixXd w2 = MatrixXd::Random(10, 10);
+    // VectorXd b2 = VectorXd::Random(10);
+    // Layer layer2(w2, b2, sigmoid, sigmoid_derivative);
+    // MatrixXd w3 = MatrixXd::Random(10, 10);
+    // VectorXd b3 = VectorXd::Random(10);
+    // Layer layer3(w3, b3, softmax, softmax_derivative);
+    // Network network(std::vector<Layer>{layer1, layer2, layer3});
 
 
     // std::cout << b3 << std::endl << std::endl;
