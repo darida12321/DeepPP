@@ -45,6 +45,7 @@ double Network::getCost(std::vector<VectorXd> in,
 
 void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
                     double stepSize) {
+
   // Accumulate the changes in the gradient
   std::vector<MatrixXd> backprop_weight_acc;
   std::vector<VectorXd> backprop_bias_acc;
@@ -72,7 +73,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     }
 
     // Backward propogation
-    VectorXd dcda = 2 * (prop - exp_out[i]);
+    VectorXd dcda = 1 * (prop - exp_out[i]);
     for (int i = weights_.size() - 1; i >= 0; i--) {
       VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
 
@@ -80,7 +81,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
       dcda = weights_[i].transpose() * dcdz;
 
       // adjust weights and biases
-      backprop_weight_acc[i] -= stepSize * dcdz.cwiseProduct(a[i]);
+      backprop_weight_acc[i] -= stepSize * dcdz * a[i].transpose();
       backprop_bias_acc[i] -= stepSize * dcdz;
     }
   }
