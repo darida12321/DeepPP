@@ -45,6 +45,7 @@ double Network::getCost(std::vector<VectorXd> in,
 
 void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
                     double stepSize) {
+  assert(in.size() == exp_out.size());
 
   // Accumulate the changes in the gradient
   std::vector<MatrixXd> backprop_weight_acc;
@@ -88,10 +89,8 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
   // Apply the accumulated changes
   for (int i = 0; i < weights_.size(); i++) {
-    // weights_[i] += backprop_weight_acc[i]/in.size();
-    // biases_[i] += backprop_bias_acc[i]/in.size();
-    weights_[i] += backprop_weight_acc[i];
-    biases_[i] += backprop_bias_acc[i];
+    weights_[i] += backprop_weight_acc[i] / in.size();
+    biases_[i] += backprop_bias_acc[i] / in.size();
   }
 }
 
