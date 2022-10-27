@@ -112,32 +112,32 @@ TEST(LayerBackPropTest, Sigmoid) {
   compareNetwork(ws, bs, network);
 }
 
-TEST(LayerBackPropTest, SoftMax) {
-  // Create 1-1 neural network
-  MatrixXd w(2, 2); w << 1, 1, 1, 1;
-  VectorXd b(2); b << 1, 1;
-  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
+// TEST(LayerBackPropTest, SoftMax) {
+//   // Create 1-1 neural network
+//   MatrixXd w(2, 2); w << 1, 1, 1, 1;
+//   VectorXd b(2); b << 1, 1;
+//   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+//       std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
+//       std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
 
-  // Create example data point
-  VectorXd in1(2); in1 << 1.0, 1.0;
-  VectorXd out1(2); out1 << 0.6, 0.4;
-  VectorXd in2(2); in2 << 3.0, 5.0;
-  VectorXd out2(2); out2 << 0.2, 0.8;
-  std::vector<VectorXd> input{in1, in2};
-  std::vector<VectorXd> output{out1, out2};
+//   // Create example data point
+//   VectorXd in1(2); in1 << 1.0, 1.0;
+//   VectorXd out1(2); out1 << 0.6, 0.4;
+//   VectorXd in2(2); in2 << 3.0, 5.0;
+//   VectorXd out2(2); out2 << 0.2, 0.8;
+//   std::vector<VectorXd> input{in1, in2};
+//   std::vector<VectorXd> output{out1, out2};
 
-  // Train the network
-  network.train(input, output, 1);
+//   // Train the network
+//   network.train(input, output, 1);
 
-  // Expect output
-  MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
-  VectorXd b1(2); b1 << 1, 1;
-  MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
-  VectorXd b2(2); b2 << 0.95, 1.05;
-  std::vector<MatrixXd> ws{w1, w2};
-  std::vector<VectorXd> bs{b1, b2};
-  compareNetwork(ws, bs, network);
-}
+//   // Expect output
+//   MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
+//   VectorXd b1(2); b1 << 1, 1;
+//   MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
+//   VectorXd b2(2); b2 << 0.95, 1.05;
+//   std::vector<MatrixXd> ws{w1, w2};
+//   std::vector<VectorXd> bs{b1, b2};
+//   compareNetwork(ws, bs, network);
+// }
 
