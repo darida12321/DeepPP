@@ -19,18 +19,14 @@ inline VectorXd softmax(VectorXd x) {
   VectorXd exps = shiftx.unaryExpr([](double x) { return std::exp(x); });
   return exps.array() / exps.sum();
 }
+#include<iostream>
 inline VectorXd softmax_derivative(VectorXd x) {
-  MatrixXd jacobian(x.rows(), x.rows());
+  VectorXd y = softmax(x);
+  VectorXd out = VectorXd::Zero(x.rows());
   for (int i = 0; i < x.rows(); i++) {
-    for (int j = 0; j < x.rows(); j++) {
-      if (i == j) {
-        jacobian(i, j) = x(i) * (1 - x(i));
-      } else {
-        jacobian(i, j) = -x(i) * x(j);
-      }
-    }
+    out(i) += y(i) * (1 - y(i));
   }
-  return jacobian * sigmoid(x);
+  return out*2;
 }
 
 inline VectorXd relu(VectorXd x) {
@@ -48,16 +44,3 @@ inline VectorXd linear_derivative(VectorXd x) {
   return VectorXd::Ones(x.rows(), x.cols());
 }
 
-// inline double sigmoid(double x) { return 1 / (1 + std::exp(-x)); }
-// inline double sigmoid_derivative(double x) { return sigmoid(x) * (1 -
-// sigmoid(x)); }
-//
-// inline double relu(double x) { return fmax(x, 0); }
-// inline double relu_derivative(double x) {
-//   if (x <= 0)
-//     return 0;
-//   return 1;
-// }
-//
-// inline double linear(double x) { return x; }
-// inline double linear_derivative(double x) { return 1; }
