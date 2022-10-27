@@ -20,11 +20,39 @@ void compareNetwork(std::vector<MatrixXd> ws, std::vector<VectorXd> bs, Network 
 
     for (int y = 0; y < ws[i].rows(); y++) {
       for (int x = 0; x < ws[i].cols(); x++) {
-        EXPECT_NEAR(n.getWeights()[i](y, x), ws[i](y), 0.001);
+        EXPECT_NEAR(n.getWeights()[i](y, x), ws[i](y, x), 0.001);
       }
       EXPECT_NEAR(n.getBiases()[i](y), bs[i](y), 0.001);
     }
   }
+}
+
+TEST(LayerBackPropTest, MultiInput) {
+  // Create 1-1 neural network
+  MatrixXd w(2, 2); w << 1, 1, 1, 1;
+  VectorXd b(2); b << 1, 1;
+  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+      relu, relu_derivative);
+
+  // Create example data point
+  VectorXd in1(2); in1 << 1.0, 1.0;
+  VectorXd out1(2); out1 << 3.0, 3.0;
+  VectorXd in2(2); in2 << 3.0, 5.0;
+  VectorXd out2(2); out2 << 6.0, 8.0;
+  std::vector<VectorXd> input{in1, in2};
+  std::vector<VectorXd> output{out1, out2};
+
+  // Train the network
+  network.train(input, output, 1);
+
+  // Expect output
+  MatrixXd w1(2, 2); w1 << -39, -63, -39, -63;
+  VectorXd b1(2); b1 << -15, -15;
+  MatrixXd w2(2, 2); w2 << -63.5, -63.5, -54.5, -54.5;
+  VectorXd b2(2); b2 << -7.5, -6.5;
+  std::vector<MatrixXd> ws{w1, w2};
+  std::vector<VectorXd> bs{b1, b2};
+  compareNetwork(ws, bs, network);
 }
 
 TEST(LayerBackPropTest, Relu) {
@@ -52,3 +80,4 @@ TEST(LayerBackPropTest, Relu) {
   std::vector<VectorXd> bs{b1, b2};
   compareNetwork(ws, bs, network);
 }
+
