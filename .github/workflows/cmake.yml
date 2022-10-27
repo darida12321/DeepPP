@@ -18,13 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: gcc:11.2
-    strategy:
-      matrix:
-        path:
-          - "src"
-          - "test"
-          - "benchmark"
-          - "include"
 
     steps:
       - uses: actions/checkout@v3
