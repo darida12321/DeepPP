@@ -8,7 +8,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-TEST(LayerForwardProp, MediumNetwork) {
+TEST(LayerForwardProp, Linear) {
   // Create 2-2 neural network
   MatrixXd w1(2, 2);
   w1 << 1, 2, 3, 4;
@@ -44,46 +44,28 @@ TEST(LayerForwardProp, MediumNetwork) {
   EXPECT_NEAR(network.getCost(in, out), 10.5, 0.001);
 }
 
-// class LayerForwardPropTest:public::testing::Test {
-//   protected:
-//     MatrixXd zeroMatrix_ {
-//       {0, 0, 0},
-//       {0, 0, 0},
-//       {0, 0, 0}
-//     };
-//
-//     MatrixXd idMatrix_ {
-//       {1, 0, 0},
-//       {0, 1, 0},
-//       {0, 0, 1}
-//     };
-//
-//     VectorXd zeroVector_ {{0, 0, 0}};
-//
-//     VectorXd v1_ {{1, 1, 1}};
-//     VectorXd v2_ {{0.5, 0.5, 0.5}};
-// };
-// TEST_F(LayerForwardPropTest, ZeroMatrixRelu) {
-//   Layer layer(zeroMatrix_, zeroVector_, relu, relu_derivative);
-//   EXPECT_EQ(layer.forwardProp(v1_), zeroVector_);
-// }
-//
-// TEST_F(LayerForwardPropTest, ZeroMatrixSigmoid) {
-//   Layer layer(zeroMatrix_, zeroVector_, sigmoid, sigmoid_derivative);
-//   EXPECT_EQ(layer.forwardProp(v1_), v2_);
-// }
-//
-// TEST_F(LayerForwardPropTest, IdMatrixRelu) {
-//   Layer layer(idMatrix_, zeroVector_, relu, relu_derivative);
-//   EXPECT_EQ(layer.forwardProp(v1_), v1_);
-// }
-//
-// TEST_F(LayerForwardPropTest, biasOffset1) {
-//   Layer layer(zeroMatrix_, v1_, relu, relu_derivative);
-//   EXPECT_EQ(layer.forwardProp(v1_), v1_);
-// }
-//
-// TEST_F(LayerForwardPropTest, biasOffset2) {
-//   Layer layer(idMatrix_, v2_, relu, relu_derivative);
-//   EXPECT_EQ(layer.forwardProp(v2_), v1_);
-// }
+TEST(LayerForwardProp, SoftMax) {
+  // Create 2-2 neural network
+  MatrixXd w(2, 2);
+  w << 1, 2, 1, 4;
+  VectorXd b(2);
+  b << 9, -1;
+  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+        std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
+        std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
+
+  // Check forwardpropogation value
+  VectorXd in1(2);
+  in1 << 2, 4;
+  VectorXd in2(2);
+  in2 << 1, 1;
+
+  VectorXd out1 = network.forwardProp(in1);
+  VectorXd out2 = network.forwardProp(in2);
+
+  EXPECT_NEAR(out1(0), 0, 0.001);
+  EXPECT_NEAR(out1(1), 1, 0.001);
+  EXPECT_NEAR(out2(0), 0.8807, 0.001);
+  EXPECT_NEAR(out2(1), 0.1192, 0.001);
+
+}

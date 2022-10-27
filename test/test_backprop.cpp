@@ -131,13 +131,13 @@ TEST(LayerBackPropTest, Sigmoid) {
 //   // Train the network
 //   network.train(input, output, 1);
 
-//   // Expect output
-//   MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
-//   VectorXd b1(2); b1 << 1, 1;
-//   MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
-//   VectorXd b2(2); b2 << 0.95, 1.05;
-//   std::vector<MatrixXd> ws{w1, w2};
-//   std::vector<VectorXd> bs{b1, b2};
-//   compareNetwork(ws, bs, network);
-// }
+  // Expect output
+  MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
+  VectorXd b1(2); b1 << 1, 1;
+  MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
+  VectorXd b2(2); b2 << 0.95, 1.05;
+  std::vector<MatrixXd> ws{w1, w2};
+  std::vector<VectorXd> bs{b1, b2};
+  // compareNetwork(ws, bs, network);
+}
 
