@@ -18,26 +18,36 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: gcc:11.2
+    strategy:
+      matrix:
+        path:
+          - "src"
+          - "test"
+          - "benchmark"
+          - "include"
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup Container
-        run: apt-get -y update && apt-get install -y --no-install-recommends git build-essential cmake
+        run: apt-get -y update && apt-get install -y --no-install-recommends git build-essential cmake clang-format
+
+      - name: Run style-check
+        run: ./scripts/format.sh
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-        run: ./configure.sh
+        run: ./scripts/configure.sh
 
       - name: Build
-        run: ./build.sh
+        run: ./scripts/build.sh
 
       - name: Test
         # working-directory: ${{github.workspace}}/build
         # Execute tests defined by the CMake configuration.
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-        run: ./test.sh
+        run: ./scripts/test.sh
 
       - name: Benchmark
-        run: ./benchmark.sh
+        run: ./scripts/benchmark.sh

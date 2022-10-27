@@ -10,7 +10,8 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-void compareNetwork(std::vector<MatrixXd> ws, std::vector<VectorXd> bs, Network n) {
+void compareNetwork(std::vector<MatrixXd> ws, std::vector<VectorXd> bs,
+                    Network n) {
   ASSERT_EQ(ws.size(), bs.size());
   for (int i = 0; i < ws.size(); i++) {
     ASSERT_EQ(ws[i].rows(), n.getWeights()[i].rows());
@@ -29,17 +30,24 @@ void compareNetwork(std::vector<MatrixXd> ws, std::vector<VectorXd> bs, Network 
 
 TEST(LayerBackPropTest, MultiInput) {
   // Create 1-1 neural network
-  MatrixXd w(2, 2); w << 1, 1, 1, 1;
-  VectorXd b(2); b << 1, 1;
+  MatrixXd w(2, 2);
+  w << 1, 1, 1, 1;
+  VectorXd b(2);
+  b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu_derivative, relu_derivative});
+                  std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
+                  std::vector<std::function<VectorXd(VectorXd)>>{
+                      relu_derivative, relu_derivative});
 
   // Create example data point
-  VectorXd in1(2); in1 << 1.0, 1.0;
-  VectorXd out1(2); out1 << 3.0, 3.0;
-  VectorXd in2(2); in2 << 3.0, 5.0;
-  VectorXd out2(2); out2 << 6.0, 8.0;
+  VectorXd in1(2);
+  in1 << 1.0, 1.0;
+  VectorXd out1(2);
+  out1 << 3.0, 3.0;
+  VectorXd in2(2);
+  in2 << 3.0, 5.0;
+  VectorXd out2(2);
+  out2 << 6.0, 8.0;
   std::vector<VectorXd> input{in1, in2};
   std::vector<VectorXd> output{out1, out2};
 
@@ -47,10 +55,14 @@ TEST(LayerBackPropTest, MultiInput) {
   network.train(input, output, 1);
 
   // Expect output
-  MatrixXd w1(2, 2); w1 << -39, -63, -39, -63;
-  VectorXd b1(2); b1 << -15, -15;
-  MatrixXd w2(2, 2); w2 << -63.5, -63.5, -54.5, -54.5;
-  VectorXd b2(2); b2 << -7.5, -6.5;
+  MatrixXd w1(2, 2);
+  w1 << -39, -63, -39, -63;
+  VectorXd b1(2);
+  b1 << -15, -15;
+  MatrixXd w2(2, 2);
+  w2 << -63.5, -63.5, -54.5, -54.5;
+  VectorXd b2(2);
+  b2 << -7.5, -6.5;
   std::vector<MatrixXd> ws{w1, w2};
   std::vector<VectorXd> bs{b1, b2};
   compareNetwork(ws, bs, network);
@@ -58,15 +70,21 @@ TEST(LayerBackPropTest, MultiInput) {
 
 TEST(LayerBackPropTest, Relu) {
   // Create 1-1 neural network
-  MatrixXd w(2, 2); w << 1, 1, 1, 1;
-  VectorXd b(2); b << 1, 1;
-  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+  MatrixXd w(2, 2);
+  w << 1, 1, 1, 1;
+  VectorXd b(2);
+  b << 1, 1;
+  Network network(
+      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, linear_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
+                                                     linear_derivative});
 
   // Create example data point
-  VectorXd in(2); in << 1.0, 1.0;
-  VectorXd out(2); out << 3.0, 3.0;
+  VectorXd in(2);
+  in << 1.0, 1.0;
+  VectorXd out(2);
+  out << 3.0, 3.0;
   std::vector<VectorXd> input{in};
   std::vector<VectorXd> output{out};
 
@@ -74,10 +92,14 @@ TEST(LayerBackPropTest, Relu) {
   network.train(input, output, 1);
 
   // Expect output
-  MatrixXd w1(2, 2); w1 << -7, -7, -7, -7;
-  VectorXd b1(2); b1 << -7, -7;
-  MatrixXd w2(2, 2); w2 << -11, -11, -11, -11;
-  VectorXd b2(2); b2 << -3, -3;
+  MatrixXd w1(2, 2);
+  w1 << -7, -7, -7, -7;
+  VectorXd b1(2);
+  b1 << -7, -7;
+  MatrixXd w2(2, 2);
+  w2 << -11, -11, -11, -11;
+  VectorXd b2(2);
+  b2 << -3, -3;
   std::vector<MatrixXd> ws{w1, w2};
   std::vector<VectorXd> bs{b1, b2};
   compareNetwork(ws, bs, network);
@@ -85,17 +107,25 @@ TEST(LayerBackPropTest, Relu) {
 
 TEST(LayerBackPropTest, Sigmoid) {
   // Create 1-1 neural network
-  MatrixXd w(2, 2); w << 1, 1, 1, 1;
-  VectorXd b(2); b << 1, 1;
-  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+  MatrixXd w(2, 2);
+  w << 1, 1, 1, 1;
+  VectorXd b(2);
+  b << 1, 1;
+  Network network(
+      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid_derivative, sigmoid_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid_derivative,
+                                                     sigmoid_derivative});
 
   // Create example data point
-  VectorXd in1(2); in1 << 1.0, 1.0;
-  VectorXd out1(2); out1 << 3.0, 3.0;
-  VectorXd in2(2); in2 << 3.0, 5.0;
-  VectorXd out2(2); out2 << 6.0, 8.0;
+  VectorXd in1(2);
+  in1 << 1.0, 1.0;
+  VectorXd out1(2);
+  out1 << 3.0, 3.0;
+  VectorXd in2(2);
+  in2 << 3.0, 5.0;
+  VectorXd out2(2);
+  out2 << 6.0, 8.0;
   std::vector<VectorXd> input{in1, in2};
   std::vector<VectorXd> output{out1, out2};
 
@@ -103,10 +133,14 @@ TEST(LayerBackPropTest, Sigmoid) {
   network.train(input, output, 1);
 
   // Expect output
-  MatrixXd w1(2, 2); w1 << 1.0046, 1.0047, 1.0046, 1.0047;
-  VectorXd b1(2); b1 << 1.0046, 1.0046;
-  MatrixXd w2(2, 2); w2 << 1.1621, 1.1621, 1.2072, 1.2073;
-  VectorXd b2(2); b2 << 1.1645, 1.2097;
+  MatrixXd w1(2, 2);
+  w1 << 1.0046, 1.0047, 1.0046, 1.0047;
+  VectorXd b1(2);
+  b1 << 1.0046, 1.0046;
+  MatrixXd w2(2, 2);
+  w2 << 1.1621, 1.1621, 1.2072, 1.2073;
+  VectorXd b2(2);
+  b2 << 1.1645, 1.2097;
   std::vector<MatrixXd> ws{w1, w2};
   std::vector<VectorXd> bs{b1, b2};
   compareNetwork(ws, bs, network);
@@ -118,7 +152,8 @@ TEST(LayerBackPropTest, Sigmoid) {
 //   VectorXd b(2); b << 1, 1;
 //   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
 //       std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-//       std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
+//       std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
+//       softmax_derivative});
 
 //   // Create example data point
 //   VectorXd in1(2); in1 << 1.0, 1.0;
@@ -131,13 +166,12 @@ TEST(LayerBackPropTest, Sigmoid) {
 //   // Train the network
 //   network.train(input, output, 1);
 
-  // Expect output
-  MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
-  VectorXd b1(2); b1 << 1, 1;
-  MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
-  VectorXd b2(2); b2 << 0.95, 1.05;
-  std::vector<MatrixXd> ws{w1, w2};
-  std::vector<VectorXd> bs{b1, b2};
-  // compareNetwork(ws, bs, network);
-}
-
+// Expect output
+// MatrixXd w1(2, 2); w1 << 1, 1, 1, 1;
+// VectorXd b1(2); b1 << 1, 1;
+// MatrixXd w2(2, 2); w2 << 0.4, 0.4, 1.6, 1.6;
+// VectorXd b2(2); b2 << 0.95, 1.05;
+// std::vector<MatrixXd> ws{w1, w2};
+// std::vector<VectorXd> bs{b1, b2};
+// compareNetwork(ws, bs, network);
+// }

@@ -18,9 +18,11 @@ TEST(LayerForwardProp, Linear) {
   w2 << 2, -4, -1, 3;
   VectorXd b2(2);
   b2 << -3, 1;
-  Network network(std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
-        std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-        std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, linear_derivative});
+  Network network(
+      std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
+      std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
+      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
+                                                     linear_derivative});
 
   // Check forwardpropogation value
   VectorXd in1(2);
@@ -50,9 +52,11 @@ TEST(LayerForwardProp, SoftMax) {
   w << 1, 2, 1, 4;
   VectorXd b(2);
   b << 9, -1;
-  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-        std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-        std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
+  Network network(
+      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+      std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
+      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
+                                                     softmax_derivative});
 
   // Check forwardpropogation value
   VectorXd in1(2);
@@ -67,5 +71,4 @@ TEST(LayerForwardProp, SoftMax) {
   EXPECT_NEAR(out1(1), 1, 0.001);
   EXPECT_NEAR(out2(0), 0.8807, 0.001);
   EXPECT_NEAR(out2(1), 0.1192, 0.001);
-
 }
