@@ -7,15 +7,15 @@
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-                 std::function<VectorXd(VectorXd)> act_func,
-                 std::function<VectorXd(VectorXd)> act_func_der)
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func,
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
     : weights_(weights),
       biases_(biases),
       act_func_(act_func),
       act_func_der_(act_func_der) {}
 Network::Network(std::vector<int> sizes,
-                 std::function<VectorXd(VectorXd)> act_func,
-                 std::function<VectorXd(VectorXd)> act_func_der)
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func,
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
     : act_func_(act_func), act_func_der_(act_func_der) {
   for (int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
@@ -27,7 +27,7 @@ Network::Network(std::vector<int> sizes,
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
   for (int i = 0; i < weights_.size(); i++) {
-    curr = act_func_(weights_[i] * curr + biases_[i]);
+    curr = act_func_[i](weights_[i] * curr + biases_[i]);
   }
   return curr;
 }
@@ -67,10 +67,10 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
       // Record data for backpropogation
       a[i] = prop;
-      dadz[i] = act_func_der_(newV);
+      dadz[i] = act_func_der_[i](newV);
 
       // Get the forward propogated value
-      prop = act_func_(newV);
+      prop = act_func_[i](newV);
     }
 
     // Backward propogation
