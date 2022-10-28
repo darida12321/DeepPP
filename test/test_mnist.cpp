@@ -103,19 +103,37 @@ void printPrediction(VectorXd out) {
 }
 
 TEST(MnistTest, ReadData) {
-  MatrixXd w1 = MatrixXd::Random(10, 28*28);
-  VectorXd b1 = VectorXd::Random(10);
-  // Layer layer1(w1, b1, sigmoid, sigmoid_derivative);
-  MatrixXd w2 = MatrixXd::Random(10, 10);
-  VectorXd b2 = VectorXd::Random(10);
-  // Layer layer2(w2, b2, sigmoid, sigmoid_derivative);
-  MatrixXd w3 = MatrixXd::Random(10, 10);
-  VectorXd b3 = VectorXd::Random(10);
-  // Layer layer3(w3, b3, softmax, softmax_derivative);
+  MatrixXd w1 = MatrixXd::Zero(128, 28*28);
+  VectorXd b1 = VectorXd::Zero(128);
+  MatrixXd w2 = MatrixXd::Zero(128, 128);
+  VectorXd b2 = VectorXd::Zero(128);
+  MatrixXd w3 = MatrixXd::Zero(10, 128);
+  VectorXd b3 = VectorXd::Zero(10);
   Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid, softmax},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative, softmaxDerivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid, sigmoid},
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative, sigmoidDerivative});
 
   ImageSet image;
-  image.printImage(0);
+  // image.printImage(0);
+  std::vector<VectorXd> x_train{image.getImage(0)};
+  std::vector<VectorXd> y_train{image.getLabel(0)};
+
+  std::cout << "Label is: " << y_train[0] << std::endl;
+
+  std::cout << network.forwardProp(x_train[0]) << std::endl;
+  network.train(x_train, y_train, 1);
+  std::cout << network.forwardProp(x_train[0]) << std::endl;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -74,7 +74,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     }
 
     // Backward propogation
-    VectorXd dcda = 1 * (prop - exp_out[i]);
+    VectorXd dcda = 2*(prop - exp_out[i])/prop.rows();
     for (int i = weights_.size() - 1; i >= 0; i--) {
       VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
 
