@@ -39,3 +39,6 @@ build/
 
 # Script to run workflow locally
 act.sh
+
+# Auto-generated documentation (run doxygen to generate)
+doc/doxygen/
