@@ -19,8 +19,8 @@ typedef Eigen::Vector<double, 10> ImgLabel;
 class ImageSet {
  public:
   ImageSet(){
-    std::ifstream trainingLabels("img/train-labels-idx1-ubyte");
-    std::ifstream trainingImages("img/train-images-idx3-ubyte");
+    std::ifstream trainingLabels("test/img/train-labels-idx1-ubyte");
+    std::ifstream trainingImages("test/img/train-images-idx3-ubyte");
 
     trainingLabels.seekg(8, std::ios_base::beg);
     trainingImages.seekg(16, std::ios_base::beg);
