@@ -58,7 +58,6 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   // For each data point, accumulate the changes
   for (int i = 0; i < in.size(); i++) {
     std::vector<VectorXd> a(weights_.size());
-    std::vector<MatrixXd> dadz(weights_.size());
 
     // Forward propogation
     VectorXd prop = in[i];
@@ -67,7 +66,6 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
       // Record data for backpropogation
       a[i] = prop;
-      dadz[i] = act_func_der_[i](z);
 
       // Get the forward propogated value
       prop = act_func_[i](z);
@@ -76,7 +74,9 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     // Backward propogation
     VectorXd dcda = 2*(prop - exp_out[i])/prop.rows();
     for (int i = weights_.size() - 1; i >= 0; i--) {
-      VectorXd dcdz = dadz[i] * dcda;//.cwiseProduct(dadz[i]);
+      VectorXd z = weights_[i] * a[i] + biases_[i];
+      MatrixXd dadz = act_func_der_[i](z);
+      VectorXd dcdz = dadz * dcda;
 
       // calculate dC/da for previous layer
       dcda = weights_[i].transpose() * dcdz;
