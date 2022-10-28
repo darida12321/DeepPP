@@ -33,7 +33,7 @@ TEST(LayerBackPropTest, MultiInput) {
   VectorXd b(2); b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu_derivative, relu_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{reluDerivative, reluDerivative});
 
   // Create example data point
   VectorXd in1(2); in1 << 1.0, 1.0;
@@ -62,7 +62,7 @@ TEST(LayerBackPropTest, Relu) {
   VectorXd b(2); b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, linear_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{linearDerivative, linearDerivative});
 
   // Create example data point
   VectorXd in(2); in << 1.0, 1.0;
@@ -89,7 +89,7 @@ TEST(LayerBackPropTest, Sigmoid) {
   VectorXd b(2); b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid_derivative, sigmoid_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative});
 
   // Create example data point
   VectorXd in1(2); in1 << 1.0, 1.0;
@@ -118,7 +118,7 @@ TEST(LayerBackPropTest, SoftMax) {
   VectorXd b(2); b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative, softmax_derivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{linearDerivative, softmaxDerivative});
 
   // Create example data point
   VectorXd in1(2); in1 << 1.0, 1.0;

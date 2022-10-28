@@ -32,61 +32,58 @@ void printPrediction(VectorXd out) {
 }
 
 TEST(MnistTest, ReadData) {
-  // MatrixXd w1 = MatrixXd::Random(10, 28*28);
-  // VectorXd b1 = VectorXd::Random(10);
+  MatrixXd w1 = MatrixXd::Random(10, 28*28);
+  VectorXd b1 = VectorXd::Random(10);
   // Layer layer1(w1, b1, sigmoid, sigmoid_derivative);
-  // MatrixXd w2 = MatrixXd::Random(10, 10);
-  // VectorXd b2 = VectorXd::Random(10);
+  MatrixXd w2 = MatrixXd::Random(10, 10);
+  VectorXd b2 = VectorXd::Random(10);
   // Layer layer2(w2, b2, sigmoid, sigmoid_derivative);
-  // MatrixXd w3 = MatrixXd::Random(10, 10);
-  // VectorXd b3 = VectorXd::Random(10);
+  MatrixXd w3 = MatrixXd::Random(10, 10);
+  VectorXd b3 = VectorXd::Random(10);
   // Layer layer3(w3, b3, softmax, softmax_derivative);
-  // Network network(std::vector<Layer>{layer1, layer2, layer3});
+  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid, softmax},
+      std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative, softmaxDerivative});
 
-  // std::cout << b3 << std::endl << std::endl;
-  // std::cout << softmax(b3) << std::endl << std::endl;
-  // std::cout << softmax_derivative(softmax(b3)) << std::endl;
+  ImageSet image;
 
-  // ImageSet image;
-  //
-  // int training_size = 1000;
-  // for (int j = 0; j < 100; j++) {
-  //     std::vector<VectorXd> in1;
-  //     std::vector<VectorXd> out1;
-  //     for (int i = 0; i < training_size; i++) {
-  //         in1.push_back(image.GetImage(j*training_size + i));
-  //         out1.push_back(image.GetLabel(j*training_size + i));
-  //     }
-  //
-  //     double cost = network.getCost(in1, out1);
-  //     std::cout << cost << std::endl;
-  //     for (int i = 0; i < 100; i++) {
-  //       network.train(in1, out1, 0.01);
-  //       double cost = network.getCost(in1, out1);
-  //       std::cout << cost << std::endl;
-  //       // if (cost < 0.85) {
-  //       //     break;
-  //       // }
-  //       if (i%20 != 0) { continue; }
-  //       for (int i = 0; i < 5; i++) {
-  //         std::cout << network.getLayer(2).getWeights() << std::endl;
-  //         std::cout << network.getLayer(2).getBias() << std::endl;
-  //         int index = 50000+i;
-  //         printPrediction(network.forwardProp(image.GetImage(index)));
-  //         std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
-  //         std::endl;
-  //       }
-  //     }
-  //
-  // }
-  //
-  // std::cout << "XXXXX THE PREDICTIONS XXXXX" << std::endl;
-  // for (int i = 0; i < 10; i++) {
-  //     int index = 50000+i;
-  //     printPrediction(network.forwardProp(image.GetImage(index)));
-  //     std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
-  //     std::endl;
-  // }
+  int training_size = 100;
+  for (int j = 0; j < 50; j++) {
+      std::vector<VectorXd> in1;
+      std::vector<VectorXd> out1;
+      for (int i = 0; i < training_size; i++) {
+          in1.push_back(image.GetImage(j*training_size + i));
+          out1.push_back(image.GetLabel(j*training_size + i));
+      }
 
-  // image.PrintImage(1000);
+      double cost = network.getCost(in1, out1);
+      std::cout << cost << std::endl;
+      for (int i = 0; i < 1; i++) {
+        network.train(in1, out1, 0.1);
+        double cost = network.getCost(in1, out1);
+        std::cout << cost << std::endl;
+        // if (cost < 0.85) {
+        //     break;
+        // }
+        for (int i = 0; i < 1; i++) {
+          // std::cout << network.getWeights()[2] << std::endl;
+          // std::cout << network.getBiases()[2] << std::endl;
+          int index = 50000+i;
+          printPrediction(network.forwardProp(image.GetImage(index)));
+          std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
+          std::endl;
+        }
+      }
+
+  }
+
+  std::cout << "XXXXX THE PREDICTIONS XXXXX" << std::endl;
+  for (int i = 0; i < 10; i++) {
+      int index = 50000+i;
+      printPrediction(network.forwardProp(image.GetImage(index)));
+      std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
+      std::endl;
+  }
+
+  image.PrintImage(1000);
 }
