@@ -1,0 +1,17 @@
+PROJECT_NAME = "DeepPP"
+PROJECT_BRIEF = "Deep neural network using c++ template metaprogramming"
+PROJECT_LOGO = ./doc/deeppp-logo.png
+OUTPUT_DIRECTORY = ./doc/doxygen
+BUILTIN_STL_SUPPORT = YES
+EXTRACT_ALL = YES
+INPUT = ./src ./include ./test
+RECURSIVE = YES
+HIDE_UNDOC_RELATIONS = NO
+HAVE_DOT = YES
+UML_LOOK = YES
+CALL_GRAPH = YES
+CALLER_GRAPH = YES
+GENERATE_TODOLIST = YES
+EXCLUDE = ./benchmark ./bin ./img ./lib ./scripts ./build
+USE_MDFILE_AS_MAINPAGE = ./README.md
+INLINE_SOURCES = YES

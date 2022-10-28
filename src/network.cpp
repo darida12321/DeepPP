@@ -6,6 +6,16 @@
 #include "Eigen/src/Core/Matrix.h"
 
 // Constructor for the layer
+/**
+ * @brief Construct a new Network:: Network object
+ *
+ * @param weights Matrices representing the weights of the connections in the
+ * network
+ * @param biases Bias vectors
+ * @param act_func The activation function to be applied at each layer of the
+ * network
+ * @param act_func_der The derivative of the activation function
+ */
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
