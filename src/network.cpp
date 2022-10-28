@@ -6,16 +6,6 @@
 #include "Eigen/src/Core/Matrix.h"
 
 // Constructor for the layer
-/**
- * @brief Construct a new Network:: Network object
- *
- * @param weights Matrices representing the weights of the connections in the
- * network
- * @param biases Bias vectors
- * @param act_func The activation function to be applied at each layer of the
- * network
- * @param act_func_der The derivative of the activation function
- */
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
@@ -33,7 +23,6 @@ Network::Network(std::vector<int> sizes,
   }
 }
 
-// Propogate the values forward through the layers
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
   for (int i = 0; i < weights_.size(); i++) {
@@ -42,7 +31,6 @@ VectorXd Network::forwardProp(VectorXd in) {
   return curr;
 }
 
-// Get the cost of the function for a set of inputs
 double Network::getCost(std::vector<VectorXd> in,
                         std::vector<VectorXd> exp_out) {
   double error = 0;
@@ -104,8 +92,6 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   }
 }
 
-// Get a vector containing weight matrices for all layers
 std::vector<MatrixXd>& Network::getWeights() { return weights_; }
 
-// Get a vector containing bias vectors for all layers
 std::vector<VectorXd>& Network::getBiases() { return biases_; }
