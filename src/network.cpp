@@ -8,14 +8,14 @@
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
+                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der)
     : weights_(weights),
       biases_(biases),
       act_func_(act_func),
       act_func_der_(act_func_der) {}
 Network::Network(std::vector<int> sizes,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
+                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der)
     : act_func_(act_func), act_func_der_(act_func_der) {
   for (int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
@@ -58,25 +58,25 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   // For each data point, accumulate the changes
   for (int i = 0; i < in.size(); i++) {
     std::vector<VectorXd> a(weights_.size());
-    std::vector<VectorXd> dadz(weights_.size());
+    std::vector<MatrixXd> dadz(weights_.size());
 
     // Forward propogation
     VectorXd prop = in[i];
     for (int i = 0; i < weights_.size(); i++) {
-      VectorXd newV = weights_[i] * prop + biases_[i];
+      VectorXd z = weights_[i] * prop + biases_[i];
 
       // Record data for backpropogation
       a[i] = prop;
-      dadz[i] = act_func_der_[i](newV);
+      dadz[i] = act_func_der_[i](z);
 
       // Get the forward propogated value
-      prop = act_func_[i](newV);
+      prop = act_func_[i](z);
     }
 
     // Backward propogation
     VectorXd dcda = 2*(prop - exp_out[i])/prop.rows();
     for (int i = weights_.size() - 1; i >= 0; i--) {
-      VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
+      VectorXd dcdz = dadz[i] * dcda;//.cwiseProduct(dadz[i]);
 
       // calculate dC/da for previous layer
       dcda = weights_[i].transpose() * dcdz;

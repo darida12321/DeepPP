@@ -110,19 +110,25 @@ TEST(MnistTest, ReadData) {
   MatrixXd w3 = MatrixXd::Zero(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
   Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid, sigmoid},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative, sigmoidDerivative});
+      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
+      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative});
 
   ImageSet image;
-  // image.printImage(0);
   std::vector<VectorXd> x_train{image.getImage(0)};
   std::vector<VectorXd> y_train{image.getLabel(0)};
 
-  std::cout << "Label is: " << y_train[0] << std::endl;
+  VectorXd exp1{{0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}};
+  VectorXd out1 = network.forwardProp(x_train[0]);
 
-  std::cout << network.forwardProp(x_train[0]) << std::endl;
   network.train(x_train, y_train, 1);
-  std::cout << network.forwardProp(x_train[0]) << std::endl;
+
+  VectorXd exp2{{0.0998, 0.0998, 0.0998, 0.0998, 0.0998, 0.1018, 0.0998, 0.0998, 0.0998, 0.0998}};
+  VectorXd out2 = network.forwardProp(x_train[0]);
+
+  for (int i = 0; i < 10; i++) {
+    EXPECT_NEAR(exp1(i), out1(i), 0.001);
+    EXPECT_NEAR(exp2(i), out2(i), 0.001);
+  }
 }
 
 
