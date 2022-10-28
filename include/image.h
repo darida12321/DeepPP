@@ -14,12 +14,12 @@ typedef Eigen::Vector<double, 10> ImgLabel;
 class ImageSet {
  public:
   ImageSet();
-  ImgVector GetImage(int index);
-  ImgLabel GetLabel(int index);
-  void PrintImage(int index);
+  ImgVector getImage(int index);
+  ImgLabel getLabel(int index);
+  void printImage(int index);
 
  private:
   std::vector<ImgLabel> trainLabels_;
   std::vector<ImgVector> trainImages_;
-  ImgLabel CharToLabel(char);
+  ImgLabel charToLabel(char);
 };

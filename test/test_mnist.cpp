@@ -1,11 +1,82 @@
 #include <activation_function.h>
 #include <gtest/gtest.h>
-#include <image.h>
+// #include <image.h>
 #include <network.h>
+#include <fstream>
 
 #include <Eigen/Dense>
 #include <cmath>
 #include <iostream>
+
+const int TEST_SIZE = 10000;
+const int TRAIN_SIZE = 60000;
+const int IMG_WIDTH = 28;
+const int IMG_HEIGHT = 28;
+
+typedef Eigen::Vector<double, IMG_WIDTH * IMG_HEIGHT> ImgVector;
+typedef Eigen::Vector<double, 10> ImgLabel;
+
+class ImageSet {
+ public:
+  ImageSet(){
+    std::ifstream trainingLabels("img/train-labels-idx1-ubyte");
+    std::ifstream trainingImages("img/train-images-idx3-ubyte");
+
+    trainingLabels.seekg(8, std::ios_base::beg);
+    trainingImages.seekg(16, std::ios_base::beg);
+
+    for (int i = 0; i < TRAIN_SIZE; i++) {
+      char cl;
+      char ci;
+      trainingLabels.get(cl);
+      trainLabels_.push_back(charToLabel(cl));
+
+      ImgVector img;
+      for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
+        trainingImages.get(ci);
+        img(j) = ci;
+      }
+      trainImages_.push_back(img);
+    }
+  }
+  ImgVector& getImage(int index){
+    return trainImages_[index]; 
+  }
+  ImgLabel& getLabel(int index){
+    return trainLabels_[index]; 
+  }
+  void printImage(int index){
+    ImgVector img = trainImages_[index];
+    ImgLabel label = trainLabels_[index];
+    for (int i = 0; i < IMG_HEIGHT; i++) {
+      for (int j = 0; j < IMG_WIDTH; j++) {
+        if ((unsigned int)img(IMG_WIDTH * i + j) > 128) {
+          std::cout << "@@";
+        } else {
+          std::cout << "  ";
+        }
+      }
+      std::cout << std::endl;
+    }
+  }
+
+ private:
+  std::vector<ImgLabel> trainLabels_;
+  std::vector<ImgVector> trainImages_;
+  ImgLabel charToLabel(char c) {
+    ImgLabel label;
+    for (int i = 0; i < 10; i++) {
+      if (c == i) {
+        label(i) = 1.0;
+      } else {
+        label(i) = 0.0;
+      }
+    }
+    return label;
+  }
+};
+
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -46,44 +117,5 @@ TEST(MnistTest, ReadData) {
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoidDerivative, sigmoidDerivative, softmaxDerivative});
 
   ImageSet image;
-
-  int training_size = 100;
-  for (int j = 0; j < 50; j++) {
-      std::vector<VectorXd> in1;
-      std::vector<VectorXd> out1;
-      for (int i = 0; i < training_size; i++) {
-          in1.push_back(image.GetImage(j*training_size + i));
-          out1.push_back(image.GetLabel(j*training_size + i));
-      }
-
-      double cost = network.getCost(in1, out1);
-      std::cout << cost << std::endl;
-      for (int i = 0; i < 1; i++) {
-        network.train(in1, out1, 0.1);
-        double cost = network.getCost(in1, out1);
-        std::cout << cost << std::endl;
-        // if (cost < 0.85) {
-        //     break;
-        // }
-        for (int i = 0; i < 1; i++) {
-          // std::cout << network.getWeights()[2] << std::endl;
-          // std::cout << network.getBiases()[2] << std::endl;
-          int index = 50000+i;
-          printPrediction(network.forwardProp(image.GetImage(index)));
-          std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
-          std::endl;
-        }
-      }
-
-  }
-
-  std::cout << "XXXXX THE PREDICTIONS XXXXX" << std::endl;
-  for (int i = 0; i < 10; i++) {
-      int index = 50000+i;
-      printPrediction(network.forwardProp(image.GetImage(index)));
-      std::cout << " Actual: " << getPrediction(image.GetLabel(index)) <<
-      std::endl;
-  }
-
-  image.PrintImage(1000);
+  image.printImage(0);
 }
