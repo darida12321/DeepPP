@@ -7,7 +7,7 @@
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
     : weights_(weights),
       biases_(biases),

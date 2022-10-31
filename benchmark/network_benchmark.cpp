@@ -10,7 +10,7 @@ using Eigen::VectorXd;
 
 static void BM_MultiInput(benchmark::State& state) {
   // Create 1-1 neural network
-    MatrixXd w(2, 2);
+  MatrixXd w(2, 2);
   w << 1, 1, 1, 1;
   VectorXd b(2);
   b << 1, 1;
