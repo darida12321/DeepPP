@@ -9,7 +9,7 @@
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der,
                  std::function<double(VectorXd, VectorXd)> cost_func,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : weights_(weights),
@@ -21,7 +21,7 @@ Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
 
 Network::Network(std::vector<int> sizes,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der,
                  std::function<double(VectorXd, VectorXd)> cost_func,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : act_func_(act_func),
@@ -42,15 +42,6 @@ VectorXd Network::forwardProp(VectorXd in) {
   return curr;
 }
 
-double Network::getCost(std::vector<VectorXd> in,
-                        std::vector<VectorXd> exp_out) {
-  double error = 0;
-  for (int i = 0; i < in.size(); i++) {
-    error += cost_func_(forwardProp(in[i]), exp_out[i]);
-  }
-  return error / in.size();
-}
-
 void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
                     double stepSize) {
   assert(in.size() == exp_out.size());
@@ -66,32 +57,32 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   // For each data point, accumulate the changes
   for (int i = 0; i < in.size(); i++) {
     std::vector<VectorXd> a(weights_.size());
-    std::vector<VectorXd> dadz(weights_.size());
 
     // Forward propogation
     VectorXd prop = in[i];
-    for (int i = 0; i < weights_.size(); i++) {
-      VectorXd newV = weights_[i] * prop + biases_[i];
+    for (int j = 0; j < weights_.size(); j++) {
+      VectorXd z = weights_[j] * prop + biases_[j];
 
       // Record data for backpropogation
-      a[i] = prop;
-      dadz[i] = act_func_der_[i](newV);
+      a[j] = prop;
 
       // Get the forward propogated value
-      prop = act_func_[i](newV);
+      prop = act_func_[j](z);
     }
 
     // Backward propogation
     VectorXd dcda = cost_func_der_(prop, exp_out[i]);
-    for (int i = weights_.size() - 1; i >= 0; i--) {
-      VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
+    for (int j = weights_.size() - 1; j >= 0; j--) {
+      VectorXd z = weights_[j] * a[j] + biases_[j];
+      MatrixXd dadz = act_func_der_[j](z);
+      VectorXd dcdz = dadz * dcda;
 
       // calculate dC/da for previous layer
-      dcda = weights_[i].transpose() * dcdz;
+      dcda = weights_[j].transpose() * dcdz;
 
       // adjust weights and biases
-      backprop_weight_acc[i] -= stepSize * dcdz * a[i].transpose();
-      backprop_bias_acc[i] -= stepSize * dcdz;
+      backprop_weight_acc[j] -= stepSize * dcdz * a[j].transpose();
+      backprop_bias_acc[j] -= stepSize * dcdz;
     }
   }
 
@@ -102,6 +93,32 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   }
 }
 
-std::vector<MatrixXd>& Network::getWeights() { return weights_; }
+// Get the cost of the function for a set of inputs
+double Network::getCost(std::vector<VectorXd> in,
+                        std::vector<VectorXd> exp_out) {
+  double error = 0;
+  for (int i = 0; i < in.size(); i++) {
+    error += cost_func_(forwardProp(in[i]), exp_out[i]);
+  }
+  return error / in.size();
+}
 
+// TODO: This does categorical accuracy all the time.
+double Network::getAccuracy(std::vector<VectorXd> in,
+                        std::vector<VectorXd> exp_out) {
+  double acc = 0;
+  for (int i = 0; i < in.size(); i++) {
+    VectorXd val = forwardProp(in[i]);
+    Eigen::Index predicted, expected;
+    val.maxCoeff(&predicted);
+    exp_out[i].maxCoeff(&expected);
+    if (predicted == expected) {
+      acc++;
+    }
+  }
+  return acc / in.size();
+}
+
+// Get a vector containing weight matrices for all layers
+std::vector<MatrixXd>& Network::getWeights() { return weights_; }
 std::vector<VectorXd>& Network::getBiases() { return biases_; }

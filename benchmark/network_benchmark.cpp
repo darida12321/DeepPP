@@ -17,8 +17,8 @@ static void BM_MultiInput(benchmark::State& state) {
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
                   std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-                  std::vector<std::function<VectorXd(VectorXd)>>{
-                      relu_derivative, relu_derivative},
+                  std::vector<std::function<MatrixXd(VectorXd)>>{
+                      reluDerivative, reluDerivative},
                   mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -49,8 +49,8 @@ static void BM_Relu(benchmark::State& state) {
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
                   std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-                  std::vector<std::function<VectorXd(VectorXd)>>{
-                      relu_derivative, relu_derivative},
+                  std::vector<std::function<MatrixXd(VectorXd)>>{
+                      reluDerivative, reluDerivative},
                   mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -82,8 +82,8 @@ static void BM_Sigmoid(benchmark::State& state) {
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid_derivative,
-                                                     sigmoid_derivative},
+      std::vector<std::function<MatrixXd(VectorXd)>>{sigmoidDerivative,
+                                                     sigmoidDerivative},
       mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -113,8 +113,8 @@ BENCHMARK(BM_Sigmoid);
 // 	Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b,
 // b}, 			std::vector<std::function<VectorXd(VectorXd)>>{tanh,
 // tanh},
-// std::vector<std::function<VectorXd(VectorXd)>>{tanh_derivative,
-// tanh_derivative});
+// std::vector<std::function<VectorXd(VectorXd)>>{tanhDerivative,
+// tanhDerivative});
 
 // 	// Create example data point
 // 	VectorXd in1(2); in1 << 1.0, 1.0;
@@ -136,7 +136,7 @@ BENCHMARK(BM_Sigmoid);
 // 	for (auto _ : state) {
 // 		MatrixXd w1 {{1}};
 // 		VectorXd b1 {{0.5}};
-// 		Layer layer1(w1, b1, linear, linear_derivative);
+// 		Layer layer1(w1, b1, linear, linearDerivative);
 // 		Network network({layer1});
 //
 // 		VectorXd in1 {{0.2}};
@@ -154,15 +154,15 @@ BENCHMARK(BM_Sigmoid);
 // 	for (auto _ : state) {
 // 		MatrixXd w1 {{1}};
 // 		VectorXd	b1 {{0.5}};
-// 		Layer layer1(w1, b1, linear, linear_derivative);
+// 		Layer layer1(w1, b1, linear, linearDerivative);
 //
 // 		MatrixXd w2 {{2}};
 // 		VectorXd b2 {{0.3}};
-// 		Layer layer2(w2, b2, linear, linear_derivative);
+// 		Layer layer2(w2, b2, linear, linearDerivative);
 //
 // 		MatrixXd w3 {{0.2}};
 // 		VectorXd b3 {{0.8}};
-// 		Layer layer3(w3, b3, linear, linear_derivative);
+// 		Layer layer3(w3, b3, linear, linearDerivative);
 //
 // 		Network network({layer1, layer2, layer3});
 //

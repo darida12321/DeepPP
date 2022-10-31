@@ -2,6 +2,6 @@ DeepPP
 deep neural network with c++ metaprogramming
 
 to start, run
-./configure.sh 
-./build.sh
-./bin/test/DeepPPTest
+./scripts/configure.sh 
+./scripts/build.sh
+./scripts/test.sh

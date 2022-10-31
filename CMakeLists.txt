@@ -6,11 +6,9 @@ project(DeepPP)
 set(Headers
     include/activation_function.h
     include/network.h
-    include/image.h
 )
 set(Sources
     src/network.cpp
-    src/image.cpp
 )
 
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
