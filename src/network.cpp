@@ -84,6 +84,17 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
       backprop_weight_acc[j] -= stepSize * dcdz * a[j].transpose();
       backprop_bias_acc[j] -= stepSize * dcdz;
     }
+
+    // Apply the accumulated changes
+    if (i % 100 == 99) {
+      for (int j = 0; j < weights_.size(); j++) {
+        weights_[j] += backprop_weight_acc[j] / 100;
+        biases_[j] += backprop_bias_acc[j] / 100;
+        backprop_weight_acc[j] = weights_[j] - weights_[j];
+        backprop_bias_acc[j] = biases_[j] - biases_[j];
+      }
+    }
+
   }
 
   // Apply the accumulated changes

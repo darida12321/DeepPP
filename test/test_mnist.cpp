@@ -10,8 +10,8 @@
 
 // MAX_TRAIN_SIZE = 60000;
 // MAX_TEST_SIZE = 10000;
-const int TRAIN_SIZE = 1000;
-const int TEST_SIZE = 1000;
+const int TRAIN_SIZE = 60000;
+const int TEST_SIZE = 10000;
 const int IMG_WIDTH = 28;
 const int IMG_HEIGHT = 28;
 
@@ -40,8 +40,9 @@ class ImageSet {
       ImgVector img(28*28);
       for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
         trainingImages.get(ci);
-        img(j) = ci;
+        img(j) = (double)(unsigned char)ci / 256.0;
       }
+      img.normalize();
       trainImages_.push_back(img);
     }
 
@@ -54,8 +55,9 @@ class ImageSet {
       ImgVector img(28*28);
       for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
         testImages.get(ci);
-        img(j) = ci;
+        img(j) = (double)(unsigned char)ci / 256.0;
       }
+      img.normalize();
       testImages_.push_back(img);
     }
   }
@@ -177,13 +179,12 @@ TEST(MnistTest, SCCtest) {
 }
 
 TEST(MnistTest, IntegrationTest) {
-  return;
   MatrixXd w1 = MatrixXd::Random(128, 28*28);
-  VectorXd b1 = VectorXd::Random(128);
+  VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Random(128, 128);
-  VectorXd b2 = VectorXd::Random(128);
+  VectorXd b2 = VectorXd::Zero(128);
   MatrixXd w3 = MatrixXd::Random(10, 128);
-  VectorXd b3 = VectorXd::Random(10);
+  VectorXd b3 = VectorXd::Zero(10);
 
 
   Network network(
@@ -194,10 +195,14 @@ TEST(MnistTest, IntegrationTest) {
 
   ImageSet image;
 
-  network.train(image.getTrainImages(), image.getTrainLabels(), 3);
 
-  double acc = network.getAccuracy(image.getTestImages(), image.getTestLabels());
-  std::cout << "Accuracy is: " << acc << std::endl;
+  for(int i = 0; i < 300; i++) {
+    network.train(image.getTrainImages(), image.getTrainLabels(), 0.1);
+
+    double acc1 = network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+    double acc2 = network.getAccuracy(image.getTestImages(), image.getTestLabels());
+    std::cout << "Round " << i << " train: " << acc1 << ", test: " << acc2 << std::endl;
+  }
 }
 
 
