@@ -94,7 +94,6 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
         backprop_bias_acc[j] = biases_[j] - biases_[j];
       }
     }
-
   }
 
   // Apply the accumulated changes

@@ -1,11 +1,11 @@
 #include <activation_function.h>
+#include <cost_function.h>
 #include <gtest/gtest.h>
 #include <network.h>
-#include <fstream>
-#include <cost_function.h>
 
 #include <Eigen/Dense>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 
 // MAX_TRAIN_SIZE = 60000;
@@ -20,7 +20,7 @@ typedef Eigen::VectorXd ImgLabel;
 
 class ImageSet {
  public:
-  ImageSet(){
+  ImageSet() {
     std::ifstream trainingLabels("test/img/train-labels-idx1-ubyte");
     std::ifstream trainingImages("test/img/train-images-idx3-ubyte");
     std::ifstream testLabels("test/img/t10k-labels-idx1-ubyte");
@@ -37,7 +37,7 @@ class ImageSet {
       trainingLabels.get(cl);
       trainLabels_.push_back(charToLabel(cl));
 
-      ImgVector img(28*28);
+      ImgVector img(28 * 28);
       for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
         trainingImages.get(ci);
         img(j) = (double)(unsigned char)ci / 256.0;
@@ -52,7 +52,7 @@ class ImageSet {
       testLabels.get(cl);
       testLabels_.push_back(charToLabel(cl));
 
-      ImgVector img(28*28);
+      ImgVector img(28 * 28);
       for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
         testImages.get(ci);
         img(j) = (double)(unsigned char)ci / 256.0;
@@ -61,13 +61,9 @@ class ImageSet {
       testImages_.push_back(img);
     }
   }
-  ImgVector& getImage(int index){
-    return trainImages_[index]; 
-  }
-  ImgLabel& getLabel(int index){
-    return trainLabels_[index]; 
-  }
-  void printImage(int index){
+  ImgVector& getImage(int index) { return trainImages_[index]; }
+  ImgLabel& getLabel(int index) { return trainLabels_[index]; }
+  void printImage(int index) {
     ImgVector img = trainImages_[index];
     ImgLabel label = trainLabels_[index];
     for (int i = 0; i < IMG_HEIGHT; i++) {
@@ -82,10 +78,10 @@ class ImageSet {
     }
   }
 
-  std::vector<ImgLabel> getTrainLabels(){ return trainLabels_; }
-  std::vector<ImgVector> getTrainImages(){ return trainImages_; }
-  std::vector<ImgLabel> getTestLabels(){ return testLabels_; }
-  std::vector<ImgVector> getTestImages(){ return testImages_; }
+  std::vector<ImgLabel> getTrainLabels() { return trainLabels_; }
+  std::vector<ImgVector> getTrainImages() { return trainImages_; }
+  std::vector<ImgLabel> getTestLabels() { return testLabels_; }
+  std::vector<ImgVector> getTestImages() { return testImages_; }
 
  private:
   std::vector<ImgLabel> trainLabels_;
@@ -106,20 +102,21 @@ class ImageSet {
   }
 };
 
-
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 TEST(MnistTest, MSEtest) {
-  MatrixXd w1 = MatrixXd::Zero(128, 28*28);
+  MatrixXd w1 = MatrixXd::Zero(128, 28 * 28);
   VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Zero(128, 128);
   VectorXd b2 = VectorXd::Zero(128);
   MatrixXd w3 = MatrixXd::Zero(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
-  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+  Network network(
+      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<std::function<MatrixXd(VectorXd)>>{
+          reluDerivative, reluDerivative, softmaxDerivative},
       mean_sqr_error, mean_sqr_error_der);
 
   ImageSet image;
@@ -131,7 +128,8 @@ TEST(MnistTest, MSEtest) {
 
   network.train(x_train, y_train, 1);
 
-  VectorXd exp2{{0.0998, 0.0998, 0.0998, 0.0998, 0.0998, 0.1018, 0.0998, 0.0998, 0.0998, 0.0998}};
+  VectorXd exp2{{0.0998, 0.0998, 0.0998, 0.0998, 0.0998, 0.1018, 0.0998, 0.0998,
+                 0.0998, 0.0998}};
   VectorXd out2 = network.forwardProp(x_train[0]);
 
   for (int i = 0; i < 10; i++) {
@@ -141,23 +139,25 @@ TEST(MnistTest, MSEtest) {
 
   std::vector<VectorXd> x_test, y_test;
   for (int i = 0; i < 100; i++) {
-    x_test.push_back(image.getImage(200+i));
-    y_test.push_back(image.getLabel(200+i));
+    x_test.push_back(image.getImage(200 + i));
+    y_test.push_back(image.getLabel(200 + i));
   }
   double acc = network.getAccuracy(x_test, y_test);
   EXPECT_NEAR(acc, 0.1, 0.001);
 }
 
 TEST(MnistTest, SCCtest) {
-  MatrixXd w1 = MatrixXd::Zero(128, 28*28);
+  MatrixXd w1 = MatrixXd::Zero(128, 28 * 28);
   VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Zero(128, 128);
   VectorXd b2 = VectorXd::Zero(128);
   MatrixXd w3 = MatrixXd::Zero(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
-  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+  Network network(
+      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<std::function<MatrixXd(VectorXd)>>{
+          reluDerivative, reluDerivative, softmaxDerivative},
       cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
@@ -169,9 +169,10 @@ TEST(MnistTest, SCCtest) {
 
   network.train(x_train, y_train, 1);
 
-  VectorXd exp2{{0.0853, 0.0853, 0.0853, 0.0853, 0.0853, 0.2320, 0.0853, 0.0853, 0.0853, 0.0853}};
+  VectorXd exp2{{0.0853, 0.0853, 0.0853, 0.0853, 0.0853, 0.2320, 0.0853, 0.0853,
+                 0.0853, 0.0853}};
   VectorXd out2 = network.forwardProp(x_train[0]);
-  
+
   for (int i = 0; i < 10; i++) {
     EXPECT_NEAR(exp1(i), out1(i), 0.001);
     EXPECT_NEAR(exp2(i), out2(i), 0.001);
@@ -179,7 +180,7 @@ TEST(MnistTest, SCCtest) {
 }
 
 TEST(MnistTest, IntegrationTest) {
-  MatrixXd w1 = MatrixXd::Random(128, 28*28);
+  MatrixXd w1 = MatrixXd::Random(128, 28 * 28);
   VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Random(128, 128);
   VectorXd b2 = VectorXd::Zero(128);
@@ -189,30 +190,20 @@ TEST(MnistTest, IntegrationTest) {
   Network network(
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<std::function<MatrixXd(VectorXd)>>{
+          reluDerivative, reluDerivative, softmaxDerivative},
       cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
 
-
-  for(int i = 0; i < 300; i++) {
+  for (int i = 0; i < 300; i++) {
     network.train(image.getTrainImages(), image.getTrainLabels(), 0.1);
 
-    double acc1 = network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
-    double acc2 = network.getAccuracy(image.getTestImages(), image.getTestLabels());
-    std::cout << "Round " << i << " train: " << acc1 << ", test: " << acc2 << std::endl;
+    double acc1 =
+        network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+    double acc2 =
+        network.getAccuracy(image.getTestImages(), image.getTestLabels());
+    std::cout << "Round " << i << " train: " << acc1 << ", test: " << acc2
+              << std::endl;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
