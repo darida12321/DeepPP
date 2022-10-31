@@ -1,8 +1,8 @@
 #include <activation_function.h>
 #include <gtest/gtest.h>
-// #include <image.h>
 #include <network.h>
 #include <fstream>
+#include <cost_function.h>
 
 #include <Eigen/Dense>
 #include <cmath>
@@ -117,7 +117,8 @@ TEST(MnistTest, SingleTest) {
   VectorXd b3 = VectorXd::Zero(10);
   Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative});
+      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      mean_sqr_error, mean_sqr_error_der);
 
   ImageSet image;
   std::vector<VectorXd> x_train{image.getImage(0)};
@@ -152,9 +153,13 @@ TEST(MnistTest, IntegrationTest) {
   VectorXd b2 = VectorXd::Random(128);
   MatrixXd w3 = MatrixXd::Random(10, 128);
   VectorXd b3 = VectorXd::Random(10);
-  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+
+
+  Network network(
+      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative});
+      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      mean_sqr_error, mean_sqr_error_der);
 
   ImageSet image;
 
