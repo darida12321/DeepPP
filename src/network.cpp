@@ -13,6 +13,7 @@ Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
       biases_(biases),
       act_func_(act_func),
       act_func_der_(act_func_der) {}
+
 Network::Network(std::vector<int> sizes,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
                  std::vector<std::function<MatrixXd(VectorXd)>> act_func_der)
