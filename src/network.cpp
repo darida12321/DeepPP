@@ -94,6 +94,7 @@ double Network::getCost(std::vector<VectorXd> in,
   return error / in.size();
 }
 
+// TODO: This does categorical accuracy all the time.
 double Network::getAccuracy(std::vector<VectorXd> in,
                         std::vector<VectorXd> exp_out) {
   double acc = 0;

@@ -129,6 +129,14 @@ TEST(MnistTest, ReadData) {
     EXPECT_NEAR(exp1(i), out1(i), 0.001);
     EXPECT_NEAR(exp2(i), out2(i), 0.001);
   }
+
+  std::vector<VectorXd> x_test, y_test;
+  for (int i = 0; i < 100; i++) {
+    x_test.push_back(image.getImage(200+i));
+    y_test.push_back(image.getLabel(200+i));
+  }
+  double acc = network.getAccuracy(x_test, y_test);
+  EXPECT_NEAR(acc, 0.1, 0.001);
 }
 
 
