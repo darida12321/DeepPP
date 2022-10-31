@@ -14,25 +14,21 @@ class Network {
    * @param weights Matrices representing the weights of the connections in the
    * network
    * @param biases Bias vectors
-   * @param act_func The activation functions to be applied at each layer of the
+   * @param act_func The activation function objects to be applied at each layer of the
    * network
-   * @param act_func_der The derivatives of the activation functions
    */
   Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func_der);
+          std::vector<ActivationFunction*>);
 
   /**
    * @brief Construct a new Network object using layer sizes
    *
    * @param layer_sizes A vector containing the sizes of the layers
-   * @param act_func The activation functions to be applied at each layer of the
+   * @param act_func The activation function objects to be applied at each layer of the
    * network
-   * @param act_func_der The derivatives of the activetion functions
    */
   Network(std::vector<int> layer_sizes,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func_der);
+          std::vector<ActivationFunction*>);
 
   /**
    * @brief Propagete a vector through the network
@@ -79,6 +75,5 @@ class Network {
  private:
   std::vector<MatrixXd> weights_ = std::vector<MatrixXd>();
   std::vector<VectorXd> biases_ = std::vector<VectorXd>();
-  std::vector<std::function<VectorXd(VectorXd)>> act_func_;
-  std::vector<std::function<VectorXd(VectorXd)>> act_func_der_;
+  std::vector<ActivationFunction*> act_func_;
 };
