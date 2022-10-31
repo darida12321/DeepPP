@@ -5,6 +5,11 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
+Sigmoid sigmoid;
+Softmax softmax;
+Relu relu;
+Linear linear;
+
 class ActivationFunction {
   public: 
     virtual inline VectorXd function(VectorXd x) = 0;
@@ -106,7 +111,7 @@ class Linear : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd linear(VectorXd x) { return x; }
+    inline VectorXd function(VectorXd x) { return x; }
 
     /**
      * @brief The gradient of the identity function
@@ -114,7 +119,7 @@ class Linear : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd linear_derivative(VectorXd x) {
+    inline VectorXd derivative(VectorXd x) {
       return VectorXd::Ones(x.rows(), x.cols());
     }
 };
