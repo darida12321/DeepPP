@@ -5,6 +5,8 @@
 #include <Eigen/Dense>
 #include <cmath>
 #include <iostream>
+
+#include "cost_function.h"
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -22,7 +24,8 @@ TEST(LayerForwardProp, Linear) {
       std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
       std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
       std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
-                                                     linear_derivative});
+                                                     linear_derivative},
+      mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value
   VectorXd in1(2);
@@ -56,7 +59,8 @@ TEST(LayerForwardProp, SoftMax) {
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
       std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
-                                                     softmax_derivative});
+                                                     softmax_derivative},
+      mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value
   VectorXd in1(2);
