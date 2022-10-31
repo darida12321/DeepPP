@@ -1,5 +1,6 @@
 #include <network.h>
 
+#include <functional>
 #include <iostream>
 
 #include "Eigen/Core"
@@ -8,15 +9,25 @@
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+                 std::function<double(VectorXd, VectorXd)> cost_func,
+                 std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : weights_(weights),
       biases_(biases),
       act_func_(act_func),
-      act_func_der_(act_func_der) {}
+      act_func_der_(act_func_der),
+      cost_func_(cost_func),
+      cost_func_der_(cost_func_der) {}
+
 Network::Network(std::vector<int> sizes,
                  std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der)
-    : act_func_(act_func), act_func_der_(act_func_der) {
+                 std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+                 std::function<double(VectorXd, VectorXd)> cost_func,
+                 std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
+    : act_func_(act_func),
+      act_func_der_(act_func_der),
+      cost_func_(cost_func),
+      cost_func_der_(cost_func_der) {
   for (int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
@@ -35,8 +46,7 @@ double Network::getCost(std::vector<VectorXd> in,
                         std::vector<VectorXd> exp_out) {
   double error = 0;
   for (int i = 0; i < in.size(); i++) {
-    VectorXd diff = forwardProp(in[i]).array() - exp_out[i].array();
-    error += (diff.array() * diff.array()).sum();
+    error += cost_func_(forwardProp(in[i]), exp_out[i]);
   }
   return error / in.size();
 }
@@ -72,7 +82,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     }
 
     // Backward propogation
-    VectorXd dcda = 1 * (prop - exp_out[i]);
+    VectorXd dcda = cost_func_der_(prop, exp_out[i]);
     for (int i = weights_.size() - 1; i >= 0; i--) {
       VectorXd dcdz = dcda.cwiseProduct(dadz[i]);
 

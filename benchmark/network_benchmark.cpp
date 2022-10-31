@@ -1,5 +1,6 @@
 #include <activation_function.h>
 #include <benchmark/benchmark.h>
+#include <cost_function.h>
 #include <network.h>
 
 #include <Eigen/Dense>
@@ -17,7 +18,8 @@ static void BM_MultiInput(benchmark::State& state) {
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
                   std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
                   std::vector<std::function<VectorXd(VectorXd)>>{
-                      relu_derivative, relu_derivative});
+                      relu_derivative, relu_derivative},
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
   VectorXd in1(2);
@@ -48,7 +50,8 @@ static void BM_Relu(benchmark::State& state) {
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
                   std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
                   std::vector<std::function<VectorXd(VectorXd)>>{
-                      relu_derivative, relu_derivative});
+                      relu_derivative, relu_derivative},
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
   VectorXd in1(2);
@@ -80,7 +83,8 @@ static void BM_Sigmoid(benchmark::State& state) {
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
       std::vector<std::function<VectorXd(VectorXd)>>{sigmoid_derivative,
-                                                     sigmoid_derivative});
+                                                     sigmoid_derivative},
+      mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
   VectorXd in1(2);
