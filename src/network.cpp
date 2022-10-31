@@ -32,17 +32,6 @@ VectorXd Network::forwardProp(VectorXd in) {
   return curr;
 }
 
-// Get the cost of the function for a set of inputs
-double Network::getCost(std::vector<VectorXd> in,
-                        std::vector<VectorXd> exp_out) {
-  double error = 0;
-  for (int i = 0; i < in.size(); i++) {
-    VectorXd diff = forwardProp(in[i]).array() - exp_out[i].array();
-    error += (diff.array() * diff.array()).sum();
-  }
-  return error / in.size();
-}
-
 void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
                     double stepSize) {
   assert(in.size() == exp_out.size());
@@ -92,6 +81,32 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     weights_[i] += backprop_weight_acc[i] / in.size();
     biases_[i] += backprop_bias_acc[i] / in.size();
   }
+}
+
+// Get the cost of the function for a set of inputs
+double Network::getCost(std::vector<VectorXd> in,
+                        std::vector<VectorXd> exp_out) {
+  double error = 0;
+  for (int i = 0; i < in.size(); i++) {
+    VectorXd diff = forwardProp(in[i]).array() - exp_out[i].array();
+    error += (diff.array() * diff.array()).sum();
+  }
+  return error / in.size();
+}
+
+double Network::getAccuracy(std::vector<VectorXd> in,
+                        std::vector<VectorXd> exp_out) {
+  double acc = 0;
+  for (int i = 0; i < in.size(); i++) {
+    VectorXd val = forwardProp(in[i]);
+    Eigen::Index predicted, expected;
+    val.maxCoeff(&predicted);
+    exp_out[i].maxCoeff(&expected);
+    if (predicted == expected) {
+      acc++;
+    }
+  }
+  return acc / in.size();
 }
 
 // Get a vector containing weight matrices for all layers

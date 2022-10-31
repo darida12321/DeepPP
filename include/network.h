@@ -15,8 +15,11 @@ class Network {
           std::vector<std::function<VectorXd(VectorXd)>>, 
           std::vector<std::function<MatrixXd(VectorXd)>>); 
   VectorXd forwardProp(VectorXd);
-  double getCost(std::vector<VectorXd>, std::vector<VectorXd>);
   void train(std::vector<VectorXd>, std::vector<VectorXd>, double);
+
+  double getCost(std::vector<VectorXd>, std::vector<VectorXd>);
+  double getAccuracy(std::vector<VectorXd>, std::vector<VectorXd>);
+
   std::vector<MatrixXd>& getWeights();
   std::vector<VectorXd>& getBiases();
 
