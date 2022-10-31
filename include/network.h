@@ -1,4 +1,5 @@
 #pragma once
+#include <activation_function.h>
 
 #include <Eigen/Dense>
 #include <vector>

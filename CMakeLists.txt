@@ -9,6 +9,7 @@ set(Headers
     include/image.h
 )
 set(Sources
+    src/activation_function.cpp
     src/network.cpp
     src/image.cpp
 )

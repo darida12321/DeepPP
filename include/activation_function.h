@@ -5,11 +5,6 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-Sigmoid sigmoid;
-Softmax softmax;
-Relu relu;
-Linear linear;
-
 class ActivationFunction {
   public: 
     virtual inline VectorXd function(VectorXd x) = 0;
@@ -123,3 +118,8 @@ class Linear : public ActivationFunction {
       return VectorXd::Ones(x.rows(), x.cols());
     }
 };
+
+extern Sigmoid sigmoid;
+extern Softmax softmax;
+extern Relu relu;
+extern Linear linear;
