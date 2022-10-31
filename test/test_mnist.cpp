@@ -186,7 +186,6 @@ TEST(MnistTest, IntegrationTest) {
   MatrixXd w3 = MatrixXd::Random(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
 
-
   Network network(
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
