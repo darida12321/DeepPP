@@ -108,7 +108,7 @@ class ImageSet {
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-TEST(MnistTest, SingleTest) {
+TEST(MnistTest, MSEtest) {
   MatrixXd w1 = MatrixXd::Zero(128, 28*28);
   VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Zero(128, 128);
@@ -146,7 +146,38 @@ TEST(MnistTest, SingleTest) {
   EXPECT_NEAR(acc, 0.1, 0.001);
 }
 
+TEST(MnistTest, SCCtest) {
+  MatrixXd w1 = MatrixXd::Zero(128, 28*28);
+  VectorXd b1 = VectorXd::Zero(128);
+  MatrixXd w2 = MatrixXd::Zero(128, 128);
+  VectorXd b2 = VectorXd::Zero(128);
+  MatrixXd w3 = MatrixXd::Zero(10, 128);
+  VectorXd b3 = VectorXd::Zero(10);
+  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
+      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
+      cat_cross_entropy, cat_cross_entropy_der);
+
+  ImageSet image;
+  std::vector<VectorXd> x_train{image.getImage(0)};
+  std::vector<VectorXd> y_train{image.getLabel(0)};
+
+  VectorXd exp1{{0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}};
+  VectorXd out1 = network.forwardProp(x_train[0]);
+
+  network.train(x_train, y_train, 1);
+
+  VectorXd exp2{{0.0853, 0.0853, 0.0853, 0.0853, 0.0853, 0.2320, 0.0853, 0.0853, 0.0853, 0.0853}};
+  VectorXd out2 = network.forwardProp(x_train[0]);
+  
+  for (int i = 0; i < 10; i++) {
+    EXPECT_NEAR(exp1(i), out1(i), 0.001);
+    EXPECT_NEAR(exp2(i), out2(i), 0.001);
+  }
+}
+
 TEST(MnistTest, IntegrationTest) {
+  return;
   MatrixXd w1 = MatrixXd::Random(128, 28*28);
   VectorXd b1 = VectorXd::Random(128);
   MatrixXd w2 = MatrixXd::Random(128, 128);
@@ -159,7 +190,7 @@ TEST(MnistTest, IntegrationTest) {
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
       std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
       std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative},
-      mean_sqr_error, mean_sqr_error_der);
+      cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
 
