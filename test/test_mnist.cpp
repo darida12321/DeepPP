@@ -8,22 +8,28 @@
 #include <cmath>
 #include <iostream>
 
-const int TEST_SIZE = 10000;
-const int TRAIN_SIZE = 60000;
+// MAX_TRAIN_SIZE = 60000;
+// MAX_TEST_SIZE = 10000;
+const int TRAIN_SIZE = 1000;
+const int TEST_SIZE = 1000;
 const int IMG_WIDTH = 28;
 const int IMG_HEIGHT = 28;
 
-typedef Eigen::Vector<double, IMG_WIDTH * IMG_HEIGHT> ImgVector;
-typedef Eigen::Vector<double, 10> ImgLabel;
+typedef Eigen::VectorXd ImgVector;
+typedef Eigen::VectorXd ImgLabel;
 
 class ImageSet {
  public:
   ImageSet(){
     std::ifstream trainingLabels("test/img/train-labels-idx1-ubyte");
     std::ifstream trainingImages("test/img/train-images-idx3-ubyte");
+    std::ifstream testLabels("test/img/t10k-labels-idx1-ubyte");
+    std::ifstream testImages("test/img/t10k-images-idx3-ubyte");
 
     trainingLabels.seekg(8, std::ios_base::beg);
     trainingImages.seekg(16, std::ios_base::beg);
+    testLabels.seekg(8, std::ios_base::beg);
+    testImages.seekg(16, std::ios_base::beg);
 
     for (int i = 0; i < TRAIN_SIZE; i++) {
       char cl;
@@ -31,12 +37,26 @@ class ImageSet {
       trainingLabels.get(cl);
       trainLabels_.push_back(charToLabel(cl));
 
-      ImgVector img;
+      ImgVector img(28*28);
       for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
         trainingImages.get(ci);
         img(j) = ci;
       }
       trainImages_.push_back(img);
+    }
+
+    for (int i = 0; i < TEST_SIZE; i++) {
+      char cl;
+      char ci;
+      testLabels.get(cl);
+      testLabels_.push_back(charToLabel(cl));
+
+      ImgVector img(28*28);
+      for (int j = 0; j < IMG_WIDTH * IMG_HEIGHT; j++) {
+        testImages.get(ci);
+        img(j) = ci;
+      }
+      testImages_.push_back(img);
     }
   }
   ImgVector& getImage(int index){
@@ -60,11 +80,19 @@ class ImageSet {
     }
   }
 
+  std::vector<ImgLabel> getTrainLabels(){ return trainLabels_; }
+  std::vector<ImgVector> getTrainImages(){ return trainImages_; }
+  std::vector<ImgLabel> getTestLabels(){ return testLabels_; }
+  std::vector<ImgVector> getTestImages(){ return testImages_; }
+
  private:
   std::vector<ImgLabel> trainLabels_;
   std::vector<ImgVector> trainImages_;
+  std::vector<ImgLabel> testLabels_;
+  std::vector<ImgVector> testImages_;
+
   ImgLabel charToLabel(char c) {
-    ImgLabel label;
+    ImgLabel label(10);
     for (int i = 0; i < 10; i++) {
       if (c == i) {
         label(i) = 1.0;
@@ -80,29 +108,7 @@ class ImageSet {
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-int getPrediction(VectorXd out) {
-  int maxIndex = 0;
-  for (int i = 1; i < 10; i++) {
-    if (out(i) > out(maxIndex)) {
-      maxIndex = i;
-    }
-  }
-  return maxIndex;
-}
-void printPrediction(VectorXd out) {
-  std::cout.setf(std::ios::fixed, std::ios::floatfield);
-  std::cout.precision(3);
-  for (int i = 0; i < 10; i++) {
-    std::cout << "  " << i << "   | ";
-  }
-  std::cout << std::endl;
-  for (int i = 0; i < 10; i++) {
-    std::cout << out(i) << " | ";
-  }
-  std::cout << getPrediction(out);
-}
-
-TEST(MnistTest, ReadData) {
+TEST(MnistTest, SingleTest) {
   MatrixXd w1 = MatrixXd::Zero(128, 28*28);
   VectorXd b1 = VectorXd::Zero(128);
   MatrixXd w2 = MatrixXd::Zero(128, 128);
@@ -137,6 +143,25 @@ TEST(MnistTest, ReadData) {
   }
   double acc = network.getAccuracy(x_test, y_test);
   EXPECT_NEAR(acc, 0.1, 0.001);
+}
+
+TEST(MnistTest, IntegrationTest) {
+  MatrixXd w1 = MatrixXd::Random(128, 28*28);
+  VectorXd b1 = VectorXd::Random(128);
+  MatrixXd w2 = MatrixXd::Random(128, 128);
+  VectorXd b2 = VectorXd::Random(128);
+  MatrixXd w3 = MatrixXd::Random(10, 128);
+  VectorXd b3 = VectorXd::Random(10);
+  Network network(std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
+      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
+      std::vector<std::function<MatrixXd(VectorXd)>>{reluDerivative, reluDerivative, softmaxDerivative});
+
+  ImageSet image;
+
+  network.train(image.getTrainImages(), image.getTrainLabels(), 3);
+
+  double acc = network.getAccuracy(image.getTestImages(), image.getTestLabels());
+  std::cout << "Accuracy is: " << acc << std::endl;
 }
 
 
