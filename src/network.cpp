@@ -50,29 +50,29 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
     // Forward propogation
     VectorXd prop = in[i];
-    for (int i = 0; i < weights_.size(); i++) {
-      VectorXd z = weights_[i] * prop + biases_[i];
+    for (int j = 0; j < weights_.size(); j++) {
+      VectorXd z = weights_[j] * prop + biases_[j];
 
       // Record data for backpropogation
-      a[i] = prop;
+      a[j] = prop;
 
       // Get the forward propogated value
-      prop = act_func_[i](z);
+      prop = act_func_[j](z);
     }
 
     // Backward propogation
     VectorXd dcda = 2*(prop - exp_out[i])/prop.rows();
-    for (int i = weights_.size() - 1; i >= 0; i--) {
-      VectorXd z = weights_[i] * a[i] + biases_[i];
-      MatrixXd dadz = act_func_der_[i](z);
+    for (int j = weights_.size() - 1; j >= 0; j--) {
+      VectorXd z = weights_[j] * a[j] + biases_[j];
+      MatrixXd dadz = act_func_der_[j](z);
       VectorXd dcdz = dadz * dcda;
 
       // calculate dC/da for previous layer
-      dcda = weights_[i].transpose() * dcdz;
+      dcda = weights_[j].transpose() * dcdz;
 
       // adjust weights and biases
-      backprop_weight_acc[i] -= stepSize * dcdz * a[i].transpose();
-      backprop_bias_acc[i] -= stepSize * dcdz;
+      backprop_weight_acc[j] -= stepSize * dcdz * a[j].transpose();
+      backprop_bias_acc[j] -= stepSize * dcdz;
     }
   }
 
