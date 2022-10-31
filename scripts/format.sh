@@ -1,9 +1,10 @@
 #! /bin/sh
 for folder in benchmark include src test
 do 
-	# echo $folder
-	clang-format -i $folder/*.cpp > /dev/null
-	clang-format -i $folder/*.h > /dev/null
+	echo formatting $folder...
+	find $folder -name "*.h" -o -name "*.cpp" -exec clang-format -i {} ';'
+	# clang-format -i $folder/*.cpp $folder/*.h > /dev/null
+	# clang-format -i $folder/*.h > /dev/null
 	# ls $folder
 done
 
