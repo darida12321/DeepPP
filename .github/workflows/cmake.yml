@@ -47,7 +47,7 @@ jobs:
 
       # - name: Run style-check
       #   run: ./scripts/format.sh
-        
+
       - run: cmake --version
 
       - name: Configure CMake

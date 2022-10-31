@@ -67,7 +67,7 @@ TEST(LayerForwardProp, SoftMax) {
   VectorXd out1 = network.forwardProp(in1);
   VectorXd out2 = network.forwardProp(in2);
 
-  EXPECT_NEAR(out1(0), 0, 0.001);
+    EXPECT_NEAR(out1(0), 0, 0.001);
   EXPECT_NEAR(out1(1), 1, 0.001);
   EXPECT_NEAR(out2(0), 0.8807, 0.001);
   EXPECT_NEAR(out2(1), 0.1192, 0.001);

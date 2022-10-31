@@ -19,7 +19,7 @@ class Network {
    * @param act_func_der The derivatives of the activation functions
    */
   Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func,
+                std::vector<std::function<VectorXd(VectorXd)>> act_func,
           std::vector<std::function<VectorXd(VectorXd)>> act_func_der);
 
   /**
