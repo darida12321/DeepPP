@@ -12,6 +12,7 @@ set(Headers
     include/network.h
 )
 set(Sources
+    src/activation_function.cpp
     src/network.cpp
 )
 

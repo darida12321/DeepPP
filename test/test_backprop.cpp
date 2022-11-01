@@ -36,11 +36,7 @@ TEST(LayerBackPropTest, MultiInput) {
   VectorXd b(2);
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-                  std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-                  std::vector<std::function<MatrixXd(VectorXd)>>{
-                      reluDerivative,
-                      reluDerivative,
-                  },
+                  std::vector<ActivationFunction*>{&relu, &relu},
                   mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -80,9 +76,7 @@ TEST(LayerBackPropTest, Relu) {
   b << 1, 1;
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-      std::vector<std::function<MatrixXd(VectorXd)>>{linearDerivative,
-                                                     linearDerivative},
+      std::vector<ActivationFunction*>{&linear, &linear},
       mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -118,9 +112,7 @@ TEST(LayerBackPropTest, Sigmoid) {
   b << 1, 1;
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
-      std::vector<std::function<MatrixXd(VectorXd)>>{sigmoidDerivative,
-                                                     sigmoidDerivative},
+      std::vector<ActivationFunction*>{&sigmoid, &sigmoid},
       mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point

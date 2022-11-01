@@ -22,10 +22,8 @@ TEST(LayerForwardProp, Linear) {
   b2 << -3, 1;
   Network network(
       std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-      std::vector<std::function<MatrixXd(VectorXd)>>{linearDerivative,
-                                                     linearDerivative},
-      mean_sqr_error, mean_sqr_error_der);
+      std::vector<ActivationFunction*>{&linear, &linear},
+      mean_sqr_error, mean_sqr_error_def);
 
   // Check forwardpropogation value
   VectorXd in1(2);
@@ -57,9 +55,7 @@ TEST(LayerForwardProp, SoftMax) {
   b << 9, -1;
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{linearDerivative,
-                                                     softmaxDerivative},
+      std::vector<ActivationFunction*>{&linear, &softmax},
       mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value

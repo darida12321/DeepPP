@@ -1,4 +1,5 @@
 #include <network.h>
+#include <activation_function.h>
 
 #include <functional>
 #include <iostream>
@@ -8,26 +9,21 @@
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der,
+                 std::vector<ActivationFunction*> act_func),
                  std::function<double(VectorXd, VectorXd)> cost_func,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : weights_(weights),
       biases_(biases),
       act_func_(act_func),
-      act_func_der_(act_func_der),
       cost_func_(cost_func),
       cost_func_der_(cost_func_der) {}
-
 Network::Network(std::vector<int> sizes,
-                 std::vector<std::function<VectorXd(VectorXd)>> act_func,
-                 std::vector<std::function<MatrixXd(VectorXd)>> act_func_der,
+                 std::vector<ActivationFunction*> act_func,
                  std::function<double(VectorXd, VectorXd)> cost_func,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : act_func_(act_func),
-      act_func_der_(act_func_der),
       cost_func_(cost_func),
-      cost_func_der_(cost_func_der) {
+      cost_func_der_(cost_func_der){
   for (int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
@@ -37,7 +33,7 @@ Network::Network(std::vector<int> sizes,
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
   for (int i = 0; i < weights_.size(); i++) {
-    curr = act_func_[i](weights_[i] * curr + biases_[i]);
+    curr = act_func_[i]->function(weights_[i] * curr + biases_[i]);
   }
   return curr;
 }
@@ -64,10 +60,11 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
       VectorXd z = weights_[j] * prop + biases_[j];
 
       // Record data for backpropogation
-      a[j] = prop;
+      a[i] = prop;
+      dadz[i] = act_func_[i]->derivative(newV);
 
       // Get the forward propogated value
-      prop = act_func_[j](z);
+      prop = act_func_[i]->function(newV);
     }
 
     // Backward propogation

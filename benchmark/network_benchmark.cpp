@@ -16,10 +16,7 @@ static void BM_MultiInput(benchmark::State& state) {
   VectorXd b(2);
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-                  std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-                  std::vector<std::function<MatrixXd(VectorXd)>>{
-                      reluDerivative, reluDerivative},
-                  mean_sqr_error, mean_sqr_error_der);
+                  std::vector<ActivationFunction*>{&relu, &relu});
 
   // Create example data point
   VectorXd in1(2);
@@ -48,10 +45,7 @@ static void BM_Relu(benchmark::State& state) {
   VectorXd b(2);
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-                  std::vector<std::function<VectorXd(VectorXd)>>{relu, relu},
-                  std::vector<std::function<MatrixXd(VectorXd)>>{
-                      reluDerivative, reluDerivative},
-                  mean_sqr_error, mean_sqr_error_der);
+                  std::vector<ActivationFunction*>{&relu, &relu});
 
   // Create example data point
   VectorXd in1(2);
@@ -81,10 +75,7 @@ static void BM_Sigmoid(benchmark::State& state) {
   b << 1, 1;
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{sigmoid, sigmoid},
-      std::vector<std::function<MatrixXd(VectorXd)>>{sigmoidDerivative,
-                                                     sigmoidDerivative},
-      mean_sqr_error, mean_sqr_error_der);
+      std::vector<ActivationFunction*>{&sigmoid, &sigmoid});
 
   // Create example data point
   VectorXd in1(2);
