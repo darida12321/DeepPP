@@ -3,6 +3,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(DeepPP)
 
+add_compile_options(
+    -Wall -Werror -Ofast
+)
+
 set(Headers
     include/activation_function.h
     include/network.h
