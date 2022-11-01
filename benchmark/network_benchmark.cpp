@@ -73,9 +73,8 @@ static void BM_Sigmoid(benchmark::State& state) {
   w << 1, 1, 1, 1;
   VectorXd b(2);
   b << 1, 1;
-  Network network(
-      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<ActivationFunction*>{&sigmoid, &sigmoid});
+  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+                  std::vector<ActivationFunction*>{&sigmoid, &sigmoid});
 
   // Create example data point
   VectorXd in1(2);
