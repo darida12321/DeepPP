@@ -1,5 +1,5 @@
-#include <network.h>
 #include <activation_function.h>
+#include <network.h>
 
 #include <functional>
 #include <iostream>
@@ -23,7 +23,7 @@ Network::Network(std::vector<int> sizes,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : act_func_(act_func),
       cost_func_(cost_func),
-      cost_func_der_(cost_func_der){
+      cost_func_der_(cost_func_der) {
   for (int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
