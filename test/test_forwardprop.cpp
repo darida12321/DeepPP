@@ -22,7 +22,7 @@ TEST(LayerForwardProp, Linear) {
   b2 << -3, 1;
   Network network(std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
                   std::vector<ActivationFunction*>{&linear, &linear},
-                  mean_sqr_error, mean_sqr_error_def);
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value
   VectorXd in1(2);

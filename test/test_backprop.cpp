@@ -36,7 +36,7 @@ TEST(LayerBackPropTest, MultiInput) {
   VectorXd b(2);
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-                  std::vector<ActivationFunction*>{&relu, &relu},
+                  std::vector<ActivationFunction*>{&linear, &linear},
                   mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -75,7 +75,7 @@ TEST(LayerBackPropTest, Relu) {
   VectorXd b(2);
   b << 1, 1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-                  std::vector<ActivationFunction*>{&linear, &linear},
+                  std::vector<ActivationFunction*>{&relu, &relu},
                   mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
@@ -104,7 +104,7 @@ TEST(LayerBackPropTest, Relu) {
 }
 
 TEST(LayerBackPropTest, Sigmoid) {
-  // Create 1-1 neural network
+  // Create 2-2 neural network
   MatrixXd w(2, 2);
   w << 1, 1, 1, 1;
   VectorXd b(2);
@@ -150,9 +150,7 @@ TEST(LayerBackPropTest, SoftMax) {
   b << 1, 1;
   Network network(
       std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{linearDerivative,
-                                                     softmaxDerivative},
+      std::vector<ActivationFunction*>{&linear, &softmax},
       mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point

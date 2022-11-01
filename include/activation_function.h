@@ -8,7 +8,7 @@ using Eigen::VectorXd;
 class ActivationFunction {
   public: 
     virtual inline VectorXd function(VectorXd x) = 0;
-    virtual inline VectorXd derivative(VectorXd x) = 0;
+    virtual inline MatrixXd derivative(VectorXd x) = 0;
 };
 
 class Sigmoid : public ActivationFunction {
@@ -29,10 +29,16 @@ class Sigmoid : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd derivative(VectorXd x) {
-      return function(x).cwiseProduct(
+    inline MatrixXd derivative(VectorXd x) {
+      MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
+      VectorXd diag = function(x).cwiseProduct(
           function(x).unaryExpr([](double x) { return 1 - x; }));
-    }   
+
+      for (int i = 0; i < x.rows(); i++) {
+        out(i, i) = diag(i);
+      }
+      return out;
+    }
 };
 
 class Softmax : public ActivationFunction {
@@ -56,19 +62,19 @@ class Softmax : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd derivative(VectorXd x) {
-      MatrixXd jacobian(x.rows(), x.rows());
-      Sigmoid sigmoid;
+    inline MatrixXd derivative(VectorXd x) {
+      VectorXd y = function(x);
+      MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
       for (int i = 0; i < x.rows(); i++) {
         for (int j = 0; j < x.rows(); j++) {
           if (i == j) {
-            jacobian(i, j) = x(i) * (1 - x(i));
+            out(i, j) += y(i) * (1 - y(i));
           } else {
-            jacobian(i, j) = -x(i) * x(j);
+            out(i, j) += - y(i) * y(j);
           }
         }
       }
-      return jacobian * sigmoid.function(x);
+      return out;
     }
 };
 
@@ -90,11 +96,12 @@ class Relu : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd derivative(VectorXd x) {
-      return x.unaryExpr([](double x) {
-        if (x <= 0) return 0.0;
-        return 1.0;
-      });
+    inline MatrixXd derivative(VectorXd x) {
+      MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
+      for (int i = 0; i < x.rows(); i++) {
+        out(i, i) = x(i) < 0 ? 0 : 1;
+      }
+      return out;
     }
 };
 
@@ -114,8 +121,12 @@ class Linear : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd derivative(VectorXd x) {
-      return VectorXd::Ones(x.rows(), x.cols());
+    inline MatrixXd derivative(VectorXd x) {
+      MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
+      for (int i = 0; i < x.rows(); i++) {
+        out(i, i) = 1;
+      }
+      return out;
     }
 };
 

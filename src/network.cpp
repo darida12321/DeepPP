@@ -9,7 +9,7 @@
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-                 std::vector<ActivationFunction*> act_func),
+                 std::vector<ActivationFunction*> act_func,
                  std::function<double(VectorXd, VectorXd)> cost_func,
                  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
     : weights_(weights),
@@ -60,18 +60,17 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
       VectorXd z = weights_[j] * prop + biases_[j];
 
       // Record data for backpropogation
-      a[i] = prop;
-      dadz[i] = act_func_[i]->derivative(newV);
+      a[j] = prop;
 
       // Get the forward propogated value
-      prop = act_func_[i]->function(newV);
+      prop = act_func_[j]->function(z);
     }
 
     // Backward propogation
     VectorXd dcda = cost_func_der_(prop, exp_out[i]);
     for (int j = weights_.size() - 1; j >= 0; j--) {
       VectorXd z = weights_[j] * a[j] + biases_[j];
-      MatrixXd dadz = act_func_der_[j](z);
+      MatrixXd dadz = act_func_[j]->derivative(z);
       VectorXd dcdz = dadz * dcda;
 
       // calculate dC/da for previous layer

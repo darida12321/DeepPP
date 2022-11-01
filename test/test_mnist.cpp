@@ -114,9 +114,7 @@ TEST(MnistTest, MSEtest) {
   VectorXd b3 = VectorXd::Zero(10);
   Network network(
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{
-          reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
       mean_sqr_error, mean_sqr_error_der);
 
   ImageSet image;
@@ -155,9 +153,7 @@ TEST(MnistTest, SCCtest) {
   VectorXd b3 = VectorXd::Zero(10);
   Network network(
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{
-          reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
       cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
@@ -189,9 +185,7 @@ TEST(MnistTest, IntegrationTest) {
 
   Network network(
       std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<std::function<VectorXd(VectorXd)>>{relu, relu, softmax},
-      std::vector<std::function<MatrixXd(VectorXd)>>{
-          reluDerivative, reluDerivative, softmaxDerivative},
+      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
       cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;

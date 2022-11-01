@@ -11,28 +11,40 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class Network {
- public:
+public:
   /**
    * @brief Construct a new Network object
    *
    * @param weights Matrices representing the weights of the connections in the
    * network
    * @param biases Bias vectors
-   * @param act_func The activation function objects to be applied at each layer of the
+   * @param act_func The activation functions to be applied at each layer of the
    * network
+   * @param act_func_der The derivatives of the activation functions
+   * @param cost_func The cost function
+   * @param cost_func_der The derivatives of the cost function with respect to
+   * the output
    */
   Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-          std::vector<ActivationFunction*>);
+          std::vector<ActivationFunction*> act_func,
+          std::function<double(VectorXd, VectorXd)> cost_func,
+          std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
 
   /**
    * @brief Construct a new Network object using layer sizes
    *
    * @param layer_sizes A vector containing the sizes of the layers
-   * @param act_func The activation function objects to be applied at each layer of the
+   * @param act_func The activation functions to be applied at each layer of the
    * network
+   * @param act_func_der The derivatives of the activetion functions
+   * @param cost_func The cost function
+   * @param cost_func_der The derivatives of the cost function with respect to
+   * the output
    */
   Network(std::vector<int> layer_sizes,
-          std::vector<ActivationFunction*>);
+          std::vector<ActivationFunction*> act_func,
+          std::function<double(VectorXd, VectorXd)> cost_func,
+          std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
 
   /**
    * @brief Propagete a vector through the network
