@@ -148,10 +148,9 @@ TEST(LayerBackPropTest, SoftMax) {
   w << 1, 1, 1, 1;
   VectorXd b(2);
   b << 1, 1;
-  Network network(
-      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<ActivationFunction*>{&linear, &softmax},
-      mean_sqr_error, mean_sqr_error_der);
+  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+                  std::vector<ActivationFunction*>{&linear, &softmax},
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Create example data point
   VectorXd in1(2);

@@ -112,10 +112,10 @@ TEST(MnistTest, MSEtest) {
   VectorXd b2 = VectorXd::Zero(128);
   MatrixXd w3 = MatrixXd::Zero(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
-  Network network(
-      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-      mean_sqr_error, mean_sqr_error_der);
+  Network network(std::vector<MatrixXd>{w1, w2, w3},
+                  std::vector<VectorXd>{b1, b2, b3},
+                  std::vector<ActivationFunction*>{&relu, &relu, &softmax},
+                  mean_sqr_error, mean_sqr_error_der);
 
   ImageSet image;
   std::vector<VectorXd> x_train{image.getImage(0)};
@@ -151,10 +151,10 @@ TEST(MnistTest, SCCtest) {
   VectorXd b2 = VectorXd::Zero(128);
   MatrixXd w3 = MatrixXd::Zero(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
-  Network network(
-      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-      cat_cross_entropy, cat_cross_entropy_der);
+  Network network(std::vector<MatrixXd>{w1, w2, w3},
+                  std::vector<VectorXd>{b1, b2, b3},
+                  std::vector<ActivationFunction*>{&relu, &relu, &softmax},
+                  cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
   std::vector<VectorXd> x_train{image.getImage(0)};
@@ -183,10 +183,10 @@ TEST(MnistTest, IntegrationTest) {
   MatrixXd w3 = MatrixXd::Random(10, 128);
   VectorXd b3 = VectorXd::Zero(10);
 
-  Network network(
-      std::vector<MatrixXd>{w1, w2, w3}, std::vector<VectorXd>{b1, b2, b3},
-      std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-      cat_cross_entropy, cat_cross_entropy_der);
+  Network network(std::vector<MatrixXd>{w1, w2, w3},
+                  std::vector<VectorXd>{b1, b2, b3},
+                  std::vector<ActivationFunction*>{&relu, &relu, &softmax},
+                  cat_cross_entropy, cat_cross_entropy_der);
 
   ImageSet image;
 
