@@ -9,7 +9,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-/* static void BM_MultiInput(benchmark::State& state) {
+static void BM_MultiInput(benchmark::State& state) {
   // Create 1-1 neural network
   MatrixXd w(2, 2);
   w << 1, 1, 1, 1;
@@ -98,7 +98,7 @@ static void BM_Sigmoid(benchmark::State& state) {
   }
 } 
 
-BENCHMARK(BM_Sigmoid); */
+BENCHMARK(BM_Sigmoid);
 
 // TODO prevent whatever is causing segfaults in network.train
 
