@@ -68,7 +68,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
     // Backward propogation
     VectorXd dcda = cost_func_der_(prop, exp_out[i]);
-    for (unsigned int j = weights_.size() - 1; j >= 0; j--) {
+    for (int j = weights_.size() - 1; j >= 0; j--) {
       VectorXd z = weights_[j] * a[j] + biases_[j];
       MatrixXd dadz = act_func_[j]->derivative(z);
       VectorXd dcdz = dadz * dcda;
