@@ -190,14 +190,16 @@ TEST(MnistTest, IntegrationTest) {
 
   ImageSet image;
 
-  for (int i = 0; i < 300; i++) {
+  for (int i = 0; i < 3; i++) {
     network.train(image.getTrainImages(), image.getTrainLabels(), 0.1);
 
-    double acc1 =
-        network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
-    double acc2 =
-        network.getAccuracy(image.getTestImages(), image.getTestLabels());
-    std::cout << "Round " << i << " train: " << acc1 << ", test: " << acc2
-              << std::endl;
+    // double acc1 =
+    //     network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+    // double acc2 =
+    //     network.getAccuracy(image.getTestImages(), image.getTestLabels());
+    std::cout << "Round " << i << std::endl;
   }
+
+  double acc = network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+  ASSERT_GT(acc, 0.9);
 }
