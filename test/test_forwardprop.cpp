@@ -1,4 +1,5 @@
 #include <activation_function.h>
+#include <cost_function.h>
 #include <gtest/gtest.h>
 #include <network.h>
 
@@ -6,7 +7,6 @@
 #include <cmath>
 #include <iostream>
 
-#include "cost_function.h"
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -20,12 +20,9 @@ TEST(LayerForwardProp, Linear) {
   w2 << 2, -4, -1, 3;
   VectorXd b2(2);
   b2 << -3, 1;
-  Network network(
-      std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, linear},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
-                                                     linear_derivative},
-      mean_sqr_error, mean_sqr_error_der);
+  Network network(std::vector<MatrixXd>{w1, w2}, std::vector<VectorXd>{b1, b2},
+                  std::vector<ActivationFunction*>{&linear, &linear},
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value
   VectorXd in1(2);
@@ -46,7 +43,7 @@ TEST(LayerForwardProp, Linear) {
   std::vector<VectorXd> in{in1, in2};
   std::vector<VectorXd> out{out1, out2};
 
-  EXPECT_NEAR(network.getCost(in, out), 10.5, 0.001);
+  EXPECT_NEAR(network.getCost(in, out), 5.25, 0.001);
 }
 
 TEST(LayerForwardProp, SoftMax) {
@@ -55,12 +52,9 @@ TEST(LayerForwardProp, SoftMax) {
   w << 1, 2, 1, 4;
   VectorXd b(2);
   b << 9, -1;
-  Network network(
-      std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear, softmax},
-      std::vector<std::function<VectorXd(VectorXd)>>{linear_derivative,
-                                                     softmax_derivative},
-      mean_sqr_error, mean_sqr_error_der);
+  Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+                  std::vector<ActivationFunction*>{&linear, &softmax},
+                  mean_sqr_error, mean_sqr_error_der);
 
   // Check forwardpropogation value
   VectorXd in1(2);

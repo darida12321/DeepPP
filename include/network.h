@@ -1,4 +1,5 @@
 #pragma once
+#include <activation_function.h>
 
 #include <Eigen/Dense>
 #include <functional>
@@ -10,7 +11,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class Network {
- public:
+public:
   /**
    * @brief Construct a new Network object
    *
@@ -25,8 +26,7 @@ class Network {
    * the output
    */
   Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+          std::vector<ActivationFunction*> act_func,
           std::function<double(VectorXd, VectorXd)> cost_func,
           std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
 
@@ -42,8 +42,7 @@ class Network {
    * the output
    */
   Network(std::vector<int> layer_sizes,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func,
-          std::vector<std::function<VectorXd(VectorXd)>> act_func_der,
+          std::vector<ActivationFunction*> act_func,
           std::function<double(VectorXd, VectorXd)> cost_func,
           std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
 
@@ -54,15 +53,6 @@ class Network {
    * @return VectorXd The output vector
    */
   VectorXd forwardProp(VectorXd in);
-
-  /**
-   * @brief Get the cost of the function for a set of inputs
-   *
-   * @param in The input vector
-   * @param exp_out The expected output
-   * @return double The cost
-   */
-  double getCost(std::vector<VectorXd> in, std::vector<VectorXd> exp_out);
 
   /**
    * @brief Perform one trainning iteration on a given set of inputs and
@@ -76,10 +66,29 @@ class Network {
   void train(std::vector<VectorXd>, std::vector<VectorXd>, double);
 
   /**
+   * @brief Get the cost of the function for a set of inputs
+   *
+   * @param in The input vector
+   * @param exp_out The expected output
+   * @return double The cost
+   */
+  double getCost(std::vector<VectorXd> in, std::vector<VectorXd> exp_out);
+
+  /**
+   * @brief Get the accuracy of the function for a set of inputs
+   *
+   * @param in The input vector
+   * @param exp_out The expected output
+   * @return double The accuracy
+   */
+  double getAccuracy(std::vector<VectorXd> in, std::vector<VectorXd> exp_out);
+
+  /**
    * @brief Get the weight matrices of all layers of the network
    *
    * @return std::vector<MatrixXd>& A vector containing the weight matrices
    */
+
   std::vector<MatrixXd>& getWeights();
 
   /**
@@ -92,8 +101,7 @@ class Network {
  private:
   std::vector<MatrixXd> weights_ = std::vector<MatrixXd>();
   std::vector<VectorXd> biases_ = std::vector<VectorXd>();
-  std::vector<std::function<VectorXd(VectorXd)>> act_func_;
-  std::vector<std::function<VectorXd(VectorXd)>> act_func_der_;
+  std::vector<ActivationFunction*> act_func_;
   std::function<double(VectorXd, VectorXd)> cost_func_;
   std::function<VectorXd(VectorXd, VectorXd)> cost_func_der_;
 };
