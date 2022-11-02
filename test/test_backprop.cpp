@@ -14,7 +14,7 @@ using Eigen::VectorXd;
 void compareNetwork(std::vector<MatrixXd> ws, std::vector<VectorXd> bs,
                     Network n) {
   ASSERT_EQ(ws.size(), bs.size());
-  for (int i = 0; i < ws.size(); i++) {
+  for (unsigned int i = 0; i < ws.size(); i++) {
     ASSERT_EQ(ws[i].rows(), n.getWeights()[i].rows());
     ASSERT_EQ(ws[i].cols(), n.getWeights()[i].cols());
     ASSERT_EQ(bs[i].rows(), n.getBiases()[i].rows());

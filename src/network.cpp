@@ -24,7 +24,7 @@ Network::Network(std::vector<int> sizes,
     : act_func_(act_func),
       cost_func_(cost_func),
       cost_func_der_(cost_func_der) {
-  for (int i = 0; i < sizes.size() - 1; i++) {
+  for (unsigned int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
   }
@@ -32,7 +32,7 @@ Network::Network(std::vector<int> sizes,
 
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
-  for (int i = 0; i < weights_.size(); i++) {
+  for (unsigned int i = 0; i < weights_.size(); i++) {
     curr = act_func_[i]->function(weights_[i] * curr + biases_[i]);
   }
   return curr;
