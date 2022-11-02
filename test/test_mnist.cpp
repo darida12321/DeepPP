@@ -200,6 +200,7 @@ TEST(MnistTest, IntegrationTest) {
     std::cout << "Round " << i << std::endl;
   }
 
-  double acc = network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+  double acc =
+      network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
   ASSERT_GT(acc, 0.9);
 }
