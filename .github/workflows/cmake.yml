@@ -13,6 +13,7 @@ env:
 jobs:
   format-check:
     runs-on: ubuntu-latest
+    needs: build-and-test
     # strategy:
     #   matrix:
     #     path:
@@ -30,23 +31,30 @@ jobs:
         with:
           commit_message: Reformat code by workflow
 
-  build_and_test:
+  build-and-test:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-latest
-    needs: format-check
     container:
-      image: gcc:11.2
+      image: gcc:11.3.0
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup Container
-        run: apt-get -y update && apt-get install -y --no-install-recommends git build-essential cmake clang-format
+        run: apt-get -y update && apt-get install -y --no-install-recommends software-properties-common build-essential cmake clang-format
 
-      # - name: Run style-check
-      #   run: ./scripts/format.sh
+      - name: Install CMake
+        run: wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+
+      - run: echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ focal main' | tee /etc/apt/sources.list.d/kitware.list >/dev/null
+
+      - run: apt-get -y update
+
+      - run: apt-get install -y kitware-archive-keyring
+
+      - run: apt-get install -y cmake
 
       - run: cmake --version
 
