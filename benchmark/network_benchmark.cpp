@@ -37,8 +37,7 @@ static void BM_MultiInput(benchmark::State& state) {
   }
 }
 
-BENCHMARK(BM_MultiInput); 
-
+BENCHMARK(BM_MultiInput);
 
 static void BM_Relu(benchmark::State& state) {
   // Create 1-1 neural network
@@ -96,51 +95,48 @@ static void BM_Sigmoid(benchmark::State& state) {
   for (auto _ : state) {
     network.train(input, output, 1);
   }
-} 
+}
 
 BENCHMARK(BM_Sigmoid);
 
 // TODO prevent whatever is causing segfaults in network.train
 
 static void BM_ForwardPropSmall(benchmark::State& state) {
-    MatrixXd w(2, 2);
-    w << 1.0, 1.0, 1.0, 1.0;
-    VectorXd b(2);
-    b << 1.0, 1.0;
-    VectorXd in(2);
-    in << 1.0, 1.0;
+  MatrixXd w(2, 2);
+  w << 1.0, 1.0, 1.0, 1.0;
+  VectorXd b(2);
+  b << 1.0, 1.0;
+  VectorXd in(2);
+  in << 1.0, 1.0;
 
-    Network nw(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-            std::vector<ActivationFunction*>{&relu, &relu},
-            mean_sqr_error, mean_sqr_error_der);
+  Network nw(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+             std::vector<ActivationFunction*>{&relu, &relu}, mean_sqr_error,
+             mean_sqr_error_der);
 
-    for (auto _ : state) {
-        nw.forwardProp(in);
-    }
+  for (auto _ : state) {
+    nw.forwardProp(in);
+  }
 }
 
 BENCHMARK(BM_ForwardPropSmall);
 
 static void BM_ForwardPropLarge(benchmark::State& state) {
-    MatrixXd w(4, 4);
-    w << 1.0, 1.0, 1.0, 1.0, 
-      1.0, 1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0, 1.0;
-    VectorXd b(4);
-    b << 1.0, 1.0, 1.0, 1.0;
-    VectorXd in(4);
-    in << 1.0, 1.0, 1.0, 1.0;
+  MatrixXd w(4, 4);
+  w << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0;
+  VectorXd b(4);
+  b << 1.0, 1.0, 1.0, 1.0;
+  VectorXd in(4);
+  in << 1.0, 1.0, 1.0, 1.0;
 
-    Network nw(std::vector<MatrixXd>{w, w, w, w}, std::vector<VectorXd>{b, b, b, b},
-            std::vector<ActivationFunction*>{&relu, &relu, &relu, &relu},
-            mean_sqr_error, mean_sqr_error_der);
+  Network nw(std::vector<MatrixXd>{w, w, w, w},
+             std::vector<VectorXd>{b, b, b, b},
+             std::vector<ActivationFunction*>{&relu, &relu, &relu, &relu},
+             mean_sqr_error, mean_sqr_error_der);
 
-    for (auto _ : state) {
-        nw.forwardProp(in);
-    }
-
+  for (auto _ : state) {
+    nw.forwardProp(in);
+  }
 }
 
 BENCHMARK(BM_ForwardPropLarge);
-
