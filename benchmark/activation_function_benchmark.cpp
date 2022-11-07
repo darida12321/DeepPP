@@ -1,17 +1,15 @@
 
-#include <benchmark/benchmark.h>
-
-#include <templates/linalg.h>
 #include <activation_function.h>
-
+#include <benchmark/benchmark.h>
+#include <templates/linalg.h>
 
 static void BM_Sigmoid(benchmark::State& state) {
-	VectorXd v(1);
-	v << 1;
-	Sigmoid s;
+  VectorXd v(1);
+  v << 1;
+  Sigmoid s;
   for (auto _ : state) {
-		s.function(v);
-		s.derivative(v);
+    s.function(v);
+    s.derivative(v);
   }
 }
 
