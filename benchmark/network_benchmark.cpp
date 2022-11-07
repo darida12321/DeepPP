@@ -99,73 +99,44 @@ static void BM_Sigmoid(benchmark::State& state) {
 
 BENCHMARK(BM_Sigmoid);
 
-// static void BM_Tanh(benchmark::State& state) {
-// 	// Create 1-1 neural network
-// 	MatrixXd w(2, 2); w << 1, 1, 1, 1;
-// 	VectorXd b(2); b << 1, 1;
-// 	Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b,
-// b}, 			std::vector<std::function<VectorXd(VectorXd)>>{tanh,
-// tanh},
-// std::vector<std::function<VectorXd(VectorXd)>>{tanhDerivative,
-// tanhDerivative});
+// TODO prevent whatever is causing segfaults in network.train
 
-// 	// Create example data point
-// 	VectorXd in1(2); in1 << 1.0, 1.0;
-// 	VectorXd out1(2); out1 << 3.0, 3.0;
-// 	VectorXd in2(2); in2 << 3.0, 5.0;
-// 	VectorXd out2(2); out2 << 6.0, 8.0;
-// 	std::vector<VectorXd> input{in1, in2};
-// 	std::vector<VectorXd> output{out1, out2};
+static void BM_ForwardPropSmall(benchmark::State& state) {
+  MatrixXd w(2, 2);
+  w << 1.0, 1.0, 1.0, 1.0;
+  VectorXd b(2);
+  b << 1.0, 1.0;
+  VectorXd in(2);
+  in << 1.0, 1.0;
 
-// 	// Train the network
-// 	for (auto _ : state) {
-// 		network.train(input, output, 1);
-// 	}
-// }
+  Network nw(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
+             std::vector<ActivationFunction*>{&relu, &relu}, mean_sqr_error,
+             mean_sqr_error_der);
 
-// BENCHMARK(BM_Tanh);
+  for (auto _ : state) {
+    nw.forwardProp(in);
+  }
+}
 
-// static void BM_SimpleNudge(benchmark::State& state) {
-// 	for (auto _ : state) {
-// 		MatrixXd w1 {{1}};
-// 		VectorXd b1 {{0.5}};
-// 		Layer layer1(w1, b1, linear, linearDerivative);
-// 		Network network({layer1});
-//
-// 		VectorXd in1 {{0.2}};
-// 		VectorXd out1{{0.8}};
-// 		std::vector<VectorXd> in {in1};
-// 		std::vector<VectorXd> out {out1};
-//
-// 		network.train(in, out, 1);
-// 	}
-// }
-//
-// BENCHMARK(BM_SimpleNudge);
-//
-// static void BM_DeepNudge(benchmark::State& state) {
-// 	for (auto _ : state) {
-// 		MatrixXd w1 {{1}};
-// 		VectorXd	b1 {{0.5}};
-// 		Layer layer1(w1, b1, linear, linearDerivative);
-//
-// 		MatrixXd w2 {{2}};
-// 		VectorXd b2 {{0.3}};
-// 		Layer layer2(w2, b2, linear, linearDerivative);
-//
-// 		MatrixXd w3 {{0.2}};
-// 		VectorXd b3 {{0.8}};
-// 		Layer layer3(w3, b3, linear, linearDerivative);
-//
-// 		Network network({layer1, layer2, layer3});
-//
-// 		VectorXd in1 {{0.2}};
-// 		VectorXd out1 {{0.8}};
-// 		std::vector<VectorXd> in {in1};
-// 		std::vector<VectorXd> out {out1};
-//
-// 		network.train(in, out, 1);
-// 	}
-// }
-//
-// BENCHMARK(BM_DeepNudge);
+BENCHMARK(BM_ForwardPropSmall);
+
+static void BM_ForwardPropLarge(benchmark::State& state) {
+  MatrixXd w(4, 4);
+  w << 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0;
+  VectorXd b(4);
+  b << 1.0, 1.0, 1.0, 1.0;
+  VectorXd in(4);
+  in << 1.0, 1.0, 1.0, 1.0;
+
+  Network nw(std::vector<MatrixXd>{w, w, w, w},
+             std::vector<VectorXd>{b, b, b, b},
+             std::vector<ActivationFunction*>{&relu, &relu, &relu, &relu},
+             mean_sqr_error, mean_sqr_error_der);
+
+  for (auto _ : state) {
+    nw.forwardProp(in);
+  }
+}
+
+BENCHMARK(BM_ForwardPropLarge);
