@@ -24,7 +24,7 @@ Network::Network(std::vector<int> sizes,
     : act_func_(act_func),
       cost_func_(cost_func),
       cost_func_der_(cost_func_der) {
-  for (int i = 0; i < sizes.size() - 1; i++) {
+  for (unsigned int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
   }
@@ -32,7 +32,7 @@ Network::Network(std::vector<int> sizes,
 
 VectorXd Network::forwardProp(VectorXd in) {
   VectorXd curr = in;
-  for (int i = 0; i < weights_.size(); i++) {
+  for (unsigned int i = 0; i < weights_.size(); i++) {
     curr = act_func_[i]->function(weights_[i] * curr + biases_[i]);
   }
   return curr;
@@ -45,18 +45,18 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   // Accumulate the changes in the gradient
   std::vector<MatrixXd> backprop_weight_acc;
   std::vector<VectorXd> backprop_bias_acc;
-  for (int i = 0; i < weights_.size(); i++) {
+  for (unsigned int i = 0; i < weights_.size(); i++) {
     backprop_weight_acc.push_back(weights_[i] - weights_[i]);
     backprop_bias_acc.push_back(biases_[i] - biases_[i]);
   }
 
   // For each data point, accumulate the changes
-  for (int i = 0; i < in.size(); i++) {
+  for (unsigned int i = 0; i < in.size(); i++) {
     std::vector<VectorXd> a(weights_.size());
 
     // Forward propogation
     VectorXd prop = in[i];
-    for (int j = 0; j < weights_.size(); j++) {
+    for (unsigned int j = 0; j < weights_.size(); j++) {
       VectorXd z = weights_[j] * prop + biases_[j];
 
       // Record data for backpropogation
@@ -83,7 +83,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 
     // Apply the accumulated changes
     if (i % 100 == 99) {
-      for (int j = 0; j < weights_.size(); j++) {
+      for (unsigned int j = 0; j < weights_.size(); j++) {
         weights_[j] += backprop_weight_acc[j] / 100;
         biases_[j] += backprop_bias_acc[j] / 100;
         backprop_weight_acc[j] = weights_[j] - weights_[j];
@@ -93,7 +93,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
   }
 
   // Apply the accumulated changes
-  for (int i = 0; i < weights_.size(); i++) {
+  for (unsigned int i = 0; i < weights_.size(); i++) {
     weights_[i] += backprop_weight_acc[i] / in.size();
     biases_[i] += backprop_bias_acc[i] / in.size();
   }
@@ -103,7 +103,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 double Network::getCost(std::vector<VectorXd> in,
                         std::vector<VectorXd> exp_out) {
   double error = 0;
-  for (int i = 0; i < in.size(); i++) {
+  for (unsigned int i = 0; i < in.size(); i++) {
     error += cost_func_(forwardProp(in[i]), exp_out[i]);
   }
   return error / in.size();
@@ -113,7 +113,7 @@ double Network::getCost(std::vector<VectorXd> in,
 double Network::getAccuracy(std::vector<VectorXd> in,
                             std::vector<VectorXd> exp_out) {
   double acc = 0;
-  for (int i = 0; i < in.size(); i++) {
+  for (unsigned int i = 0; i < in.size(); i++) {
     VectorXd val = forwardProp(in[i]);
     Eigen::Index predicted, expected;
     val.maxCoeff(&predicted);
