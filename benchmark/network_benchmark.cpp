@@ -110,8 +110,7 @@ static void BM_ForwardPropSmall(benchmark::State& state) {
   in << 1.0, 1.0;
 
   Network nw(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
-             std::vector<ActivationFunction*>{&relu, &relu}, mean_sqr_error,
-             mean_sqr_error_der);
+             std::vector<ActivationFunction*>{&relu, &relu}, &mean_sqr_error);
 
   for (auto _ : state) {
     nw.forwardProp(in);
@@ -132,7 +131,7 @@ static void BM_ForwardPropLarge(benchmark::State& state) {
   Network nw(std::vector<MatrixXd>{w, w, w, w},
              std::vector<VectorXd>{b, b, b, b},
              std::vector<ActivationFunction*>{&relu, &relu, &relu, &relu},
-             mean_sqr_error, mean_sqr_error_der);
+             &mean_sqr_error);
 
   for (auto _ : state) {
     nw.forwardProp(in);
