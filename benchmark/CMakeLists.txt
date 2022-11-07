@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.22.1)
 project(DeepPPBenchmark)
 
 set(Sources 
-	sample_benchmark.cpp
 	network_benchmark.cpp
+	activation_function_benchmark.cpp
+	t_activation_function_benchmark.cpp
 )
 
 add_executable(${PROJECT_NAME} ${Sources})
