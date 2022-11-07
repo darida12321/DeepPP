@@ -6,12 +6,13 @@
 #include <vector>
 
 #include "Eigen/src/Core/Matrix.h"
+#include "cost_function.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 class Network {
-public:
+ public:
   /**
    * @brief Construct a new Network object
    *
@@ -20,15 +21,10 @@ public:
    * @param biases Bias vectors
    * @param act_func The activation functions to be applied at each layer of the
    * network
-   * @param act_func_der The derivatives of the activation functions
    * @param cost_func The cost function
-   * @param cost_func_der The derivatives of the cost function with respect to
-   * the output
    */
   Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
-          std::vector<ActivationFunction*> act_func,
-          std::function<double(VectorXd, VectorXd)> cost_func,
-          std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
+          std::vector<ActivationFunction*> act_func, CostFunction* cost_func);
 
   /**
    * @brief Construct a new Network object using layer sizes
@@ -36,15 +32,10 @@ public:
    * @param layer_sizes A vector containing the sizes of the layers
    * @param act_func The activation functions to be applied at each layer of the
    * network
-   * @param act_func_der The derivatives of the activetion functions
    * @param cost_func The cost function
-   * @param cost_func_der The derivatives of the cost function with respect to
-   * the output
    */
   Network(std::vector<int> layer_sizes,
-          std::vector<ActivationFunction*> act_func,
-          std::function<double(VectorXd, VectorXd)> cost_func,
-          std::function<VectorXd(VectorXd, VectorXd)> cost_func_der);
+          std::vector<ActivationFunction*> act_func, CostFunction* cost_func);
 
   /**
    * @brief Propagete a vector through the network
@@ -102,6 +93,5 @@ public:
   std::vector<MatrixXd> weights_ = std::vector<MatrixXd>();
   std::vector<VectorXd> biases_ = std::vector<VectorXd>();
   std::vector<ActivationFunction*> act_func_;
-  std::function<double(VectorXd, VectorXd)> cost_func_;
-  std::function<VectorXd(VectorXd, VectorXd)> cost_func_der_;
+  CostFunction* cost_func_;
 };

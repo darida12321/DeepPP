@@ -115,7 +115,7 @@ TEST(MnistTest, MSEtest) {
   Network network(std::vector<MatrixXd>{w1, w2, w3},
                   std::vector<VectorXd>{b1, b2, b3},
                   std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-                  mean_sqr_error, mean_sqr_error_der);
+                  &mean_sqr_error);
 
   ImageSet image;
   std::vector<VectorXd> x_train{image.getImage(0)};
@@ -154,7 +154,7 @@ TEST(MnistTest, SCCtest) {
   Network network(std::vector<MatrixXd>{w1, w2, w3},
                   std::vector<VectorXd>{b1, b2, b3},
                   std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-                  cat_cross_entropy, cat_cross_entropy_der);
+                  &cat_cross_entropy);
 
   ImageSet image;
   std::vector<VectorXd> x_train{image.getImage(0)};
@@ -186,7 +186,7 @@ TEST(MnistTest, IntegrationTest) {
   Network network(std::vector<MatrixXd>{w1, w2, w3},
                   std::vector<VectorXd>{b1, b2, b3},
                   std::vector<ActivationFunction*>{&relu, &relu, &softmax},
-                  cat_cross_entropy, cat_cross_entropy_der);
+                  &cat_cross_entropy);
 
   ImageSet image;
 
@@ -200,6 +200,7 @@ TEST(MnistTest, IntegrationTest) {
     std::cout << "Round " << i << std::endl;
   }
 
-  double acc = network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
+  double acc =
+      network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
   ASSERT_GT(acc, 0.9);
 }
