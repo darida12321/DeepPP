@@ -5,9 +5,6 @@
 #include <Eigen/Dense>
 #include <cmath>
 
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
-
 namespace Template {
 template <int size>
 class CostFunction {
@@ -23,7 +20,7 @@ class MeanSquareError : public CostFunction<size> {
     auto errors = (out - exp_out).array();
     return (errors * errors).sum() / out.rows();
   }
-  inline VectorXd derivative(Vectord<size> out, Vectord<size> exp_out) {
+  inline Vectord<size> derivative(Vectord<size> out, Vectord<size> exp_out) {
     return (2.0 / out.rows()) * (out - exp_out);
   }
 };
@@ -36,7 +33,7 @@ class CategoricalCrossEntropy : public CostFunction<size> {
     auto logs = out.unaryExpr([](double x) { return log(clip(x)); }).array();
     return -(logs * exp_out.array()).sum();
   }
-  inline VectorXd derivative(Vectord<size> out, Vectord<size> exp_out) {
+  inline Vectord<size> derivative(Vectord<size> out, Vectord<size> exp_out) {
     return -exp_out.cwiseQuotient(
         out.unaryExpr([](double x) { return clip(x); }));
   }
