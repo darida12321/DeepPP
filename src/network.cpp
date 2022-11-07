@@ -6,24 +6,20 @@
 
 #include "Eigen/Core"
 #include "Eigen/src/Core/Matrix.h"
+#include "cost_function.h"
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
                  std::vector<ActivationFunction*> act_func,
-                 std::function<double(VectorXd, VectorXd)> cost_func,
-                 std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
+                 CostFunction* cost_func)
     : weights_(weights),
       biases_(biases),
       act_func_(act_func),
-      cost_func_(cost_func),
-      cost_func_der_(cost_func_der) {}
+      cost_func_(cost_func) {}
 Network::Network(std::vector<int> sizes,
                  std::vector<ActivationFunction*> act_func,
-                 std::function<double(VectorXd, VectorXd)> cost_func,
-                 std::function<VectorXd(VectorXd, VectorXd)> cost_func_der)
-    : act_func_(act_func),
-      cost_func_(cost_func),
-      cost_func_der_(cost_func_der) {
+                 CostFunction* cost_func)
+    : act_func_(act_func), cost_func_(cost_func) {
   for (unsigned int i = 0; i < sizes.size() - 1; i++) {
     weights_.push_back(MatrixXd::Random(sizes[i + 1], sizes[i]));
     biases_.push_back(VectorXd::Random(sizes[i + 1]));
@@ -67,7 +63,7 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
     }
 
     // Backward propogation
-    VectorXd dcda = cost_func_der_(prop, exp_out[i]);
+    VectorXd dcda = cost_func_->derivative(prop, exp_out[i]);
     for (int j = weights_.size() - 1; j >= 0; j--) {
       VectorXd z = weights_[j] * a[j] + biases_[j];
       MatrixXd dadz = act_func_[j]->derivative(z);
@@ -104,7 +100,7 @@ double Network::getCost(std::vector<VectorXd> in,
                         std::vector<VectorXd> exp_out) {
   double error = 0;
   for (unsigned int i = 0; i < in.size(); i++) {
-    error += cost_func_(forwardProp(in[i]), exp_out[i]);
+    error += cost_func_->function(forwardProp(in[i]), exp_out[i]);
   }
   return error / in.size();
 }

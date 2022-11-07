@@ -8,10 +8,12 @@ add_compile_options(
 )
 
 set(Headers
+    include/cost_function.h
     include/activation_function.h
     include/network.h
 )
 set(Sources
+    src/cost_function.cpp
     src/activation_function.cpp
     src/network.cpp
 )
