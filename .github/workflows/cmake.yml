@@ -2,7 +2,7 @@ name: CMake
 
 on:
   push:
-    branches: ["main", "BasicNN", "tests", "cicd"]
+    branches: ["main", "BasicNN", "tests", "cicd", "templates"]
   pull_request:
     branches: ["main"]
 
