@@ -6,6 +6,7 @@ set(Sources
     test_forwardprop.cpp
     test_backprop.cpp
     test_activation_function.cpp
+    test_cost_function.cpp
     test_mnist.cpp
 )
 
