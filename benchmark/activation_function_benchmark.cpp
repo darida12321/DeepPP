@@ -1,7 +1,7 @@
 
 #include <activation_function.h>
-#include <templates/activation_function.h>
 #include <benchmark/benchmark.h>
+#include <templates/activation_function.h>
 #include <templates/linalg.h>
 
 static void BM_Sigmoid(benchmark::State& state) {
