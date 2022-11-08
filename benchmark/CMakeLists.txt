@@ -5,7 +5,7 @@ project(DeepPPBenchmark)
 set(Sources 
 	network_benchmark.cpp
 	activation_function_benchmark.cpp
-	t_activation_function_benchmark.cpp
+	cost_function_benchmark.cpp
 )
 
 add_executable(${PROJECT_NAME} ${Sources})
