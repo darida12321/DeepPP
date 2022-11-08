@@ -9,7 +9,21 @@ namespace Template {
 template <int size>
 class CostFunction {
  public:
+  /**
+   * @brief Compute the cost function based on expected and actual outputs
+   *
+   * @param out The actual output of the neural network
+   * @param exp_out The expected output
+   * @return double The cost
+   */
   virtual inline double function(Vectord<size> out, Vectord<size> exp_out) = 0;
+  /**
+   * @brief Compute the gradient of the cost function
+   *
+   * @param out The actual output of the neural network
+   * @param exp_out The expected output
+   * @return Vector<size> Vector containing the parial derivatives of the cost
+   */
   virtual inline Vectord<size> derivative(Vectord<size> out,
                                           Vectord<size> exp_out) = 0;
 };

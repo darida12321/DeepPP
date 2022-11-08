@@ -11,10 +11,6 @@ const int IMG_HEIGHT = 28;
 typedef Eigen::Vector<double, IMG_WIDTH * IMG_HEIGHT> ImgVector;
 typedef Eigen::Vector<double, 10> ImgLabel;
 
-/**
- * @brief A class representing the MNIST image set
- *
- */
 class ImageSet {
  public:
   /**
