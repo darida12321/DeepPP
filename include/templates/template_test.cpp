@@ -1,5 +1,5 @@
-#include <tuple>
 #include <iostream>
+#include <tuple>
 #include <utility>
 #include <Eigen/Dense>
 
@@ -226,8 +226,6 @@ struct MeanSquareError {
     return (2.0 / out.rows()) * (out - exp_out);
   }
 };
-
-
 
 int main(){
   Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
