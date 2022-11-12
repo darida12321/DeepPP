@@ -11,6 +11,7 @@ set(Headers
     include/cost_function.h
     include/activation_function.h
     include/network.h
+    include/templates/template_test.h
 )
 set(Sources
     src/cost_function.cpp

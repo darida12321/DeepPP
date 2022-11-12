@@ -246,40 +246,40 @@ struct MeanSquareError {
   }
 };
 
-int main() {
-  Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
-  Eigen::Matrix<double, 2, 2> w2 = Eigen::Matrix<double, 2, 2>::Ones();
-
-  Eigen::Vector<double, 2> b1 = Eigen::Vector<double, 2>::Ones();
-  Eigen::Vector<double, 2> b2 = Eigen::Vector<double, 2>::Ones();
-
-  Network<
-    MeanSquareError,
-    Layer<2, 2, Sigmoid>, 
-    Layer<2, 2, Sigmoid> 
-  > l;
-  // TODO: smart template stuff to remove layer size redundancy
-  // TODO  bias and weight initializer classes
-
-  l.setWeights(w1, w2);
-  l.setBiases(b1, b2);
-
-  Eigen::Vector<double, 2> in1{1, 1};
-  Eigen::Vector<double, 2> out1{3, 3};
-
-  Eigen::Vector<double, 2> in2{3, 5};
-  Eigen::Vector<double, 2> out2{6, 8};
-
-  std::vector<Eigen::Vector<double, 2>> ins{in1, in2};
-  std::vector<Eigen::Vector<double, 2>> outs{out1, out2};
-
-  l.train(ins, outs, 1);
-
-  cout << "WEIGHTS:" << endl;
-  cout << l.getWeight<0>() << endl << endl;
-  cout << l.getWeight<1>() << endl << endl;
-
-  cout << "BIASES:" << endl;
-  cout << l.getBias<0>() << endl << endl;
-  cout << l.getBias<1>() << endl << endl;
-}
+// int main() {
+//   Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
+//   Eigen::Matrix<double, 2, 2> w2 = Eigen::Matrix<double, 2, 2>::Ones();
+//
+//   Eigen::Vector<double, 2> b1 = Eigen::Vector<double, 2>::Ones();
+//   Eigen::Vector<double, 2> b2 = Eigen::Vector<double, 2>::Ones();
+//
+//   Network<
+//     MeanSquareError,
+//     Layer<2, 2, Sigmoid>, 
+//     Layer<2, 2, Sigmoid> 
+//   > l;
+//   // TODO: smart template stuff to remove layer size redundancy
+//   // TODO  bias and weight initializer classes
+//
+//   l.setWeights(w1, w2);
+//   l.setBiases(b1, b2);
+//
+//   Eigen::Vector<double, 2> in1{1, 1};
+//   Eigen::Vector<double, 2> out1{3, 3};
+//
+//   Eigen::Vector<double, 2> in2{3, 5};
+//   Eigen::Vector<double, 2> out2{6, 8};
+//
+//   std::vector<Eigen::Vector<double, 2>> ins{in1, in2};
+//   std::vector<Eigen::Vector<double, 2>> outs{out1, out2};
+//
+//   l.train(ins, outs, 1);
+//
+//   cout << "WEIGHTS:" << endl;
+//   cout << l.getWeight<0>() << endl << endl;
+//   cout << l.getWeight<1>() << endl << endl;
+//
+//   cout << "BIASES:" << endl;
+//   cout << l.getBias<0>() << endl << endl;
+//   cout << l.getBias<1>() << endl << endl;
+// }
