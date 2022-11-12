@@ -134,7 +134,7 @@ TEST(LayerBackPropTest, Sigmoid) {
   VectorXd b1(2);
   b1 << 1.0046, 1.0046;
   MatrixXd w2(2, 2);
-  w2 << 1.1621, 1.1621, 1.2072, 1.2073;
+  w2 << 1.1621, 1.1621, 1.2073, 1.2073;
   VectorXd b2(2);
   b2 << 1.1645, 1.2097;
   std::vector<MatrixXd> ws{w1, w2};
