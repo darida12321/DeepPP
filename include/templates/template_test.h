@@ -21,14 +21,20 @@ struct Layer : Activation<Out> {
   }
 };
 
+
+
 template <template <int> typename Cost, typename... Ls>
 struct Network {};
+
+
+
 
 template <template <int> typename CostFunction, int... Ins, int... Outs,
           template <int> typename... Activations>
 struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
     : CostFunction<select_last<Outs...>::elem> {
- public:
+
+public:
   using Cost = CostFunction<select_last<Outs...>::elem>;
   using InputVector = Eigen::Vector<double, select_first<Ins...>::elem>;
   using OutputVector = Eigen::Vector<double, select_last<Outs...>::elem>;
@@ -151,7 +157,7 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
     (std::make_index_sequence<N>{});
   }
 
- private:
+private:
   std::tuple<Layer<Ins, Outs, Activations>...> layers_;
 };
 
