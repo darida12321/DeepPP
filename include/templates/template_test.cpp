@@ -1,42 +1,43 @@
+#include <Eigen/Dense>
 #include <iostream>
 #include <tuple>
 #include <utility>
-#include <Eigen/Dense>
 
 using namespace std;
 
 // Select last argument
-template<int ...Args> struct select_last;
-template<int A>
-struct select_last<A> { static constexpr int elem = A; };
-template<int A, int... Args> 
-struct select_last<A,Args...>{ 
+template <int... Args>
+struct select_last;
+template <int A>
+struct select_last<A> {
+  static constexpr int elem = A;
+};
+template <int A, int... Args>
+struct select_last<A, Args...> {
   static constexpr int elem = select_last<Args...>::elem;
 };
 
 // Select first argument
-template<int ...Args> struct select_first;
-template<int A, int... Args> 
-struct select_first<A,Args...>{ 
+template <int... Args>
+struct select_first;
+template <int A, int... Args>
+struct select_first<A, Args...> {
   static constexpr int elem = A;
 };
 
 // Reverse index sequence
-template<int... Ints> struct reverse_index_sequence {};
+template <int... Ints>
+struct reverse_index_sequence {};
 
-template<std::size_t N, int... Is>
-struct make_reverse_index_sequence : 
-  make_reverse_index_sequence<N - 1, Is..., N - 1> 
-{};
-template<int... Is>
-struct make_reverse_index_sequence<0, Is...> : 
-  reverse_index_sequence<Is...> 
-{};
+template <std::size_t N, int... Is>
+struct make_reverse_index_sequence
+    : make_reverse_index_sequence<N - 1, Is..., N - 1> {};
+template <int... Is>
+struct make_reverse_index_sequence<0, Is...> : reverse_index_sequence<Is...> {};
 
-
-template <int In, int Out, template<int> typename Activation>
-struct Layer : Activation<Out>{
-public:
+template <int In, int Out, template <int> typename Activation>
+struct Layer : Activation<Out> {
+ public:
   Eigen::Matrix<double, Out, In> weight_;
   Eigen::Vector<double, Out> bias_;
 
@@ -44,7 +45,6 @@ public:
     return Activation<Out>::activation(bias_ + (weight_ * rhs));
   }
 };
-
 
 template <template<int> typename Cost, typename... Ls>
 struct Network {};
@@ -70,29 +70,23 @@ public:
   static constexpr int N = sizeof...(Outs);
 
   // Setters
-  template<typename... Weights>
+  template <typename... Weights>
   void setWeights(Weights... weights) {
-    [this, &weights...] <std::size_t... I>
-    (std::index_sequence<I...>)
-    {
-      ((std::get<I>(layers_).weight_ = weights) , ...);
-    }(
-      std::make_index_sequence<N>{}
-    );
+    [ this, &weights... ]<std::size_t... I>(std::index_sequence<I...>) {
+      ((std::get<I>(layers_).weight_ = weights), ...);
+    }
+    (std::make_index_sequence<N>{});
   }
-  template<typename... Biases>
+  template <typename... Biases>
   void setBiases(Biases... biases) {
-    [this, &biases...] <std::size_t... I>
-    (std::index_sequence<I...>)
-    {
-      ((std::get<I>(layers_).bias_ = biases) , ...);
-    }(
-      std::make_index_sequence<N>{}
-    );
+    [ this, &biases... ]<std::size_t... I>(std::index_sequence<I...>) {
+      ((std::get<I>(layers_).bias_ = biases), ...);
+    }
+    (std::make_index_sequence<N>{});
   }
 
   // Getters
-  template<int I>
+  template <int I>
   typename std::tuple_element<I, MatrixList>::type getWeight() {
     return std::get<I>(layers_).weight_;
   }
@@ -101,25 +95,18 @@ public:
     return std::get<I>(layers_).bias_;
   }
 
-
   // Forward propogation
 
   OutputVector forwardProp(InputVector input) {
-    return [this, &input] <int... I>
-    (reverse_index_sequence<I...>)
-    {
+    return [ this, &input ]<int... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
-    }(
-      make_reverse_index_sequence<N>{}
-    );
+    }
+    (make_reverse_index_sequence<N>{});
   }
 
   // Backpropogation
-  void train(
-      std::vector<InputVector> in, 
-      std::vector<OutputVector> exp_out,
-      double stepSize
-  ) {
+  void train(std::vector<InputVector> in, std::vector<OutputVector> exp_out,
+             double stepSize) {
     // Create change accumulators
     MatrixList weight_acc;
     OutVectorList bias_acc;
@@ -140,15 +127,14 @@ public:
       std::get<0>(a) = in[i];
 
       // Forward propogation
-      [this, &a, &weight_acc, &bias_acc] <std::size_t... I>
-      (std::index_sequence<I...>){
-        ((
-          std::get<I+1>(a) = get<I>(layers_).activation(
-            std::get<I>(layers_).bias_ + 
-            std::get<I>(layers_).weight_ * std::get<I>(a)
-          )
-        ) , ...);
-      }(std::make_index_sequence<N>{});
+      [ this, &a, &weight_acc, &
+        bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
+        ((std::get<I + 1>(a) = get<I>(layers_).activation(
+              std::get<I>(layers_).bias_ +
+              std::get<I>(layers_).weight_ * std::get<I>(a))),
+         ...);
+      }
+      (std::make_index_sequence<N>{});
 
       // cout << "A" << endl;
       // cout << "Layer 0: " << endl << std::get<0>(a) << endl << endl;
@@ -160,7 +146,7 @@ public:
       [this, &i, &exp_out, &a, &weight_acc, &bias_acc, &stepSize] <int... I>
       (reverse_index_sequence<I...>){
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
-        // Calculate error as last element 
+        // Calculate error as last element
         std::get<N>(dcda) = Cost::cost_der(std::get<N>(a), exp_out[i]);
 
         // dcda[i] = act_der(b[j] + w[j] * a[j]) * dcda[i+1]
@@ -204,12 +190,11 @@ public:
     }(std::make_index_sequence<N>{});
   }
 
-private:
+ private:
   std::tuple<Layer<Ins, Outs, Activations>...> layers_;
 };
 
-
-template<int N>
+template <int N>
 struct Linear {
   typedef Eigen::Vector<double, N> Vec;
   typedef Eigen::Matrix<double, N, N> Mat;
@@ -261,7 +246,7 @@ struct MeanSquareError {
   }
 };
 
-int main(){
+int main() {
   Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
   Eigen::Matrix<double, 2, 2> w2 = Eigen::Matrix<double, 2, 2>::Ones();
 
