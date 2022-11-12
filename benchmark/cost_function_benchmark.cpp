@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <cost_function.h>
+// TODO restore
 // #include <templates/cost_function.h>
 // #include <templates/linalg.h>
 
