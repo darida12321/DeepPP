@@ -1,51 +1,35 @@
 #include <activation_function.h>
 #include <gtest/gtest.h>
-// #include <templates/activation_function.h>
-// #include <templates/linalg.h>
+
+#include <Eigen/Dense>
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-// TEST(ActivationFunction, Sigmoid) {
-//   for (int i = 0; i < 1000; i++) {
-//     VectorXd v = VectorXd::Random(10);
-//     Vectord<10> v_t(v);
-//     Template::Sigmoid<10> sigmoid_t;
-//
-//     EXPECT_TRUE(sigmoid.function(v).isApprox(sigmoid_t.function(v_t)));
-//     EXPECT_TRUE(sigmoid.derivative(v).isApprox(sigmoid_t.derivative(v_t)));
-//   }
-// }
-//
-// TEST(ActivationFunction, Softmax) {
-//   for (int i = 0; i < 1000; i++) {
-//     VectorXd v = VectorXd::Random(10);
-//     Vectord<10> v_t(v);
-//     Template::Softmax<10> softmax_t;
-//
-//     EXPECT_TRUE(softmax.function(v).isApprox(softmax_t.function(v_t)));
-//     EXPECT_TRUE(softmax.derivative(v).isApprox(softmax_t.derivative(v_t)));
-//   }
-// }
-//
-// TEST(ActivationFunction, Relu) {
-//   for (int i = 0; i < 1000; i++) {
-//     VectorXd v = VectorXd::Random(10);
-//     Vectord<10> v_t(v);
-//     Template::Relu<10> relu_t;
-//
-//     EXPECT_TRUE(relu.function(v).isApprox(relu_t.function(v_t)));
-//     EXPECT_TRUE(relu.derivative(v).isApprox(relu_t.derivative(v_t)));
-//   }
-// }
-//
-// TEST(ActivationFunction, Linear) {
-//   for (int i = 0; i < 1000; i++) {
-//     VectorXd v = VectorXd::Random(10);
-//     Vectord<10> v_t(v);
-//     Template::Linear<10> linear_t;
-//
-//     EXPECT_TRUE(linear.function(v).isApprox(linear_t.function(v_t)));
-//     EXPECT_TRUE(linear.derivative(v).isApprox(linear_t.derivative(v_t)));
-//   }
-// }
+TEST(ActivationFunction, Sigmoid) {
+    VectorXd in; in << -2, -1, 0, 1, 2;
+    VectorXd out; out << 0.119, 0.269, 0.5, 0.731, 0.881;
+    
+    EXPECT_TRUE(sigmoid.function(in).isApprox(out, 0.001));
+}
+
+TEST(ActivationFunction, Softmax) {
+    VectorXd in; in << 1, 2, 3, 4;
+    VectorXd out; out << 0.032, 0.087, 0.237, 0.644;
+
+    EXPECT_TRUE(softmax.function(in).isApprox(out, 0.001));
+}
+
+TEST(ActivationFunction, Relu) {
+    VectorXd in; in << -2, -1, 0, 1, 2;
+    VectorXd out; out << 0, 0, 0, 1, 2;
+
+    EXPECT_TRUE(relu.function(in).isApprox(out, 0.001))
+}
+
+TEST(ActivationFunction, Linear) {
+    VectorXd in; in << -2, -1, 0, 1, 2;
+    VectorXd out; out << -2, -1, 0, 1, 2;
+
+    EXPECT_TRUE(linear.function(in).isApprox(out, 0.001));
+}
