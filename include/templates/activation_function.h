@@ -15,7 +15,7 @@ class ActivationFunction {
    */
   virtual inline Vectord<size> function(Vectord<size> x) = 0;
   /**
-   * @brief Compute the partial derivatives of the sctivation function
+   * @brief Compute the partial derivatives of the activation function
    *
    * @param x
    * @return Matrixd<size>
