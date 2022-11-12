@@ -2,38 +2,13 @@
 #include <iostream>
 #include <tuple>
 #include <utility>
+#include <templates/template_helpers.h>
+#include <templates/activation_function.h>
+#include <templates/cost_function.h>
 
-using namespace std;
-
-// Select last argument
-template <int... Args>
-struct select_last;
-template <int A>
-struct select_last<A> {
-  static constexpr int elem = A;
-};
-template <int A, int... Args>
-struct select_last<A, Args...> {
-  static constexpr int elem = select_last<Args...>::elem;
-};
-
-// Select first argument
-template <int... Args>
-struct select_first;
-template <int A, int... Args>
-struct select_first<A, Args...> {
-  static constexpr int elem = A;
-};
-
-// Reverse index sequence
-template <int... Ints>
-struct reverse_index_sequence {};
-
-template <std::size_t N, int... Is>
-struct make_reverse_index_sequence
-    : make_reverse_index_sequence<N - 1, Is..., N - 1> {};
-template <int... Is>
-struct make_reverse_index_sequence<0, Is...> : reverse_index_sequence<Is...> {};
+// TODO  use std::size for stuff
+// TODO  bias and weight initializer classes
+// TODO: smart template stuff to remove layer size redundancy
 
 template <int In, int Out, template <int> typename Activation>
 struct Layer : Activation<Out> {
@@ -91,7 +66,6 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
   }
 
   // Forward propogation
-
   OutputVector forwardProp(InputVector input) {
     return [ this, &input ]<int... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
@@ -181,119 +155,5 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
   std::tuple<Layer<Ins, Outs, Activations>...> layers_;
 };
 
-template <int N>
-struct Linear {
-  typedef Eigen::Vector<double, N> Vec;
-  typedef Eigen::Matrix<double, N, N> Mat;
-
-  inline Vec activation(Vec x) { return x; }
-
-  inline Mat activation_der(Vec x) {
-    Mat out = Mat::Zero();
-    for (int i = 0; i < x.rows(); i++) {
-      out(i, i) = 1;
-    }
-    return out;
-  }
-};
-
-template <int N>
-struct Sigmoid {
-  typedef Eigen::Vector<double, N> Vec;
-  typedef Eigen::Matrix<double, N, N> Mat;
-
-  inline Vec activation(Vec x) {
-    return x.unaryExpr([](double x) { return 1 / (1 + std::exp(-x)); });
-  }
-
-  inline Mat activation_der(Vec x) {
-    Mat out = Mat::Zero();
-    Vec diag = activation(x).cwiseProduct(
-        activation(x).unaryExpr([](double x) { return 1 - x; }));
-
-    for (int i = 0; i < N; i++) {
-      out(i, i) = diag(i);
-    }
-    return out;
-  }
-};
-
-template<int N>
-struct Softmax {
-  typedef Eigen::Vector<double, N> Vec;
-  typedef Eigen::Matrix<double, N, N> Mat;
-
-  inline Vec activation(Vec x) {
-    double max = x.maxCoeff();
-    Vec shiftx = x.array() - max;
-    Vec exps = shiftx.unaryExpr([](double x) { return std::exp(x); });
-    return exps.array() / exps.sum();
-  }
-
-  inline Mat activation_der(Vec x) {
-    Vec y = activation(x);
-    Mat out = Mat::Zero();
-    for (int i = 0; i < x.rows(); i++) {
-      for (int j = 0; j < x.rows(); j++) {
-        if (i == j) {
-          out(i, j) += y(i) * (1 - y(i));
-        } else {
-          out(i, j) += - y(i) * y(j);
-        }
-      }
-    }
-    return out;
-  }
-};
 
 
-template<int N>
-struct MeanSquareError {
-  typedef Eigen::Vector<double, N> Vec;
-  inline double cost(Vec out, Vec exp_out) {
-    auto errors = (out - exp_out).array();
-    return (errors * errors).sum() / out.rows();
-  }
-  inline Vec cost_der(Vec out, Vec exp_out) {
-    return (2.0 / out.rows()) * (out - exp_out);
-  }
-};
-
-// TODO: smart template stuff to remove layer size redundancy
-// TODO  bias and weight initializer classes
-// TODO delete this text
-// int main() {
-//   Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
-//   Eigen::Matrix<double, 2, 2> w2 = Eigen::Matrix<double, 2, 2>::Ones();
-//
-//   Eigen::Vector<double, 2> b1 = Eigen::Vector<double, 2>::Ones();
-//   Eigen::Vector<double, 2> b2 = Eigen::Vector<double, 2>::Ones();
-//
-//   Network<
-//     MeanSquareError,
-//     Layer<2, 2, Sigmoid>, 
-//     Layer<2, 2, Sigmoid> 
-//   > l;
-//
-//   l.setWeights(w1, w2);
-//   l.setBiases(b1, b2);
-//
-//   Eigen::Vector<double, 2> in1{1, 1};
-//   Eigen::Vector<double, 2> out1{3, 3};
-//
-//   Eigen::Vector<double, 2> in2{3, 5};
-//   Eigen::Vector<double, 2> out2{6, 8};
-//
-//   std::vector<Eigen::Vector<double, 2>> ins{in1, in2};
-//   std::vector<Eigen::Vector<double, 2>> outs{out1, out2};
-//
-//   l.train(ins, outs, 1);
-//
-//   cout << "WEIGHTS:" << endl;
-//   cout << l.getWeight<0>() << endl << endl;
-//   cout << l.getWeight<1>() << endl << endl;
-//
-//   cout << "BIASES:" << endl;
-//   cout << l.getBias<0>() << endl << endl;
-//   cout << l.getBias<1>() << endl << endl;
-// }

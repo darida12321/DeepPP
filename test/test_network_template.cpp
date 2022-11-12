@@ -8,6 +8,7 @@
 using Eigen::Matrix;
 using Eigen::Vector;
 
+// TODO use is_approx
 TEST(NetworkTemplate, SoftMax) {
   // Create 2-2-2 neural network
   Matrix<double, 2, 2> w1{{1, 2}, {1, 4}};
@@ -26,7 +27,7 @@ TEST(NetworkTemplate, SoftMax) {
   // Check forwardpropogation value
   Vector<double, 2> in1{2, 4};
   Vector<double, 2> in2{1, 1};
-
+ 
   Vector<double, 2> out1 = network.forwardProp(in1);
   Vector<double, 2> out2 = network.forwardProp(in2);
 
