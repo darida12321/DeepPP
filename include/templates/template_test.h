@@ -126,8 +126,7 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
       std::get<0>(a) = in[i];
 
       // Forward propogation
-      [ this, &a, &weight_acc, &
-        bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
+      [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
         ((std::get<I + 1>(a) = get<I>(layers_).activation(
               std::get<I>(layers_).bias_ +
               std::get<I>(layers_).weight_ * std::get<I>(a))),
@@ -135,13 +134,7 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
       }
       (std::make_index_sequence<N>{});
 
-      // cout << "A" << endl;
-      // cout << "Layer 0: " << endl << std::get<0>(a) << endl << endl;
-      // cout << "Layer 1: " << endl << std::get<1>(a) << endl << endl;
-      // cout << "Layer 2: " << endl << std::get<2>(a) << endl << endl;
-
       // Backward propogation
-      cout << std::get<N>(a) << endl << endl;
       [ this, &i, &exp_out, &a, &weight_acc, &bias_acc, &
         stepSize ]<int... I>(reverse_index_sequence<I...>) {
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
@@ -156,10 +149,6 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
                                                       std::get<I>(a)) *
               std::get<I + 1>(dcda)),
          ...);
-        // cout << "DCDA" << endl;
-        // cout << "Layer 0: " << endl << std::get<0>(dcda) << endl << endl;
-        // cout << "Layer 1: " << endl << std::get<1>(dcda) << endl << endl;
-        // cout << "Layer 2: " << endl << std::get<2>(dcda) << endl << endl;
 
         // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
         ((std::get<I>(weight_acc) -=
@@ -174,11 +163,6 @@ struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
                                                   std::get<I>(a)) *
           std::get<I + 1>(dcda) * stepSize),
          ...);
-
-        // cout << "weight_acc:" << endl;
-        // cout << "Layer 0: " << endl << std::get<0>(weight_acc) << endl <<
-        // endl; cout << "Layer 1: " << endl << std::get<1>(weight_acc) << endl
-        // << endl;
       }
       (make_reverse_index_sequence<N>{});
     }
@@ -275,6 +259,9 @@ struct MeanSquareError {
   }
 };
 
+// TODO: smart template stuff to remove layer size redundancy
+// TODO  bias and weight initializer classes
+// TODO delete this text
 // int main() {
 //   Eigen::Matrix<double, 2, 2> w1 = Eigen::Matrix<double, 2, 2>::Ones();
 //   Eigen::Matrix<double, 2, 2> w2 = Eigen::Matrix<double, 2, 2>::Ones();
@@ -287,8 +274,6 @@ struct MeanSquareError {
 //     Layer<2, 2, Sigmoid>, 
 //     Layer<2, 2, Sigmoid> 
 //   > l;
-//   // TODO: smart template stuff to remove layer size redundancy
-//   // TODO  bias and weight initializer classes
 //
 //   l.setWeights(w1, w2);
 //   l.setBiases(b1, b2);
