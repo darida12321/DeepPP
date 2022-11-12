@@ -19,11 +19,7 @@ TEST(LayerForwardPropTemplate, SoftMax) {
   Vector<double, 2> b2;
   b2 << 9, -1;
 
-  Network<
-    MeanSquareError,
-    Layer<2, 2, Linear>, 
-    Layer<2, 2, Softmax> 
-  > network;
+  Network<MeanSquareError, Layer<2, 2, Linear>, Layer<2, 2, Softmax> > network;
   network.setWeights(w1, w2);
   network.setBiases(b1, b2);
 
