@@ -46,22 +46,17 @@ struct Layer : Activation<Out> {
   }
 };
 
-template <template<int> typename Cost, typename... Ls>
+template <template <int> typename Cost, typename... Ls>
 struct Network {};
 
-template <
-  template<int> typename CostFunction,
-  int... Ins, int... Outs,
-  template<int> typename... Activations
->
-struct Network<
-  CostFunction,
-  Layer<Ins, Outs, Activations>...
-> : CostFunction<select_last<Outs...>::elem> {
-public:
+template <template <int> typename CostFunction, int... Ins, int... Outs,
+          template <int> typename... Activations>
+struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
+    : CostFunction<select_last<Outs...>::elem> {
+ public:
   using Cost = CostFunction<select_last<Outs...>::elem>;
-  using InputVector = Eigen::Vector<double, select_first<Ins...>::elem>; 
-  using OutputVector = Eigen::Vector<double, select_last<Outs...>::elem>; 
+  using InputVector = Eigen::Vector<double, select_first<Ins...>::elem>;
+  using OutputVector = Eigen::Vector<double, select_last<Outs...>::elem>;
 
   using MatrixList = std::tuple<Eigen::Matrix<double, Outs, Ins>...>;
   using InVectorList = std::tuple<Eigen::Vector<double, Ins>...>;
@@ -90,7 +85,7 @@ public:
   typename std::tuple_element<I, MatrixList>::type getWeight() {
     return std::get<I>(layers_).weight_;
   }
-  template<int I>
+  template <int I>
   typename std::tuple_element<I, OutVectorList>::type getBias() {
     return std::get<I>(layers_).bias_;
   }
@@ -113,16 +108,20 @@ public:
 
     // Reset the change accumulators
     // TODO Zero function vs. Matrix::Zero creation.
-    [&weight_acc, &bias_acc] <std::size_t... I>
-    (std::index_sequence<I...>){
-      ((std::get<I>(weight_acc) = std::tuple_element<I, MatrixList>::type::Zero()) , ...);
-      ((std::get<I>(bias_acc) = std::tuple_element<I, OutVectorList>::type::Zero()), ...);
-    }(std::make_index_sequence<N>{});
+    [&weight_acc, &bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
+      ((std::get<I>(weight_acc) =
+            std::tuple_element<I, MatrixList>::type::Zero()),
+       ...);
+      ((std::get<I>(bias_acc) =
+            std::tuple_element<I, OutVectorList>::type::Zero()),
+       ...);
+    }
+    (std::make_index_sequence<N>{});
 
     // For each data poing, accumulate the changes
     // TODO: Use std::array for compile time size
     for (int i = 0; i < in.size(); i++) {
-      // Save activations 
+      // Save activations
       std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
       std::get<0>(a) = in[i];
 
@@ -143,51 +142,55 @@ public:
 
       // Backward propogation
       cout << std::get<N>(a) << endl << endl;
-      [this, &i, &exp_out, &a, &weight_acc, &bias_acc, &stepSize] <int... I>
-      (reverse_index_sequence<I...>){
+      [ this, &i, &exp_out, &a, &weight_acc, &bias_acc, &
+        stepSize ]<int... I>(reverse_index_sequence<I...>) {
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
         // Calculate error as last element
         std::get<N>(dcda) = Cost::cost_der(std::get<N>(a), exp_out[i]);
 
         // dcda[i] = act_der(b[j] + w[j] * a[j]) * dcda[i+1]
-        ((
-          std::get<I>(dcda) = std::get<I>(layers_).weight_.transpose() *
-          std::get<I>(layers_).activation_der(
-            std::get<I>(layers_).bias_ +
-            std::get<I>(layers_).weight_ * std::get<I>(a)
-          ) * std::get<I+1>(dcda)
-        ) , ...);
+        ((std::get<I>(dcda) =
+              std::get<I>(layers_).weight_.transpose() *
+              std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
+                                                  std::get<I>(layers_).weight_ *
+                                                      std::get<I>(a)) *
+              std::get<I + 1>(dcda)),
+         ...);
         // cout << "DCDA" << endl;
         // cout << "Layer 0: " << endl << std::get<0>(dcda) << endl << endl;
         // cout << "Layer 1: " << endl << std::get<1>(dcda) << endl << endl;
         // cout << "Layer 2: " << endl << std::get<2>(dcda) << endl << endl;
-        
-        // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
-        ((
-          std::get<I>(weight_acc) -= std::get<I>(layers_).activation_der(
-            std::get<I>(layers_).bias_ + 
-            std::get<I>(layers_).weight_ * std::get<I>(a)
-          ) * std::get<I+1>(dcda) * std::get<I>(a).transpose() * stepSize,
 
-          std::get<I>(bias_acc) -= std::get<I>(layers_).activation_der(
-            std::get<I>(layers_).bias_ + 
-            std::get<I>(layers_).weight_ * std::get<I>(a)
-          ) * std::get<I+1>(dcda) * stepSize
-        ) , ...);
+        // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
+        ((std::get<I>(weight_acc) -=
+          std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
+                                              std::get<I>(layers_).weight_ *
+                                                  std::get<I>(a)) *
+          std::get<I + 1>(dcda) * std::get<I>(a).transpose() * stepSize,
+
+          std::get<I>(bias_acc) -=
+          std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
+                                              std::get<I>(layers_).weight_ *
+                                                  std::get<I>(a)) *
+          std::get<I + 1>(dcda) * stepSize),
+         ...);
 
         // cout << "weight_acc:" << endl;
-        // cout << "Layer 0: " << endl << std::get<0>(weight_acc) << endl << endl;
-        // cout << "Layer 1: " << endl << std::get<1>(weight_acc) << endl << endl;
-
-      }(make_reverse_index_sequence<N>{});
+        // cout << "Layer 0: " << endl << std::get<0>(weight_acc) << endl <<
+        // endl; cout << "Layer 1: " << endl << std::get<1>(weight_acc) << endl
+        // << endl;
+      }
+      (make_reverse_index_sequence<N>{});
     }
 
     // Add the change
-    [this, &in, &weight_acc, &bias_acc] <std::size_t... I>
-    (std::index_sequence<I...>){
-      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc)/in.size()) , ...);
-      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc)/in.size()) , ...);
-    }(std::make_index_sequence<N>{});
+    [ this, &in, &weight_acc, &
+      bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
+      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / in.size()),
+       ...);
+      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / in.size()), ...);
+    }
+    (std::make_index_sequence<N>{});
   }
 
  private:
@@ -199,9 +202,7 @@ struct Linear {
   typedef Eigen::Vector<double, N> Vec;
   typedef Eigen::Matrix<double, N, N> Mat;
 
-  inline Vec activation(Vec x) {
-    return x;
-  }
+  inline Vec activation(Vec x) { return x; }
 
   inline Mat activation_der(Vec x) {
     Mat out = Mat::Zero();
@@ -212,7 +213,7 @@ struct Linear {
   }
 };
 
-template<int N>
+template <int N>
 struct Sigmoid {
   typedef Eigen::Vector<double, N> Vec;
   typedef Eigen::Matrix<double, N, N> Mat;
