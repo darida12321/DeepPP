@@ -2,8 +2,8 @@
 #include <cost_function.h>
 #include <templates/cost_function.h>
 
-using Eigen::VectorXd;
 using Eigen::Vector;
+using Eigen::VectorXd;
 
 static void BM_MeanSquareError(benchmark::State& state) {
   VectorXd v = VectorXd::Random(10);

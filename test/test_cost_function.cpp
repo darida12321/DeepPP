@@ -1,10 +1,11 @@
-#include <Eigen/Dense>
 #include <cost_function.h>
-#include <templates/cost_function.h>
 #include <gtest/gtest.h>
+#include <templates/cost_function.h>
 
-using Eigen::VectorXd;
+#include <Eigen/Dense>
+
 using Eigen::Vector;
+using Eigen::VectorXd;
 
 TEST(Costcost, MeanSquareError) {
   for (int i = 0; i < 1000; i++) {
