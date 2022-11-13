@@ -1,5 +1,6 @@
 #include <Eigen/Dense>
 #include <iostream>
+#include <iterator>
 #include <tuple>
 #include <utility>
 #include <templates/template_helpers.h>
@@ -12,18 +13,18 @@
 // TODO  comment stuff
 
 // USER INTERFACE
-template <int In>
+template <size_t In>
 struct InputLayer{};
-template <int Out, template <int> typename Activation>
+template <size_t Out, template <size_t > typename Activation>
 struct Layer {};
 
-template <template <int> typename Cost, typename... Ls>
+template <template <size_t > typename Cost, typename... Ls>
 struct Network {};
 
 
 
 
-template <int In, int Out, template <int> typename Activation>
+template <size_t In, size_t Out, template <size_t > typename Activation>
 struct LayerBase : Activation<Out> {
  public:
   Eigen::Matrix<double, Out, In> weight_;
@@ -37,12 +38,12 @@ struct LayerBase : Activation<Out> {
 
 
 // Network implementation
-template <typename I, template <int> typename Cost, typename... Ls>
+template <typename I, template <size_t > typename Cost, typename... Ls>
 struct NetworkBase {};
 
-template <template <int> typename CostFunction,
-  int Input, int... Outs, std::size_t... LayerIndices,
-  template <int> typename... Activations>
+template <template <size_t > typename CostFunction,
+  size_t Input, size_t ... Outs, size_t... LayerIndices,
+  template <size_t> typename... Activations>
 struct NetworkBase<
   std::index_sequence<LayerIndices...>,
   CostFunction,
@@ -59,7 +60,7 @@ public:
   using InVectorList = std::tuple<Eigen::Vector<double, intlist_element<LayerIndices, Input, Outs...>::elem>...>;
   using OutVectorList = std::tuple<Eigen::Vector<double, Outs>...>;
 
-  static constexpr int N = sizeof...(Outs);
+  static constexpr size_t N = sizeof...(Outs);
 
   // Setters
   template <typename... Weights>
@@ -78,18 +79,18 @@ public:
   }
 
   // Getters
-  template <int I>
+  template <size_t I>
   typename std::tuple_element<I, MatrixList>::type getWeight() {
     return std::get<I>(layers_).weight_;
   }
-  template <int I>
+  template <size_t I>
   typename std::tuple_element<I, OutVectorList>::type getBias() {
     return std::get<I>(layers_).bias_;
   }
 
   // Forward propogation
   OutputVector forwardProp(InputVector input) {
-    return [ this, &input ]<int... I>(reverse_index_sequence<I...>) {
+    return [ this, &input ]<size_t... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
     }
     (make_reverse_index_sequence<N>{});
@@ -116,7 +117,7 @@ public:
 
     // For each data poing, accumulate the changes
     // TODO: Use std::array for compile time size
-    for (int i = 0; i < in.size(); i++) {
+    for (size_t i = 0; i < in.size(); i++) {
       // Save activations
       std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
       std::get<0>(a) = in[i];
@@ -132,7 +133,7 @@ public:
 
       // Backward propogation
       [ this, &i, &exp_out, &a, &weight_acc, &bias_acc, &
-        stepSize ]<int... I>(reverse_index_sequence<I...>) {
+        stepSize ]<size_t... I>(reverse_index_sequence<I...>) {
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
         // Calculate error as last element
         std::get<N>(dcda) = Cost::cost_der(std::get<N>(a), exp_out[i]);
@@ -179,9 +180,9 @@ private:
 
 
 template <
-  template <int> typename CostFunction,
-  int Input, int... Outs,
-  template <int> typename... Activations
+  template <size_t> typename CostFunction,
+  size_t Input, size_t... Outs,
+  template <size_t> typename... Activations
 >
 struct Network<
   CostFunction,
