@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <templates/template_test.h>
+#include <templates/network.h>
 
 #include <Eigen/Dense>
 #include <cmath>
