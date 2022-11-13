@@ -1,12 +1,12 @@
 #include <activation_function.h>
-#include <templates/activation_function.h>
 #include <gtest/gtest.h>
+#include <templates/activation_function.h>
 
 #include <Eigen/Dense>
 
 using Eigen::MatrixXd;
-using Eigen::VectorXd;
 using Eigen::Vector;
+using Eigen::VectorXd;
 
 TEST(ActivationFunction, Sigmoid) {
   VectorXd in(5);
@@ -51,7 +51,8 @@ TEST(ActivationFunction, Sigmoid_Template) {
     Template::Sigmoid<10> sigmoid_t;
 
     EXPECT_TRUE(sigmoid.function(in).isApprox(sigmoid_t.activation(in_t)));
-    EXPECT_TRUE(sigmoid.derivative(in).isApprox(sigmoid_t.activation_der(in_t)));
+    EXPECT_TRUE(
+        sigmoid.derivative(in).isApprox(sigmoid_t.activation_der(in_t)));
   }
 }
 
@@ -62,7 +63,8 @@ TEST(ActivationFunction, Softmax_Template) {
     Template::Softmax<10> softmax_t;
 
     EXPECT_TRUE(softmax.function(in).isApprox(softmax_t.activation(in_t)));
-    EXPECT_TRUE(softmax.derivative(in).isApprox(softmax_t.activation_der(in_t)));
+    EXPECT_TRUE(
+        softmax.derivative(in).isApprox(softmax_t.activation_der(in_t)));
   }
 }
 
