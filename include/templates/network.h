@@ -6,12 +6,25 @@
 #include <templates/activation_function.h>
 #include <templates/cost_function.h>
 
-// TODO  use std::size for stuff
+// TODO  use std::size for indexing instead of ints
 // TODO  bias and weight initializer classes
 // TODO: smart template stuff to remove layer size redundancy
+// TODO  comment stuff
+
+// USER INTERFACE
+template <int In>
+struct InputLayer{};
+template <int Out, template <int> typename Activation>
+struct Layer {};
+
+template <template <int> typename Cost, typename... Ls>
+struct Network {};
+
+
+
 
 template <int In, int Out, template <int> typename Activation>
-struct Layer : Activation<Out> {
+struct LayerBase : Activation<Out> {
  public:
   Eigen::Matrix<double, Out, In> weight_;
   Eigen::Vector<double, Out> bias_;
@@ -23,24 +36,27 @@ struct Layer : Activation<Out> {
 
 
 
-template <template <int> typename Cost, typename... Ls>
-struct Network {};
+// Network implementation
+template <typename I, template <int> typename Cost, typename... Ls>
+struct NetworkBase {};
 
-
-
-
-template <template <int> typename CostFunction, int... Ins, int... Outs,
-          template <int> typename... Activations>
-struct Network<CostFunction, Layer<Ins, Outs, Activations>...>
-    : CostFunction<select_last<Outs...>::elem> {
+template <template <int> typename CostFunction,
+  int Input, int... Outs, std::size_t... LayerIndices,
+  template <int> typename... Activations>
+struct NetworkBase<
+  std::index_sequence<LayerIndices...>,
+  CostFunction,
+  InputLayer<Input>,
+  Layer<Outs, Activations>...
+> : CostFunction<select_last<Outs...>::elem> {
 
 public:
   using Cost = CostFunction<select_last<Outs...>::elem>;
-  using InputVector = Eigen::Vector<double, select_first<Ins...>::elem>;
+  using InputVector = Eigen::Vector<double, Input>;
   using OutputVector = Eigen::Vector<double, select_last<Outs...>::elem>;
 
-  using MatrixList = std::tuple<Eigen::Matrix<double, Outs, Ins>...>;
-  using InVectorList = std::tuple<Eigen::Vector<double, Ins>...>;
+  using MatrixList = std::tuple<Eigen::Matrix<double, Outs, intlist_element<LayerIndices, Input, Outs...>::elem>...>;
+  using InVectorList = std::tuple<Eigen::Vector<double, intlist_element<LayerIndices, Input, Outs...>::elem>...>;
   using OutVectorList = std::tuple<Eigen::Vector<double, Outs>...>;
 
   static constexpr int N = sizeof...(Outs);
@@ -158,8 +174,33 @@ public:
   }
 
 private:
-  std::tuple<Layer<Ins, Outs, Activations>...> layers_;
+  std::tuple<LayerBase<intlist_element<LayerIndices, Input, Outs...>::elem, Outs, Activations>...> layers_;
 };
+
+
+template <
+  template <int> typename CostFunction,
+  int Input, int... Outs,
+  template <int> typename... Activations
+>
+struct Network<
+  CostFunction,
+  InputLayer<Input>,
+  Layer<Outs, Activations>...
+> : NetworkBase<
+    std::make_index_sequence<sizeof...(Outs)>,
+    CostFunction, 
+    InputLayer<Input>,
+    Layer<Outs, Activations>...
+  >
+{};
+
+
+
+
+
+
+
 
 
 

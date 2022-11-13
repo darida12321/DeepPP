@@ -18,6 +18,17 @@ struct select_first<A, Args...> {
   static constexpr int elem = A;
 };
 
+// Select index
+template <int I, int... Xs>
+struct intlist_element;
+template <int X, int... Xs>
+struct intlist_element<0, X, Xs...> {
+  static constexpr int elem = X;
+};
+template <int I, int X, int... Xs>
+struct intlist_element<I, X, Xs...> : select_last<I-1, Xs...> {};
+
+
 // Reverse index sequence
 template <int... Ints>
 struct reverse_index_sequence {};
