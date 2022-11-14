@@ -7,9 +7,9 @@
 
 using Eigen::Matrix;
 using Eigen::Vector;
+using namespace Template;
 
 // TODO use is_approx
-namespace Template {
 TEST(NetworkTemplate, SoftMax) {
   // Create 2-2-2 neural network
   Matrix<double, 2, 2> w1{{1, 2}, {1, 4}};
@@ -23,6 +23,7 @@ TEST(NetworkTemplate, SoftMax) {
     Layer<2, Linear>,
     Layer<2, Softmax>
   > network;
+
   network.setWeights(w1, w2);
   network.setBiases(b1, b2);
 
@@ -57,4 +58,3 @@ TEST(NetworkTemplate, SoftMax) {
   EXPECT_TRUE(b1_final.isApprox(network.getBias<0>(), 0.001));
   EXPECT_TRUE(b2_final.isApprox(network.getBias<1>(), 0.001));
 }
-}  // namespace Template
