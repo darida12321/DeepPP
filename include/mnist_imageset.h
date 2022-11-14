@@ -3,6 +3,11 @@
 #include <vector>
 #include <Eigen/Dense>
 
+const int TRAIN_SIZE = 60000;
+const int TEST_SIZE = 10000;
+const int IMG_WIDTH = 28;
+const int IMG_HEIGHT = 28;
+
 typedef Eigen::VectorXd ImgVector;
 typedef Eigen::VectorXd ImgLabel;
 
