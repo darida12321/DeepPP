@@ -1,8 +1,8 @@
 #include <activation_function.h>
 #include <cost_function.h>
 #include <gtest/gtest.h>
-#include <network.h>
 #include <mnist_imageset.h>
+#include <network.h>
 
 #include <Eigen/Dense>
 #include <cmath>
