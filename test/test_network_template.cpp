@@ -17,7 +17,8 @@ TEST(NetworkTemplate, SoftMax) {
   Matrix<double, 2, 2> w2{{1, 2}, {1, 4}};
   Vector<double, 2> b2{9, -1};
 
-  Network<MeanSquareError, WeightZero, BiasZero, InputLayer<2>, Layer<2, Linear>, Layer<2, Softmax>>
+  Network<MeanSquareError, WeightZero, BiasZero, InputLayer<2>,
+          Layer<2, Linear>, Layer<2, Softmax>>
       network;
   network.setWeights(w1, w2);
   network.setBiases(b1, b2);
@@ -55,10 +56,9 @@ TEST(NetworkTemplate, SoftMax) {
 }
 
 TEST(NetworkTemplate, TestInitialisation) {
-
-  Network<MeanSquareError, WeightZero, BiasZero, InputLayer<2>, Layer<2, Linear>, Layer<2, Softmax>>
+  Network<MeanSquareError, WeightZero, BiasZero, InputLayer<2>,
+          Layer<2, Linear>, Layer<2, Softmax>>
       network;
-
 
   Matrix<double, 2, 2> w1{{0, 0}, {0, 0}};
   Vector<double, 2> b1{0, 0};
