@@ -17,17 +17,62 @@ struct InputLayer{};
 template <size_t Out, template <size_t > typename Activation>
 struct Layer {};
 
-template <template <size_t > typename Cost, typename... Ls>
+template <template <size_t > typename Cost, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit, typename... Ls>
 struct Network {};
 
 
+// Distribution
+template<size_t N, size_t M>
+struct WeightZero {
+  typedef Eigen::Matrix<double, N, M> Weight;
+
+  inline Weight genWeight() {
+    return Weight::Zero();
+  }
+
+};
+
+template<size_t N>
+struct BiasZero {
+  typedef Eigen::Vector<double, N> Bias;
+
+  inline Bias genBias() {
+    return Bias::Zero();
+  }
+
+};
+
+template<size_t N, size_t M>
+struct WeightRandom {
+  typedef Eigen::Matrix<double, N, M> Weight;
+
+  inline Weight genWeight() {
+    return Weight::Random();
+  }
+
+};
+
+template<size_t N>
+struct BiasRandom {
+  typedef Eigen::Vector<double, N> Bias;
+
+  inline Bias genBias() {
+    return Bias::Random();
+  }
+
+};
 
 
-template <size_t In, size_t Out, template <size_t > typename Activation>
-struct LayerBase : Activation<Out> {
+
+
+
+
+template <size_t In, size_t Out, template <size_t > typename Activation, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit>
+struct LayerBase : Activation<Out>, WeightInit<Out, In>, BiasInit<Out> {
  public:
-  Eigen::Matrix<double, Out, In> weight_;
-  Eigen::Vector<double, Out> bias_;
+  Eigen::Matrix<double, Out, In> weight_ = WeightInit<Out, In>::genWeight();
+  Eigen::Vector<double, Out> bias_ = BiasInit<Out>::genBias();
+
 
   Eigen::Vector<double, Out> operator<<(Eigen::Vector<double, In> rhs) {
     Eigen::Vector<double, Out> z = bias_ + (weight_ * rhs);
@@ -38,15 +83,17 @@ struct LayerBase : Activation<Out> {
 
 
 // Network implementation
-template <typename I, template <size_t > typename Cost, typename... Ls>
+template <typename I, template <size_t > typename Cost, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit, typename... Ls>
 struct NetworkBase {};
 
-template <template <size_t > typename CostFunction,
+template <template <size_t > typename CostFunction, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit,
   size_t Input, size_t ... Outs, size_t... LayerIndices,
   template <size_t> typename... Activations>
 struct NetworkBase<
   std::index_sequence<LayerIndices...>,
   CostFunction,
+  WeightInit,
+  BiasInit,
   InputLayer<Input>,
   Layer<Outs, Activations>...
 > : CostFunction<select_last<Outs...>::elem> {
@@ -202,27 +249,50 @@ public:
   }
 
 private:
-  std::tuple<LayerBase<intlist_element<LayerIndices, Input, Outs...>::elem, Outs, Activations>...> layers_;
+  std::tuple<LayerBase<intlist_element<LayerIndices, Input, Outs...>::elem, Outs, Activations, WeightInit, BiasInit>...> layers_;
 };
 
 
+// template <
+//   template <size_t> typename CostFunction,
+//   size_t Input, size_t... Outs,
+//   template <size_t> typename... Activations
+// >
+// struct Network<
+//   CostFunction,
+//   InputLayer<Input>,
+//   Layer<Outs, Activations>...
+// > : NetworkBase<
+//     std::make_index_sequence<sizeof...(Outs)>,
+//     CostFunction, 
+//     WeightZero,
+//     BiasZero,
+//     InputLayer<Input>,
+//     Layer<Outs, Activations>...
+//   >
+// {};
+
+
 template <
-  template <size_t> typename CostFunction,
+  template <size_t> typename CostFunction, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit,
   size_t Input, size_t... Outs,
   template <size_t> typename... Activations
 >
 struct Network<
   CostFunction,
+  WeightInit,
+  BiasInit,
   InputLayer<Input>,
   Layer<Outs, Activations>...
 > : NetworkBase<
     std::make_index_sequence<sizeof...(Outs)>,
-    CostFunction, 
+    CostFunction,
+    WeightInit,
+    BiasInit, 
     InputLayer<Input>,
     Layer<Outs, Activations>...
   >
 {};
-
 
 
 
