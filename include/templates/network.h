@@ -8,7 +8,6 @@
 #include <templates/cost_function.h>
 
 // TODO  bias and weight initializer classes
-// TODO: smart template stuff to remove layer size redundancy
 // TODO  comment stuff
 
 // USER INTERFACE

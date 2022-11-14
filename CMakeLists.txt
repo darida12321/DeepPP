@@ -11,6 +11,7 @@ set(Headers
     include/cost_function.h
     include/activation_function.h
     include/network.h
+    include/mnist_imageset.h
 
     include/templates/network.h
     include/templates/activation_function.h
@@ -21,12 +22,17 @@ set(Sources
     src/cost_function.cpp
     src/activation_function.cpp
     src/network.cpp
+    src/mnist_imageset.cpp
 )
-
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
+add_executable(${PROJECT_NAME}_Demo src/demo_mnist.cpp)
 
 add_subdirectory(lib/eigen)
 target_include_directories(${PROJECT_NAME} 
+    PUBLIC include/
+    PUBLIC lib/eigen
+)
+target_include_directories(${PROJECT_NAME}_Demo 
     PUBLIC include/
     PUBLIC lib/eigen
 )
