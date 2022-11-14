@@ -45,3 +45,4 @@ doc/doxygen/
 
 # VScode generated files
 .vscode/
+.cache/

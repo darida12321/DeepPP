@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="doc/deeppp-logo.png">
+    <img src="doc/logo.png">
     <h1> Deeppp </h1>
     <h3>deep neural network with c++ metaprogramming</h3>
     </br>
