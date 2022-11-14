@@ -26,16 +26,17 @@ Network::Network(std::vector<int> sizes,
   }
 }
 
-VectorXd Network::forwardProp(VectorXd in) {
+VectorXd Network::forwardProp(const VectorXd& in) {
   VectorXd curr = in;
   for (unsigned int i = 0; i < weights_.size(); i++) {
-    curr = act_func_[i]->function(weights_[i] * curr + biases_[i]);
+    VectorXd z = weights_[i] * curr + biases_[i];
+    curr = act_func_[i]->function(z);
   }
   return curr;
 }
 
-void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
-                    double stepSize) {
+void Network::train(const std::vector<VectorXd>& in,
+                    const std::vector<VectorXd>& exp_out, double stepSize) {
   assert(in.size() == exp_out.size());
 
   // Accumulate the changes in the gradient
@@ -96,18 +97,19 @@ void Network::train(std::vector<VectorXd> in, std::vector<VectorXd> exp_out,
 }
 
 // Get the cost of the function for a set of inputs
-double Network::getCost(std::vector<VectorXd> in,
-                        std::vector<VectorXd> exp_out) {
+double Network::getCost(const std::vector<VectorXd>& in,
+                        const std::vector<VectorXd>& exp_out) {
   double error = 0;
   for (unsigned int i = 0; i < in.size(); i++) {
-    error += cost_func_->function(forwardProp(in[i]), exp_out[i]);
+    VectorXd out = forwardProp(in[i]);
+    error += cost_func_->function(out, exp_out[i]);
   }
   return error / in.size();
 }
 
 // TODO: This does categorical accuracy all the time.
-double Network::getAccuracy(std::vector<VectorXd> in,
-                            std::vector<VectorXd> exp_out) {
+double Network::getAccuracy(const std::vector<VectorXd>& in,
+                            const std::vector<VectorXd>& exp_out) {
   double acc = 0;
   for (unsigned int i = 0; i < in.size(); i++) {
     VectorXd val = forwardProp(in[i]);

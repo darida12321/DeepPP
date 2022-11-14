@@ -28,7 +28,7 @@ class CostFunction {
    * @param exp_out The expected output
    * @return double The cost
    */
-  virtual inline double function(VectorXd out, VectorXd exp_out) = 0;
+  virtual inline double function(const VectorXd& out, const VectorXd& exp_out) = 0;
   /**
    * @brief Compute the gradient of the cost function
    *
@@ -36,7 +36,7 @@ class CostFunction {
    * @param exp_out The expected output
    * @return VectorXd Vector containing the parial derivatives of the cost
    */
-  virtual inline VectorXd derivative(VectorXd out, VectorXd exp_out) = 0;
+  virtual inline VectorXd derivative(const VectorXd& out, const VectorXd& exp_out) = 0;
 };
 
 class MeanSquareError : public CostFunction {
@@ -48,7 +48,7 @@ class MeanSquareError : public CostFunction {
    * @param exp_out The expected output
    * @return double The mean square error
    */
-  inline double function(VectorXd out, VectorXd exp_out) {
+  inline double function(const VectorXd& out, const VectorXd& exp_out) {
     auto errors = (out - exp_out).array();
     return (errors * errors).sum() / out.rows();
   }
@@ -60,7 +60,7 @@ class MeanSquareError : public CostFunction {
    * @return VectorXd Vector containing the partial derrivatives of the
    * mean square error
    */
-  inline VectorXd derivative(VectorXd out, VectorXd exp_out) {
+  inline VectorXd derivative(const VectorXd& out, const VectorXd& exp_out) {
     return (2.0 / out.rows()) * (out - exp_out);
   }
 };
@@ -74,7 +74,7 @@ class CategoricalCrossEntropy : public CostFunction {
    * @param exp_out The expected output
    * @return double The categorical cross entropy
    */
-  inline double function(VectorXd out, VectorXd exp_out) {
+  inline double function(const VectorXd& out, const VectorXd& exp_out) {
     auto logs = out.unaryExpr([](double x) { return log(clip(x)); }).array();
     return -(logs * exp_out.array()).sum();
   }
@@ -86,7 +86,7 @@ class CategoricalCrossEntropy : public CostFunction {
    * @return Vectord<size> Vector containing the partial derivatives of the
    * categorical cross entropy
    */
-  inline VectorXd derivative(VectorXd out, VectorXd exp_out) {
+  inline VectorXd derivative(const VectorXd& out, const VectorXd& exp_out) {
     return -exp_out.cwiseQuotient(
         out.unaryExpr([](double x) { return clip(x); }));
   }
