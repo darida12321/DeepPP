@@ -1,7 +1,7 @@
-#include <iostream>
+#include <templates/network.h>
 
 #include <Eigen/Dense>
-#include <templates/network.h>
+#include <iostream>
 
 using Eigen::Matrix;
 using Eigen::Vector;
