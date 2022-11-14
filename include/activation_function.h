@@ -1,6 +1,7 @@
 #pragma once
 #include <Eigen/Dense>
 #include <cmath>
+#include "Eigen/src/Core/Matrix.h"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -122,11 +123,8 @@ class Linear : public ActivationFunction {
      * @return VectorXd
      */
     inline MatrixXd derivative(VectorXd x) {
-      MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
-      for (int i = 0; i < x.rows(); i++) {
-        out(i, i) = 1;
-      }
-      return out;
+      int rows = x.rows();
+      return MatrixXd::Identity(rows, rows);
     }
 };
 

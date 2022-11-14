@@ -7,7 +7,6 @@
 #include <templates/activation_function.h>
 #include <templates/cost_function.h>
 
-// TODO  use std::size for indexing instead of ints
 // TODO  bias and weight initializer classes
 // TODO: smart template stuff to remove layer size redundancy
 // TODO  comment stuff
@@ -64,6 +63,11 @@ public:
 
   // Setters
   template <typename... Weights>
+  /**
+   * @brief Set the weight matrices
+   * 
+   * @param weights 
+   */
   void setWeights(Weights... weights) {
     [ this, &weights... ]<std::size_t... I>(std::index_sequence<I...>) {
       ((std::get<I>(layers_).weight_ = weights), ...);
@@ -71,6 +75,11 @@ public:
     (std::make_index_sequence<N>{});
   }
   template <typename... Biases>
+  /**
+   * @brief Set the bias vectors
+   * 
+   * @param biases 
+   */
   void setBiases(Biases... biases) {
     [ this, &biases... ]<std::size_t... I>(std::index_sequence<I...>) {
       ((std::get<I>(layers_).bias_ = biases), ...);
@@ -80,15 +89,25 @@ public:
 
   // Getters
   template <size_t I>
+  /**
+   * @brief Get the weight matrix of a perticular layer
+   */
   typename std::tuple_element<I, MatrixList>::type getWeight() {
     return std::get<I>(layers_).weight_;
   }
   template <size_t I>
+  /**
+   * @brief Get the bias vector of a perticular layer
+   */
   typename std::tuple_element<I, OutVectorList>::type getBias() {
     return std::get<I>(layers_).bias_;
   }
 
-  // Forward propogation
+  /**
+   * @brief Perform forward propagation
+   * 
+   * @param input
+   */
   OutputVector forwardProp(InputVector input) {
     return [ this, &input ]<size_t... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
@@ -96,7 +115,14 @@ public:
     (make_reverse_index_sequence<N>{});
   }
 
-  // Backpropogation
+  /**
+   * @brief Use backpropagation to train the network on a set of inputs and
+   * expected outputs
+   * 
+   * @param in inputs
+   * @param exp_out expected outputs
+   * @param stepSize amount by which to vary the weights and biases
+   */
   void train(std::vector<InputVector> in, std::vector<OutputVector> exp_out,
              double stepSize) {
     // Create change accumulators

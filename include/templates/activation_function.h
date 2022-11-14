@@ -1,6 +1,6 @@
 #include <Eigen/Dense>
+#include "Eigen/src/Core/Matrix.h"
 
-// TODO  documentation
 // TODO add rest
 
 namespace Template {
@@ -9,14 +9,22 @@ namespace Template {
     typedef Eigen::Vector<double, N> Vec;
     typedef Eigen::Matrix<double, N, N> Mat;
 
+    /**
+     * @brief The indentity function on vectors
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Vec activation(Vec x) { return x; }
 
+    /**
+     * @brief The gradient of the identity function
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Mat activation_der(Vec x) {
-      Mat out = Mat::Zero();
-      for (size_t i = 0; i < N; i++) {
-        out(i, i) = 1;
-      }
-      return out;
+      return Eigen::Matrix<double, N, N>::Identity();
     }
   };
 
@@ -25,10 +33,22 @@ namespace Template {
     typedef Eigen::Vector<double, N> Vec;
     typedef Eigen::Matrix<double, N, N> Mat;
 
+    /**
+     * @brief The sigmoid activation function (applied componentwise)
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Vec activation(Vec x) {
       return x.unaryExpr([](double x) { return 1 / (1 + std::exp(-x)); });
     }
 
+    /**
+     * @brief The gradient of the sigmoid activation function
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Mat activation_der(Vec x) {
       Mat out = Mat::Zero();
       Vec diag = activation(x).cwiseProduct(
@@ -46,6 +66,12 @@ namespace Template {
     typedef Eigen::Vector<double, N> Vec;
     typedef Eigen::Matrix<double, N, N> Mat;
 
+    /**
+     * @brief The softmax activation function
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Vec activation(Vec x) {
       double max = x.maxCoeff();
       Vec shiftx = x.array() - max;
@@ -53,6 +79,12 @@ namespace Template {
       return exps.array() / exps.sum();
     }
 
+    /**
+     * @brief The gradient of the softmax activation function
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Mat activation_der(Vec x) {
       Vec y = activation(x);
       Mat out = Mat::Zero();
@@ -74,10 +106,22 @@ namespace Template {
     typedef Eigen::Vector<double, N> Vec;
     typedef Eigen::Matrix<double, N, N> Mat;
 
+    /**
+     * @brief The RELU activation function (applied componentwise)
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Vec activation(Vec x) {
       return x.unaryExpr([](double x) { return std::max(0.0, x); });
     }
 
+    /**
+     * @brief The gradient of the RELU activation function
+     *
+     * @param x The input vector
+     * @return VectorXd
+     */
     inline Mat activation_der(Vec x) {
       Mat out = Mat::Zero();
       for (size_t i = 0; i < N; i++) {

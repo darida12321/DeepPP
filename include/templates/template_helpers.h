@@ -1,7 +1,11 @@
 #include <cstddef>
 #include <utility>
 
-// Select last argument
+/**
+ * @brief Select the last parameter from a parameter pack
+ * 
+ * @tparam Args template parameters to select from
+ */
 template <size_t... Args>
 struct select_last;
 template <size_t A>
@@ -11,7 +15,11 @@ struct select_last<A> {
 template <size_t A, size_t... Args>
 struct select_last<A, Args...> : select_last<Args...> {};
 
-// Select first argument
+/**
+ * @brief Select the first parameter from a parameter pack
+ * 
+ * @tparam Args template parameters to select from
+ */
 template <size_t... Args>
 struct select_first;
 template <size_t A, size_t... Args>
@@ -19,7 +27,12 @@ struct select_first<A, Args...> {
   static constexpr size_t elem = A;
 };
 
-// Select index
+/**
+ * @brief Select an element from an integer parameter pack
+ * 
+ * @tparam I index
+ * @tparam Xs template parameters to select from
+ */
 template <size_t I, size_t... Xs>
 struct intlist_element;
 template <size_t X, size_t... Xs>
@@ -30,7 +43,10 @@ template <size_t I, size_t X, size_t... Xs>
 struct intlist_element<I, X, Xs...> : select_last<I-1, Xs...> {};
 
 
-// Reverse index sequence
+/**
+ * @brief Reverse an index sequence
+ * 
+ */
 template <size_t... Ints>
 struct reverse_index_sequence {};
 
