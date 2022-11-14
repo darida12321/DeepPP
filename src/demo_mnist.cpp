@@ -22,7 +22,7 @@ int main() {
   Vector<double, 10>             b3 = Vector<double, 10>::Zero();
 
   Network<
-    MeanSquareError, 
+    MeanSquareError, WeightRandom, BiasZero,
     InputLayer<IMAGESIZE>, 
     Layer<128, Relu>, 
     Layer<128, Relu>, 
