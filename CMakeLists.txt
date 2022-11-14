@@ -11,6 +11,7 @@ set(Headers
     include/cost_function.h
     include/activation_function.h
     include/network.h
+    include/mnist_imageset.h
 
     include/templates/network.h
     include/templates/activation_function.h
@@ -21,6 +22,7 @@ set(Sources
     src/cost_function.cpp
     src/activation_function.cpp
     src/network.cpp
+    src/mnist_imageset.cpp
 )
 
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
