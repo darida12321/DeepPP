@@ -35,8 +35,8 @@ VectorXd Network::forwardProp(const VectorXd& in) {
   return curr;
 }
 
-void Network::train(const std::vector<VectorXd>& in, const std::vector<VectorXd>& exp_out,
-                    double stepSize) {
+void Network::train(const std::vector<VectorXd>& in,
+                    const std::vector<VectorXd>& exp_out, double stepSize) {
   assert(in.size() == exp_out.size());
 
   // Accumulate the changes in the gradient
