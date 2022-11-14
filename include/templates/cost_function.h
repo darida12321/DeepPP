@@ -12,7 +12,7 @@ namespace Template {
    * @param exp_out The expected output
    * @return double
    */
-    inline double cost(Vec out, Vec exp_out) {
+    inline double cost(const Vec& out, const Vec& exp_out) {
       auto errors = (out - exp_out).array();
       return (errors * errors).sum() / N;
     }
@@ -23,7 +23,7 @@ namespace Template {
    * @param exp_out The expected output
    * @return Vector<double, N>
    */
-    inline Vec cost_der(Vec out, Vec exp_out) {
+    inline Vec cost_der(const Vec& out, const Vec& exp_out) {
       return (2.0 / N) * (out - exp_out);
     }
   };
@@ -48,7 +48,7 @@ namespace Template {
    * @param exp_out The expected output
    * @return double
    */
-    inline double cost(Vec out, Vec exp_out) {
+    inline double cost(const Vec& out, const Vec& exp_out) {
       auto logs = out.unaryExpr([this](double x) { return log(clip(x)); }).array();
       return -(logs * exp_out.array()).sum();
     }
@@ -60,7 +60,7 @@ namespace Template {
      * @param exp_out The expected output
      * @return Vector<double, N>
      */
-    inline Vec cost_der(Vec out, Vec exp_out) {
+    inline Vec cost_der(const Vec& out, const Vec& exp_out) {
       return -exp_out.cwiseQuotient(
           out.unaryExpr([this](double x) { return clip(x); }));
     }

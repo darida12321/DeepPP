@@ -43,7 +43,7 @@ class Network {
    * @param in The input vector
    * @return VectorXd The output vector
    */
-  VectorXd forwardProp(VectorXd in);
+  VectorXd forwardProp(const VectorXd& in);
 
   /**
    * @brief Perform one trainning iteration on a given set of inputs and
@@ -54,7 +54,7 @@ class Network {
    * @param stepSize The amount by which the weights and biases are to be
    * adjusted
    */
-  void train(std::vector<VectorXd>, std::vector<VectorXd>, double);
+  void train(const std::vector<VectorXd>&, const std::vector<VectorXd>&, double);
 
   /**
    * @brief Get the cost of the function for a set of inputs
@@ -63,7 +63,7 @@ class Network {
    * @param exp_out The expected output
    * @return double The cost
    */
-  double getCost(std::vector<VectorXd> in, std::vector<VectorXd> exp_out);
+  double getCost(const std::vector<VectorXd>& in, const std::vector<VectorXd>& exp_out);
 
   /**
    * @brief Get the accuracy of the function for a set of inputs
@@ -72,7 +72,7 @@ class Network {
    * @param exp_out The expected output
    * @return double The accuracy
    */
-  double getAccuracy(std::vector<VectorXd> in, std::vector<VectorXd> exp_out);
+  double getAccuracy(const std::vector<VectorXd>& in, const std::vector<VectorXd>& exp_out);
 
   /**
    * @brief Get the weight matrices of all layers of the network

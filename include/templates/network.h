@@ -30,7 +30,8 @@ struct LayerBase : Activation<Out> {
   Eigen::Vector<double, Out> bias_;
 
   Eigen::Vector<double, Out> operator<<(Eigen::Vector<double, In> rhs) {
-    return Activation<Out>::activation(bias_ + (weight_ * rhs));
+    Eigen::Vector<double, Out> z = bias_ + (weight_ * rhs);
+    return Activation<Out>::activation(z);
   }
 };
 
@@ -108,7 +109,7 @@ public:
    * 
    * @param input
    */
-  OutputVector forwardProp(InputVector input) {
+  OutputVector forwardProp(const InputVector& input) {
     return [ this, &input ]<size_t... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
     }
@@ -123,7 +124,7 @@ public:
    * @param exp_out expected outputs
    * @param stepSize amount by which to vary the weights and biases
    */
-  void train(std::vector<InputVector> in, std::vector<OutputVector> exp_out,
+  void train(const std::vector<InputVector>& in, const std::vector<OutputVector>& exp_out,
              double stepSize) {
     // Create change accumulators
     MatrixList weight_acc;

@@ -15,7 +15,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Vec activation(Vec x) { return x; }
+    inline Vec activation(const Vec& x) { return x; }
 
     /**
      * @brief The gradient of the identity function
@@ -23,7 +23,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Mat activation_der(Vec x) {
+    inline Mat activation_der(const Vec& x) {
       return Eigen::Matrix<double, N, N>::Identity();
     }
   };
@@ -39,7 +39,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Vec activation(Vec x) {
+    inline Vec activation(const Vec& x) {
       return x.unaryExpr([](double x) { return 1 / (1 + std::exp(-x)); });
     }
 
@@ -49,7 +49,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Mat activation_der(Vec x) {
+    inline Mat activation_der(const Vec& x) {
       Mat out = Mat::Zero();
       Vec diag = activation(x).cwiseProduct(
           activation(x).unaryExpr([](double x) { return 1 - x; }));
@@ -72,7 +72,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Vec activation(Vec x) {
+    inline Vec activation(const Vec& x) {
       double max = x.maxCoeff();
       Vec shiftx = x.array() - max;
       Vec exps = shiftx.unaryExpr([](double x) { return std::exp(x); });
@@ -85,7 +85,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Mat activation_der(Vec x) {
+    inline Mat activation_der(const Vec& x) {
       Vec y = activation(x);
       Mat out = Mat::Zero();
       for (size_t i = 0; i < N; i++) {
@@ -112,7 +112,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Vec activation(Vec x) {
+    inline Vec activation(const Vec& x) {
       return x.unaryExpr([](double x) { return std::max(0.0, x); });
     }
 
@@ -122,7 +122,7 @@ namespace Template {
      * @param x The input vector
      * @return VectorXd
      */
-    inline Mat activation_der(Vec x) {
+    inline Mat activation_der(const Vec& x) {
       Mat out = Mat::Zero();
       for (size_t i = 0; i < N; i++) {
         out(i, i) = x(i) < 0 ? 0 : 1;

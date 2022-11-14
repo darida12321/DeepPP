@@ -8,8 +8,8 @@ using Eigen::VectorXd;
 
 class ActivationFunction {
   public: 
-    virtual inline VectorXd function(VectorXd x) = 0;
-    virtual inline MatrixXd derivative(VectorXd x) = 0;
+    virtual inline VectorXd function(const VectorXd& x) = 0;
+    virtual inline MatrixXd derivative(const VectorXd& x) = 0;
 };
 
 class Sigmoid : public ActivationFunction {
@@ -20,7 +20,7 @@ class Sigmoid : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd function(VectorXd x) {
+    inline VectorXd function(const VectorXd& x) {
       return x.unaryExpr([](double x) { return 1 / (1 + std::exp(-x)); });
     }
 
@@ -30,7 +30,7 @@ class Sigmoid : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline MatrixXd derivative(VectorXd x) {
+    inline MatrixXd derivative(const VectorXd& x) {
       MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
       VectorXd diag = function(x).cwiseProduct(
           function(x).unaryExpr([](double x) { return 1 - x; }));
@@ -50,7 +50,7 @@ class Softmax : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd function(VectorXd x) {
+    inline VectorXd function(const VectorXd& x) {
       double max = x.maxCoeff();
       VectorXd shiftx = x.array() - max;
       VectorXd exps = shiftx.unaryExpr([](double x) { return std::exp(x); });
@@ -63,7 +63,7 @@ class Softmax : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline MatrixXd derivative(VectorXd x) {
+    inline MatrixXd derivative(const VectorXd& x) {
       VectorXd y = function(x);
       MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
       for (int i = 0; i < x.rows(); i++) {
@@ -87,7 +87,7 @@ class Relu : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd function(VectorXd x) {
+    inline VectorXd function(const VectorXd& x) {
       return x.unaryExpr([](double x) { return fmax(x, 0); });
     }
 
@@ -97,7 +97,7 @@ class Relu : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline MatrixXd derivative(VectorXd x) {
+    inline MatrixXd derivative(const VectorXd& x) {
       MatrixXd out = MatrixXd::Zero(x.rows(), x.rows());
       for (int i = 0; i < x.rows(); i++) {
         out(i, i) = x(i) < 0 ? 0 : 1;
@@ -114,7 +114,7 @@ class Linear : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline VectorXd function(VectorXd x) { return x; }
+    inline VectorXd function(const VectorXd& x) { return x; }
 
     /**
      * @brief The gradient of the identity function
@@ -122,7 +122,7 @@ class Linear : public ActivationFunction {
      * @param x The input vector
      * @return VectorXd
      */
-    inline MatrixXd derivative(VectorXd x) {
+    inline MatrixXd derivative(const VectorXd& x) {
       int rows = x.rows();
       return MatrixXd::Identity(rows, rows);
     }
