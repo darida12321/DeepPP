@@ -134,7 +134,7 @@ TEST(LayerBackPropTest, Sigmoid) {
   VectorXd b1(2);
   b1 << 1.0046, 1.0046;
   MatrixXd w2(2, 2);
-  w2 << 1.1621, 1.1621, 1.2072, 1.2073;
+  w2 << 1.1621, 1.1621, 1.2073, 1.2073;
   VectorXd b2(2);
   b2 << 1.1645, 1.2097;
   std::vector<MatrixXd> ws{w1, w2};
@@ -142,12 +142,13 @@ TEST(LayerBackPropTest, Sigmoid) {
   compareNetwork(ws, bs, network);
 }
 
+using namespace std;
 TEST(LayerBackPropTest, SoftMax) {
   // Create 1-1 neural network
   MatrixXd w(2, 2);
-  w << 1, 1, 1, 1;
+  w << 1, 2, 1, 4;
   VectorXd b(2);
-  b << 1, 1;
+  b << 9, -1;
   Network network(std::vector<MatrixXd>{w, w}, std::vector<VectorXd>{b, b},
                   std::vector<ActivationFunction*>{&linear, &softmax},
                   &mean_sqr_error);
@@ -164,18 +165,17 @@ TEST(LayerBackPropTest, SoftMax) {
   std::vector<VectorXd> input{in1, in2};
   std::vector<VectorXd> output{out1, out2};
 
-  // Train the network
   network.train(input, output, 1);
 
   // Expect output
   MatrixXd w1(2, 2);
-  w1 << 1, 1, 1, 1;
+  w1 << 1, 2, 1.059, 4.058;
   VectorXd b1(2);
-  b1 << 1, 1;
+  b1 << 9, -0.941;
   MatrixXd w2(2, 2);
-  w2 << 0.4, 0.4, 1.6, 1.6;
+  w2 << 0.646, 1.882, 1.354, 4.118;
   VectorXd b2(2);
-  b2 << 0.95, 1.05;
+  b2 << 8.971, -0.971;
   std::vector<MatrixXd> ws{w1, w2};
   std::vector<VectorXd> bs{b1, b2};
   compareNetwork(ws, bs, network);
