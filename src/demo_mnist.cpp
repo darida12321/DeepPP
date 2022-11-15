@@ -32,20 +32,25 @@ int main() {
   network.setWeights(w1, w2, w3);
   network.setBiases(b1, b2, b3);
 
-ImageSet image;
+  ImageSet image;
+  
+  auto trainImages = image.getTrainImages();
+  auto trainLabels = image.getTrainLabels();
+  
+  double acc =
+      network.getAccuracy(trainImages, trainLabels);
+  std::cout << "Network accuracy: " << acc << std::endl;
+
 std::cout << "Started training" << std::endl;
   for (int i = 0; i < 3; i++) {
-    network.train(image.getTrainImages(), image.getTrainLabels(), 0.1);
+    network.train(trainImages, trainLabels, 0.1);
 
-    // double acc1 =
-  //     network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
-    // double acc2 =
-    //     network.getAccuracy(image.getTestImages(), image.getTestLabels());
-    std::cout << "Round " << i << std::endl;
+    std::cout << "Completed round " << i << std::endl;
+    double acc =
+        network.getAccuracy(trainImages, trainLabels);
+    std::cout << "Network accuracy: " << acc << std::endl;
+  
   }
 
-  //double acc =
-  //    network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
-  
   return 0;
 }
