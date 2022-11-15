@@ -91,8 +91,8 @@ void Network::train(const std::vector<VectorXd>& in,
 
   // Apply the accumulated changes
   for (unsigned int i = 0; i < weights_.size(); i++) {
-    weights_[i] += backprop_weight_acc[i] / in.size();
-    biases_[i] += backprop_bias_acc[i] / in.size();
+    weights_[i] += backprop_weight_acc[i] / (in.size());
+    biases_[i] += backprop_bias_acc[i] / (in.size());
   }
 }
 

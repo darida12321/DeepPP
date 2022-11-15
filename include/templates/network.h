@@ -10,6 +10,8 @@
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
 
+namespace Template {
+
 // USER INTERFACE
 template <size_t In>
 struct InputLayer{};
@@ -259,12 +261,13 @@ public:
       }
     }
 
+
     // Add the change
     [ this, &in, &weight_acc, &
       bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
-      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / (in.size()%100)),
+      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / in.size()),
        ...);
-      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / (in.size()%100)), ...);
+      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / in.size()), ...);
     }
     (std::make_index_sequence<N>{});
   }
@@ -339,3 +342,4 @@ struct Network<
 
 
 
+}

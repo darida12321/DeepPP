@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <templates/network.h>
+#include <templates/mnist_imageset.h>
 
 #include <Eigen/Dense>
 #include <cmath>
@@ -69,4 +70,62 @@ TEST(NetworkTemplate, TestInitialisation) {
   EXPECT_TRUE(w2.isApprox(network.getWeight<1>(), 0.001));
   EXPECT_TRUE(b1.isApprox(network.getBias<0>(), 0.001));
   EXPECT_TRUE(b2.isApprox(network.getBias<1>(), 0.001));
+}
+
+TEST(NetworkTemplate, TestMnistSingle) {
+  const size_t IMAGESIZE = IMG_WIDTH*IMG_HEIGHT;
+  Network<
+    CategoricalCrossEntropy, WeightZero, BiasZero,
+    InputLayer<IMAGESIZE>, 
+    Layer<128, Relu>, 
+    Layer<128, Relu>, 
+    Layer<10, Softmax>
+  > network;
+
+  ImageSet image;
+  std::vector<Vector<double, IMAGESIZE>> x_train{image.getImage(0)};
+  std::vector<Vector<double, 10>> y_train{image.getLabel(0)};
+
+  Vector<double, 10> exp1{{0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}};
+  Vector<double, 10> out1 = network.forwardProp(x_train[0]);
+
+  network.train(x_train, y_train, 1);
+
+  Vector<double, 10> exp2{{0.0853, 0.0853, 0.0853, 0.0853, 0.0853, 0.2320, 0.0853, 0.0853,
+                 0.0853, 0.0853}};
+  Vector<double, 10> out2 = network.forwardProp(x_train[0]);
+
+  for (int i = 0; i < 10; i++) {
+    EXPECT_NEAR(exp1(i), out1(i), 0.001);
+    EXPECT_NEAR(exp2(i), out2(i), 0.001);
+  }
+}
+
+TEST(NetworkTemplate, Fooooo) { // TODO delete
+  // const size_t IMAGESIZE = IMG_WIDTH*IMG_HEIGHT;
+  // Network<
+  //   CategoricalCrossEntropy, WeightZero, BiasZero,
+  //   InputLayer<IMAGESIZE>, 
+  //   Layer<128, Relu>, 
+  //   Layer<128, Relu>, 
+  //   Layer<10, Softmax>
+  // > network;
+  //
+  //
+  // ImageSet image;
+  //
+  // auto x_train{image.getTrainImages()};
+  // auto y_train{image.getTrainLabels()};
+  // // x_train.resize(100);
+  // // y_train.resize(100);
+  // x_train.resize(99);
+  // y_train.resize(99);
+  //
+  // network.train(x_train, y_train, 0.1);
+  // network.train(x_train, y_train, 0.1);
+  // network.train(x_train, y_train, 0.1);
+  // network.train(x_train, y_train, 0.1);
+  // network.train(x_train, y_train, 0.1);
+  // double acc = network.getAccuracy(image.getTestImages(), image.getTestLabels());
+  // std::cout << "Acc: " << acc << std::endl;
 }
