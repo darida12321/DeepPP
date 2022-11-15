@@ -21,15 +21,6 @@ int main() {
     Layer<10, Softmax>
   > network;
 
-  // TODO test initialization plsssss
-  Eigen::MatrixXd w1 = Eigen::MatrixXd::Random(128, 28 * 28);
-  Eigen::MatrixXd w2 = Eigen::MatrixXd::Random(128, 128);
-  Eigen::MatrixXd w3 = Eigen::MatrixXd::Random(10, 128);
-  Eigen::MatrixXd w1_t(w1);
-  Eigen::MatrixXd w2_t(w2);
-  Eigen::MatrixXd w3_t(w3);
-  network.setWeights(w1_t, w2_t, w3_t);
-
   ImageSet image;
   
   auto trainImages = image.getTrainImages();

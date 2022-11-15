@@ -30,7 +30,6 @@ struct WeightZero {
   inline Weight genWeight() {
     return Weight::Zero();
   }
-
 };
 
 template<size_t N>
@@ -40,7 +39,6 @@ struct BiasZero {
   inline Bias genBias() {
     return Bias::Zero();
   }
-
 };
 
 template<size_t N, size_t M>
@@ -50,7 +48,6 @@ struct WeightRandom {
   inline Weight genWeight() {
     return Weight::Random();
   }
-
 };
 
 template<size_t N>
@@ -60,8 +57,26 @@ struct BiasRandom {
   inline Bias genBias() {
     return Bias::Random();
   }
-
 };
+
+template<size_t N, size_t M>
+struct WeightOnes {
+  typedef Eigen::Matrix<double, N, M> Weight;
+
+  inline Weight genWeight() {
+    return Weight::Ones();
+  }
+};
+
+template<size_t N>
+struct BiasOnes {
+  typedef Eigen::Vector<double, N> Bias;
+
+  inline Bias genBias() {
+    return Bias::Ones();
+  }
+};
+
 
 
 
@@ -198,7 +213,7 @@ public:
 
       // Forward propogation
       [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
-        ((std::get<I + 1>(a) = get<I>(layers_).activation(
+        ((std::get<I + 1>(a) = std::get<I>(layers_).activation(
               std::get<I>(layers_).bias_ +
               std::get<I>(layers_).weight_ * std::get<I>(a))),
          ...);
