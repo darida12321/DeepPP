@@ -61,6 +61,8 @@ jobs:
       image: node:19-slim
     needs: configure-and-build
     steps:
+      - uses: actions/checkout@v3
+
       - name: Download build files
         uses: actions/download-artifact@v3
         # with:
@@ -81,6 +83,8 @@ jobs:
       image: node:19-slim
     needs: configure-and-build
     steps:
+      - uses: actions/checkout@v3
+
       - name: Download build files
         uses: actions/download-artifact@v3
         with:
