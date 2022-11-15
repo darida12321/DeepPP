@@ -6,9 +6,12 @@
 #include <templates/template_helpers.h>
 #include <templates/activation_function.h>
 #include <templates/cost_function.h>
+#include <memory>
 
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
+
+namespace Template {
 
 // USER INTERFACE
 template <size_t In>
@@ -25,41 +28,68 @@ template<size_t N, size_t M>
 struct WeightZero {
   typedef Eigen::Matrix<double, N, M> Weight;
 
-  inline Weight genWeight() {
-    return Weight::Zero();
+  inline Weight* genWeight() {
+    Weight* w = new Weight;
+    *w = Weight::Zero();
+    return w;
   }
-
 };
 
 template<size_t N>
 struct BiasZero {
   typedef Eigen::Vector<double, N> Bias;
 
-  inline Bias genBias() {
-    return Bias::Zero();
+  inline Bias* genBias() {
+    Bias* b = new Bias;
+    *b = Bias::Zero();
+    return b;
   }
-
 };
 
 template<size_t N, size_t M>
 struct WeightRandom {
   typedef Eigen::Matrix<double, N, M> Weight;
 
-  inline Weight genWeight() {
-    return Weight::Random();
+  inline Weight* genWeight() {
+    Weight* w = new Weight;
+    *w = Weight::Random();
+    return w;
   }
-
 };
 
 template<size_t N>
 struct BiasRandom {
   typedef Eigen::Vector<double, N> Bias;
 
-  inline Bias genBias() {
-    return Bias::Random();
+  inline Bias* genBias() {
+    Bias* b = new Bias;
+    *b = Bias::Random();
+    return b;
   }
-
 };
+
+template<size_t N, size_t M>
+struct WeightOnes {
+  typedef Eigen::Matrix<double, N, M> Weight;
+
+  inline Weight* genWeight() {
+    Weight* w = new Weight;
+    *w = Weight::Ones();
+    return w;
+  }
+};
+
+template<size_t N>
+struct BiasOnes {
+  typedef Eigen::Vector<double, N> Bias;
+
+  inline Bias* genBias() {
+    Bias* b = new Bias;
+    *b = Bias::Ones();
+    return b;
+  }
+};
+
 
 
 
@@ -69,12 +99,14 @@ struct BiasRandom {
 template <size_t In, size_t Out, template <size_t > typename Activation, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit>
 struct LayerBase : Activation<Out>, WeightInit<Out, In>, BiasInit<Out> {
  public:
-  Eigen::Matrix<double, Out, In> weight_ = WeightInit<Out, In>::genWeight();
-  Eigen::Vector<double, Out> bias_ = BiasInit<Out>::genBias();
+  std::unique_ptr<Eigen::Matrix<double, Out, In>> weight_;
+  std::unique_ptr<Eigen::Vector<double, Out>> bias_;
+
+  LayerBase(): weight_(WeightInit<Out, In>::genWeight()), bias_(BiasInit<Out>::genBias()) {}
 
 
   Eigen::Vector<double, Out> operator<<(Eigen::Vector<double, In> rhs) {
-    Eigen::Vector<double, Out> z = bias_ + (weight_ * rhs);
+    Eigen::Vector<double, Out> z = *bias_ + (*weight_ * rhs);
     return Activation<Out>::activation(z);
   }
 };
@@ -117,7 +149,7 @@ public:
    */
   inline void setWeights(Weights... weights) {
     [ this, &weights... ]<std::size_t... I>(std::index_sequence<I...>) {
-      ((std::get<I>(layers_).weight_ = weights), ...);
+      ((*(std::get<I>(layers_).weight_) = weights), ...);
     }
     (std::make_index_sequence<N>{});
   }
@@ -129,7 +161,7 @@ public:
    */
   inline void setBiases(Biases... biases) {
     [ this, &biases... ]<std::size_t... I>(std::index_sequence<I...>) {
-      ((std::get<I>(layers_).bias_ = biases), ...);
+      ((*(std::get<I>(layers_).bias_) = biases), ...);
     }
     (std::make_index_sequence<N>{});
   }
@@ -140,14 +172,14 @@ public:
    * @brief Get the weight matrix of a perticular layer
    */
   inline typename std::tuple_element<I, MatrixList>::type getWeight() {
-    return std::get<I>(layers_).weight_;
+    return *(std::get<I>(layers_).weight_);
   }
   template <size_t I>
   /**
    * @brief Get the bias vector of a perticular layer
    */
   inline typename std::tuple_element<I, OutVectorList>::type getBias() {
-    return std::get<I>(layers_).bias_;
+    return *(std::get<I>(layers_).bias_);
   }
 
   /**
@@ -196,9 +228,9 @@ public:
 
       // Forward propogation
       [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
-        ((std::get<I + 1>(a) = get<I>(layers_).activation(
-              std::get<I>(layers_).bias_ +
-              std::get<I>(layers_).weight_ * std::get<I>(a))),
+        ((std::get<I + 1>(a) = std::get<I>(layers_).activation(
+              *(std::get<I>(layers_).bias_) +
+              *(std::get<I>(layers_).weight_) * std::get<I>(a))),
          ...);
       }
       (std::make_index_sequence<N>{});
@@ -212,23 +244,23 @@ public:
 
         // dcda[i] = act_der(b[j] + w[j] * a[j]) * dcda[i+1]
         ((std::get<I>(dcda) =
-              std::get<I>(layers_).weight_.transpose() *
-              std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
-                                                  std::get<I>(layers_).weight_ *
+              std::get<I>(layers_).weight_->transpose() *
+              std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
+                                                  *(std::get<I>(layers_).weight_) *
                                                       std::get<I>(a)) *
               std::get<I + 1>(dcda)),
          ...);
 
         // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
         ((std::get<I>(weight_acc) -=
-          std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
-                                              std::get<I>(layers_).weight_ *
+          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
+                                              *(std::get<I>(layers_).weight_) *
                                                   std::get<I>(a)) *
           std::get<I + 1>(dcda) * std::get<I>(a).transpose() * stepSize,
 
           std::get<I>(bias_acc) -=
-          std::get<I>(layers_).activation_der(std::get<I>(layers_).bias_ +
-                                              std::get<I>(layers_).weight_ *
+          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
+                                              *(std::get<I>(layers_).weight_) *
                                                   std::get<I>(a)) *
           std::get<I + 1>(dcda) * stepSize),
          ...);
@@ -240,9 +272,9 @@ public:
         // Add the change
         [ this, &weight_acc, &bias_acc ]<std::size_t... I>
         (std::index_sequence<I...>) {
-          ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / 100),
+          ((*(std::get<I>(layers_).weight_) += std::get<I>(weight_acc) / 100),
            ...);
-          ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / 100), ...);
+          ((*(std::get<I>(layers_).bias_) += std::get<I>(bias_acc) / 100), ...);
         }
         (std::make_index_sequence<N>{});
 
@@ -259,12 +291,13 @@ public:
       }
     }
 
+
     // Add the change
     [ this, &in, &weight_acc, &
       bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
-      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / (in.size()%100)),
+      ((*(std::get<I>(layers_).weight_) += std::get<I>(weight_acc) / in.size()),
        ...);
-      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / (in.size()%100)), ...);
+      ((*(std::get<I>(layers_).bias_) += std::get<I>(bias_acc) / in.size()), ...);
     }
     (std::make_index_sequence<N>{});
   }
@@ -339,3 +372,4 @@ struct Network<
 
 
 
+}
