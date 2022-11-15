@@ -112,6 +112,8 @@ jobs:
   format-check:
     runs-on: ubuntu-latest
     needs: [test, benchmark]
+    env:
+      tmp: 0
     if: ${{ !env.ACT }}
     steps:
       - uses: actions/checkout@v3
