@@ -78,8 +78,6 @@ jobs:
         with:
           name: test
 
-      - run: ls
-
       - name: Enable executable
         run: chmod +x ./DeepPPTest
 
