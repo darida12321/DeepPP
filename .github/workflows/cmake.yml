@@ -44,7 +44,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run: ./scripts/configure.sh
 
-      - name: bin
+      - name: Build project
         run: ./scripts/build.sh
 
       - run: apt update && apt install -y nodejs
