@@ -30,7 +30,6 @@ struct WeightZero {
   inline Weight genWeight() {
     return Weight::Zero();
   }
-
 };
 
 template<size_t N>
@@ -40,7 +39,6 @@ struct BiasZero {
   inline Bias genBias() {
     return Bias::Zero();
   }
-
 };
 
 template<size_t N, size_t M>
@@ -50,7 +48,6 @@ struct WeightRandom {
   inline Weight genWeight() {
     return Weight::Random();
   }
-
 };
 
 template<size_t N>
@@ -60,7 +57,6 @@ struct BiasRandom {
   inline Bias genBias() {
     return Bias::Random();
   }
-
 };
 
 template<size_t N, size_t M>
@@ -70,7 +66,6 @@ struct WeightOnes {
   inline Weight genWeight() {
     return Weight::Ones();
   }
-
 };
 
 template<size_t N>
@@ -80,7 +75,6 @@ struct BiasOnes {
   inline Bias genBias() {
     return Bias::Ones();
   }
-
 };
 
 
