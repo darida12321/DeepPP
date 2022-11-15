@@ -213,7 +213,7 @@ public:
 
       // Forward propogation
       [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
-        ((std::get<I + 1>(a) = get<I>(layers_).activation(
+        ((std::get<I + 1>(a) = std::get<I>(layers_).activation(
               std::get<I>(layers_).bias_ +
               std::get<I>(layers_).weight_ * std::get<I>(a))),
          ...);
