@@ -177,7 +177,6 @@ public:
     OutVectorList bias_acc;
 
     // Reset the change accumulators
-    // TODO Zero function vs. Matrix::Zero creation.
     [&weight_acc, &bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
       ((std::get<I>(weight_acc) =
             std::tuple_element<I, MatrixList>::type::Zero()),
@@ -235,14 +234,37 @@ public:
          ...);
       }
       (make_reverse_index_sequence<N>{});
+
+      // Apply the accumulated changes
+      if (i % 100 == 99) {
+        // Add the change
+        [ this, &weight_acc, &bias_acc ]<std::size_t... I>
+        (std::index_sequence<I...>) {
+          ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / 100),
+           ...);
+          ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / 100), ...);
+        }
+        (std::make_index_sequence<N>{});
+
+        // Reset values
+        [&weight_acc, &bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
+          ((std::get<I>(weight_acc) =
+                std::tuple_element<I, MatrixList>::type::Zero()),
+           ...);
+          ((std::get<I>(bias_acc) =
+                std::tuple_element<I, OutVectorList>::type::Zero()),
+           ...);
+        }
+        (std::make_index_sequence<N>{});
+      }
     }
 
     // Add the change
     [ this, &in, &weight_acc, &
       bias_acc ]<std::size_t... I>(std::index_sequence<I...>) {
-      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / in.size()),
+      ((std::get<I>(layers_).weight_ += std::get<I>(weight_acc) / (in.size()%100)),
        ...);
-      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / in.size()), ...);
+      ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / (in.size()%100)), ...);
     }
     (std::make_index_sequence<N>{});
   }
