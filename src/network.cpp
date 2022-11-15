@@ -83,6 +83,7 @@ void Network::train(const std::vector<VectorXd>& in,
       for (unsigned int j = 0; j < weights_.size(); j++) {
         weights_[j] += backprop_weight_acc[j] / 100;
         biases_[j] += backprop_bias_acc[j] / 100;
+        // TODO WRONG, fix this madness
         backprop_weight_acc[j] = weights_[j] - weights_[j];
         backprop_bias_acc[j] = biases_[j] - biases_[j];
       }
