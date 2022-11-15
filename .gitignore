@@ -46,3 +46,6 @@ doc/doxygen/
 # VScode generated files
 .vscode/
 .cache/
+
+# artifact folder for locally running workflow
+artifacts/

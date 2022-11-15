@@ -24,11 +24,15 @@ set(Sources
     src/network.cpp
     src/mnist_imageset.cpp
 )
-
 add_library(${PROJECT_NAME} ${Sources} ${Headers})
+add_executable(${PROJECT_NAME}_Demo src/demo_mnist.cpp)
 
 add_subdirectory(lib/eigen)
 target_include_directories(${PROJECT_NAME} 
+    PUBLIC include/
+    PUBLIC lib/eigen
+)
+target_include_directories(${PROJECT_NAME}_Demo 
     PUBLIC include/
     PUBLIC lib/eigen
 )
