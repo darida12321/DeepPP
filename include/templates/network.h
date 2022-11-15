@@ -115,7 +115,7 @@ public:
    * 
    * @param weights 
    */
-  void setWeights(Weights... weights) {
+  inline void setWeights(Weights... weights) {
     [ this, &weights... ]<std::size_t... I>(std::index_sequence<I...>) {
       ((std::get<I>(layers_).weight_ = weights), ...);
     }
@@ -127,7 +127,7 @@ public:
    * 
    * @param biases 
    */
-  void setBiases(Biases... biases) {
+  inline void setBiases(Biases... biases) {
     [ this, &biases... ]<std::size_t... I>(std::index_sequence<I...>) {
       ((std::get<I>(layers_).bias_ = biases), ...);
     }
@@ -139,14 +139,14 @@ public:
   /**
    * @brief Get the weight matrix of a perticular layer
    */
-  typename std::tuple_element<I, MatrixList>::type getWeight() {
+  inline typename std::tuple_element<I, MatrixList>::type getWeight() {
     return std::get<I>(layers_).weight_;
   }
   template <size_t I>
   /**
    * @brief Get the bias vector of a perticular layer
    */
-  typename std::tuple_element<I, OutVectorList>::type getBias() {
+  inline typename std::tuple_element<I, OutVectorList>::type getBias() {
     return std::get<I>(layers_).bias_;
   }
 
@@ -155,7 +155,7 @@ public:
    * 
    * @param input
    */
-  OutputVector forwardProp(const InputVector& input) {
+  inline OutputVector forwardProp(const InputVector& input) {
     return [ this, &input ]<size_t... I>(reverse_index_sequence<I...>) {
       return (std::get<I>(layers_) << ... << input);
     }
@@ -170,7 +170,7 @@ public:
    * @param exp_out expected outputs
    * @param stepSize amount by which to vary the weights and biases
    */
-  void train(const std::vector<InputVector>& in, const std::vector<OutputVector>& exp_out,
+  inline void train(const std::vector<InputVector>& in, const std::vector<OutputVector>& exp_out,
              double stepSize) {
     // Create change accumulators
     MatrixList weight_acc;
@@ -190,9 +190,9 @@ public:
 
     // For each data poing, accumulate the changes
     // TODO: Use std::array for compile time size
+    std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
     for (size_t i = 0; i < in.size(); i++) {
       // Save activations
-      std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
       std::get<0>(a) = in[i];
 
       // Forward propogation
@@ -245,6 +245,22 @@ public:
       ((std::get<I>(layers_).bias_ += std::get<I>(bias_acc) / in.size()), ...);
     }
     (std::make_index_sequence<N>{});
+  }
+
+  
+  inline double getAccuracy(const std::vector<InputVector>& in,
+                            const std::vector<OutputVector>& exp_out) {
+    double acc = 0;
+    for (unsigned int i = 0; i < in.size(); i++) {
+      OutputVector val = forwardProp(in[i]);
+      Eigen::Index predicted, expected;
+      val.maxCoeff(&predicted);
+      exp_out[i].maxCoeff(&expected);
+      if (predicted == expected) {
+        acc++;
+      }
+    }
+    return acc / in.size();
   }
 
 private:
