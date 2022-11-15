@@ -43,7 +43,7 @@ jobs:
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run: ./scripts/configure.sh
 
-      - name: Build
+      - name: bin
         run: ./scripts/build.sh
 
       - run: apt update && apt install -y nodejs
@@ -51,8 +51,8 @@ jobs:
       - name: Upload build files
         uses: actions/upload-artifact@v3
         with:
-          name: build
-          path: build
+          name: bin
+          path: bin
 
   #New job
   test:
@@ -65,9 +65,9 @@ jobs:
 
       - name: Download build files
         uses: actions/download-artifact@v3
-        # with:
-        #   name: build
-        #   path: build
+        with:
+          name: bin
+          path: bin
 
       - name: Run all tests
         if: github.ref == 'refs/heads/main'
@@ -88,8 +88,8 @@ jobs:
       - name: Download build files
         uses: actions/download-artifact@v3
         with:
-          name: build
-          path: build
+          name: bin
+          path: bin
 
       - name: Run benchmarks
         run: ./scripts/benchmark.sh
