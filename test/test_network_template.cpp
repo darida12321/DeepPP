@@ -57,14 +57,14 @@ TEST(NetworkTemplate, SoftMax) {
 }
 
 TEST(NetworkTemplate, TestInitialisation) {
-  Network<MeanSquareError, WeightZero, BiasZero, InputLayer<2>,
+  Network<MeanSquareError, WeightOnes, BiasOnes, InputLayer<2>,
           Layer<2, Linear>, Layer<2, Softmax>>
       network;
 
-  Matrix<double, 2, 2> w1{{0, 0}, {0, 0}};
-  Vector<double, 2> b1{0, 0};
-  Matrix<double, 2, 2> w2{{0, 0}, {0, 0}};
-  Vector<double, 2> b2{0, 0};
+  Matrix<double, 2, 2> w1{{1, 1}, {1, 1}};
+  Vector<double, 2> b1{1, 1};
+  Matrix<double, 2, 2> w2{{1, 1}, {1, 1}};
+  Vector<double, 2> b2{1, 1};
 
   EXPECT_TRUE(w1.isApprox(network.getWeight<0>(), 0.001));
   EXPECT_TRUE(w2.isApprox(network.getWeight<1>(), 0.001));

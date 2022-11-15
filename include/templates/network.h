@@ -63,6 +63,27 @@ struct BiasRandom {
 
 };
 
+template<size_t N, size_t M>
+struct WeightOnes {
+  typedef Eigen::Matrix<double, N, M> Weight;
+
+  inline Weight genWeight() {
+    return Weight::Ones();
+  }
+
+};
+
+template<size_t N>
+struct BiasOnes {
+  typedef Eigen::Vector<double, N> Bias;
+
+  inline Bias genBias() {
+    return Bias::Ones();
+  }
+
+};
+
+
 
 
 
