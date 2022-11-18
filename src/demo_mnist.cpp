@@ -1,11 +1,16 @@
 #include <templates/network.h>
+#include <templates/mnist_imageset.h>
 
 #include <Eigen/Dense>
+#include <cstddef>
 #include <iostream>
+#include "Eigen/src/Core/Matrix.h"
 
-using Eigen::Matrix;
-using Eigen::Vector;
+// using Eigen::Matrix;
+// using Eigen::Vector;
 using namespace Template;
+
+const size_t IMAGESIZE = IMG_WIDTH*IMG_HEIGHT;
 
 int main() {
   Network<
@@ -34,6 +39,5 @@ int main() {
     std::cout << "Network accuracy: " << acc << std::endl;
   
   }
-
   return 0;
 }
