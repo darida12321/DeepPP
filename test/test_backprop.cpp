@@ -1,7 +1,7 @@
-#include <activation_function.h>
-#include <cost_function.h>
+#include <runtime/activation_function.h>
+#include <runtime/cost_function.h>
 #include <gtest/gtest.h>
-#include <network.h>
+#include <runtime/network.h>
 
 #include <Eigen/Dense>
 #include <cmath>

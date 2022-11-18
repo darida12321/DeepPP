@@ -1,8 +1,8 @@
-#include <activation_function.h>
-#include <cost_function.h>
+#include <runtime/activation_function.h>
+#include <runtime/cost_function.h>
 #include <gtest/gtest.h>
-#include <mnist_imageset.h>
-#include <network.h>
+#include <runtime/mnist_imageset.h>
+#include <runtime/network.h>
 #include <templates/network.h>
 #include <templates/mnist_imageset.h>
 
@@ -100,7 +100,7 @@ TEST(MnistTest, IntegrationTest) {
                   std::vector<ActivationFunction*>{&relu, &relu, &softmax},
                   &cat_cross_entropy);
 
-  return;  // TODO actually do this test
+  // return;  
   ImageSet image;
 
   for (int i = 0; i < 3; i++) {

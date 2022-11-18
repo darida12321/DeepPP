@@ -1,5 +1,5 @@
 
-#include <activation_function.h>
+#include <runtime/activation_function.h>
 #include <benchmark/benchmark.h>
 // TODO restore
 #include <templates/activation_function.h>

@@ -1,5 +1,5 @@
 #include <benchmark/benchmark.h>
-#include <cost_function.h>
+#include <runtime/cost_function.h>
 #include <templates/cost_function.h>
 
 using Eigen::Vector;

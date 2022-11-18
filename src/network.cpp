@@ -1,12 +1,12 @@
-#include <activation_function.h>
-#include <network.h>
+#include <runtime/activation_function.h>
+#include <runtime/network.h>
+#include <runtime/cost_function.h>
 
 #include <functional>
 #include <iostream>
 
 #include "Eigen/Core"
 #include "Eigen/src/Core/Matrix.h"
-#include "cost_function.h"
 
 // Constructor for the layer
 Network::Network(std::vector<MatrixXd> weights, std::vector<VectorXd> biases,
