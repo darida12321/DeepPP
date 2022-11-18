@@ -40,7 +40,7 @@ struct intlist_element<0, X, Xs...> {
   static constexpr size_t elem = X;
 };
 template <size_t I, size_t X, size_t... Xs>
-struct intlist_element<I, X, Xs...> : select_last<I-1, Xs...> {};
+struct intlist_element<I, X, Xs...> : intlist_element<I-1, Xs...> {};
 
 
 /**

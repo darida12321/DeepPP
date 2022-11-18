@@ -1,9 +1,23 @@
-#include <mnist_imageset.h>
+#pragma once
 
-#include <fstream>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <Eigen/Dense>
 
-ImageSet::ImageSet() {
+namespace Template {
+
+const int TRAIN_SIZE = 60000;
+const int TEST_SIZE = 10000;
+const int IMG_WIDTH = 28;
+const int IMG_HEIGHT = 28;
+
+typedef Eigen::Vector<double, IMG_WIDTH*IMG_HEIGHT> ImgVector;
+typedef Eigen::Vector<double, 10> ImgLabel;
+
+class ImageSet {
+ public:
+    ImageSet() {
   std::ifstream trainingLabels("test/img/train-labels-idx1-ubyte");
   std::ifstream trainingImages("test/img/train-images-idx3-ubyte");
   std::ifstream testLabels("test/img/t10k-labels-idx1-ubyte");
@@ -44,11 +58,12 @@ ImageSet::ImageSet() {
     testImages_.push_back(img);
   }
 }
-ImgVector& ImageSet::getImage(int index) { return trainImages_[index]; }
-ImgLabel& ImageSet::getLabel(int index) { return trainLabels_[index]; }
-void ImageSet::printImage(int index) {
+
+    ImgVector& getImage(int index) { return trainImages_[index]; }
+    ImgLabel& getLabel(int index) { return trainLabels_[index]; }
+    void printImage(int index) {
   ImgVector img = trainImages_[index];
-  ImgLabel label = trainLabels_[index];
+  //ImgLabel label = trainLabels_[index];
   for (int i = 0; i < IMG_HEIGHT; i++) {
     for (int j = 0; j < IMG_WIDTH; j++) {
       if ((unsigned int)img(IMG_WIDTH * i + j) > 128) {
@@ -60,13 +75,16 @@ void ImageSet::printImage(int index) {
     std::cout << std::endl;
   }
 }
-
-std::vector<ImgLabel> ImageSet::getTrainLabels() { return trainLabels_; }
-std::vector<ImgVector> ImageSet::getTrainImages() { return trainImages_; }
-std::vector<ImgLabel> ImageSet::getTestLabels() { return testLabels_; }
-std::vector<ImgVector> ImageSet::getTestImages() { return testImages_; }
-
-ImgLabel ImageSet::charToLabel(char c) {
+    std::vector<ImgLabel> getTrainLabels() { return trainLabels_; }
+    std::vector<ImgVector> getTrainImages() { return trainImages_; }
+    std::vector<ImgLabel> getTestLabels() { return testLabels_; }
+    std::vector<ImgVector> getTestImages() { return testImages_; } 
+  private:
+    std::vector<ImgLabel> trainLabels_;
+    std::vector<ImgVector> trainImages_;
+    std::vector<ImgLabel> testLabels_;
+    std::vector<ImgVector> testImages_;
+    ImgLabel charToLabel(char c) {
   ImgLabel label(10);
   for (int i = 0; i < 10; i++) {
     if (c == i) {
@@ -76,4 +94,10 @@ ImgLabel ImageSet::charToLabel(char c) {
     }
   }
   return label;
+}
+
+};
+
+
+
 }

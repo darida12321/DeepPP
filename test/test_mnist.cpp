@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <mnist_imageset.h>
 #include <network.h>
+#include <templates/network.h>
+#include <templates/mnist_imageset.h>
 
 #include <Eigen/Dense>
 #include <cmath>
@@ -103,12 +105,9 @@ TEST(MnistTest, IntegrationTest) {
 
   for (int i = 0; i < 3; i++) {
     network.train(image.getTrainImages(), image.getTrainLabels(), 0.1);
-
-    // double acc1 =
-    //     network.getAccuracy(image.getTrainImages(), image.getTrainLabels());
-    // double acc2 =
-    //     network.getAccuracy(image.getTestImages(), image.getTestLabels());
-    std::cout << "Round " << i << std::endl;
+    double acc =
+        network.getAccuracy(image.getTestImages(), image.getTestLabels());
+    std::cout << "Round " << i << ", acc: " << acc << std::endl;
   }
 
   double acc =

@@ -83,16 +83,16 @@ void Network::train(const std::vector<VectorXd>& in,
       for (unsigned int j = 0; j < weights_.size(); j++) {
         weights_[j] += backprop_weight_acc[j] / 100;
         biases_[j] += backprop_bias_acc[j] / 100;
-        backprop_weight_acc[j] = weights_[j] - weights_[j];
-        backprop_bias_acc[j] = biases_[j] - biases_[j];
+        backprop_weight_acc[j] = MatrixXd::Zero(weights_[j].rows(), weights_[j].cols());
+        backprop_bias_acc[j] = VectorXd::Zero(biases_[j].size());
       }
     }
   }
 
   // Apply the accumulated changes
   for (unsigned int i = 0; i < weights_.size(); i++) {
-    weights_[i] += backprop_weight_acc[i] / in.size();
-    biases_[i] += backprop_bias_acc[i] / in.size();
+    weights_[i] += backprop_weight_acc[i] / (in.size());
+    biases_[i] += backprop_bias_acc[i] / (in.size());
   }
 }
 
