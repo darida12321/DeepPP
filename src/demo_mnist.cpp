@@ -39,6 +39,5 @@ int main() {
     std::cout << "Network accuracy: " << acc << std::endl;
   
   }
-
   return 0;
 }
