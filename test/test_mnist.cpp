@@ -100,7 +100,7 @@ TEST(MnistTest, IntegrationTest) {
                   std::vector<ActivationFunction*>{&relu, &relu, &softmax},
                   &cat_cross_entropy);
 
-  return;  // TODO actually do this test
+  // return;  
   ImageSet image;
 
   for (int i = 0; i < 3; i++) {
