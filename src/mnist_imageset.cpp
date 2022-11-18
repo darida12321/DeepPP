@@ -1,4 +1,4 @@
-#include <mnist_imageset.h>
+#include <runtime/mnist_imageset.h>
 
 #include <fstream>
 #include <iostream>

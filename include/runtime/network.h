@@ -1,5 +1,5 @@
 #pragma once
-#include <activation_function.h>
+#include <runtime/activation_function.h>
 
 #include <Eigen/Dense>
 #include <functional>

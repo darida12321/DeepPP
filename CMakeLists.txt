@@ -8,10 +8,10 @@ add_compile_options(
 )
 
 set(Headers
-    include/cost_function.h
-    include/activation_function.h
-    include/network.h
-    include/mnist_imageset.h
+    include/runtime/cost_function.h
+    include/runtime/activation_function.h
+    include/runtime/network.h
+    include/runtime/mnist_imageset.h
 
     include/templates/network.h
     include/templates/activation_function.h
