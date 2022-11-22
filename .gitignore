@@ -48,5 +48,8 @@ doc/doxygen/
 .cache/
 **/*2.*
 
+# Generated benchmark output
+*.json
+
 # artifact folder for locally running workflow
 artifacts/
