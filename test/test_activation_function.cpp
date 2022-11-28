@@ -1,4 +1,4 @@
-#include <activation_function.h>
+#include <runtime/activation_function.h>
 #include <gtest/gtest.h>
 #include <templates/activation_function.h>
 

@@ -1,4 +1,4 @@
-#include <cost_function.h>
+#include <runtime/cost_function.h>
 #include <gtest/gtest.h>
 #include <templates/cost_function.h>
 

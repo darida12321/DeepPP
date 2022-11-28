@@ -30,7 +30,7 @@ struct WeightZero {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Zero();
+    w->setZero();
     return w;
   }
 };
@@ -41,7 +41,7 @@ struct BiasZero {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Zero();
+    b->setZero();
     return b;
   }
 };
@@ -52,7 +52,7 @@ struct WeightRandom {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Random();
+    w->setRandom();
     return w;
   }
 };
@@ -63,7 +63,7 @@ struct BiasRandom {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Random();
+    b->setRandom();
     return b;
   }
 };
@@ -74,7 +74,7 @@ struct WeightOnes {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Ones();
+    w->setOnes();
     return w;
   }
 };
@@ -85,7 +85,7 @@ struct BiasOnes {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Ones();
+    b->setOnes();
     return b;
   }
 };
@@ -222,21 +222,26 @@ public:
     // For each data poing, accumulate the changes
     // TODO: Use std::array for compile time size
     std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
+    std::tuple<InputVector, Eigen::Vector<double, Outs>...> z;
     for (size_t i = 0; i < in.size(); i++) {
       // Save activations
       std::get<0>(a) = in[i];
+      
+      //Save activations before applying the activation functions
+      std::get<0>(z) = in[i];
 
       // Forward propogation
-      [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
-        ((std::get<I + 1>(a) = std::get<I>(layers_).activation(
-              *(std::get<I>(layers_).bias_) +
-              *(std::get<I>(layers_).weight_) * std::get<I>(a))),
+      [ this, &a, &z]<std::size_t... I>(std::index_sequence<I...>) {
+        ((std::get<I + 1>(z) = *(std::get<I>(layers_).bias_) +
+              *(std::get<I>(layers_).weight_) * std::get<I>(a),
+          std::get<I + 1>(a) = std::get<I>(layers_).activation(
+            std::get<I + 1>(z))),
          ...);
       }
       (std::make_index_sequence<N>{});
 
       // Backward propogation
-      [ this, &i, &exp_out, &a, &weight_acc, &bias_acc, &
+      [ this, &i, &exp_out, &a, &z, &weight_acc, &bias_acc, &
         stepSize ]<size_t... I>(reverse_index_sequence<I...>) {
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
         // Calculate error as last element
@@ -245,23 +250,17 @@ public:
         // dcda[i] = act_der(b[j] + w[j] * a[j]) * dcda[i+1]
         ((std::get<I>(dcda) =
               std::get<I>(layers_).weight_->transpose() *
-              std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                                  *(std::get<I>(layers_).weight_) *
-                                                      std::get<I>(a)) *
+              std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
               std::get<I + 1>(dcda)),
          ...);
 
         // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
         ((std::get<I>(weight_acc) -=
-          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                              *(std::get<I>(layers_).weight_) *
-                                                  std::get<I>(a)) *
+          std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
           std::get<I + 1>(dcda) * std::get<I>(a).transpose() * stepSize,
 
           std::get<I>(bias_acc) -=
-          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                              *(std::get<I>(layers_).weight_) *
-                                                  std::get<I>(a)) *
+          std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
           std::get<I + 1>(dcda) * stepSize),
          ...);
       }
