@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include <map>
+#include <cassert>
 
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
@@ -323,28 +323,62 @@ public:
   inline void exportNetwork(std::string path) {
       std::ofstream output;
       output.open(path);
-      output << Input;
-      ((output << Outs), ...); 
-      output << 0;
+      output << Input << '\n';
+      ((output << Outs << '\n'), ...); 
+      output << 0 << '\n';
       [this, &output]<std::size_t... I>(std::index_sequence<I...>) {
-          (({
-            double *weightCoeffs = *(std::get<I>(layers_).weight_).data();
-            for (int i = 0; i < *(std::get<I>(layers_).weight_).size(); i++) {
-                output << weightCoeffs[i];
-            }
-            double *biasCoeffs = *(std::get<I>(layers_).bias_).data();
-            for (int i = 0; i < *(std::get<I>(layers_).bias_).size(); i++) {
-                output << biasCoeffs[i];
-            }
-          }), ...);
+          ((exportHelper<I>(output)), ...);
       }
       (std::make_index_sequence<N>{});
-
+      output.close();
       // no activation functions included in the export due to templatized import requiring user specification of dimensions anyway
+  }
+
+  inline void importNetwork(std::string path) {
+      std::ifstream input;
+      input.open(path);
+      size_t next_size;
+      input >> next_size;
+      assert(next_size == Input);
+      (({
+        input >> next_size;
+        assert(next_size == Outs);
+        }), ...);
+      input >> next_size;
+      assert(next_size == 0);
+      [this, &input]<std::size_t... I>(std::index_sequence<I...>) {
+        ((importHelper<I>(input)), ...);
+      }
+      (std::make_index_sequence<N>{});
+      input.close();
   }
 
 private:
   std::tuple<LayerBase<intlist_element<LayerIndices, Input, Outs...>::elem, Outs, Activations, WeightInit, BiasInit>...> layers_;
+
+  template<std::size_t I>
+  void importHelper(std::ifstream& in) {
+    for(int i=0; i < (*(std::get<I>(layers_).weight_)).cols(); i++) {
+      for(int j=0; j < (*(std::get<I>(layers_).weight_)).rows(); j++) {
+        in >> (*(std::get<I>(layers_).weight_))(j, i);
+      }
+    }
+    for(int i=0; i < (*(std::get<I>(layers_).bias_)).size(); i++) {
+      in >> (*(std::get<I>(layers_).bias_))[i];
+    }
+  } 
+
+  template<std::size_t I>
+  void exportHelper(std::ofstream& out) {
+    double *weightCoeffs = (*(std::get<I>(layers_).weight_)).data();
+    for (int i = 0; i < (*(std::get<I>(layers_).weight_)).size(); i++) {
+        out << weightCoeffs[i] << '\n';
+    }
+    double *biasCoeffs = (*(std::get<I>(layers_).bias_)).data();
+    for (int i = 0; i < (*(std::get<I>(layers_).bias_)).size(); i++) {
+        out << biasCoeffs[i] << '\n';
+    }
+  }
 };
 
 
