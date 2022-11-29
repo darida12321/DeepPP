@@ -7,6 +7,9 @@
 #include <templates/activation_function.h>
 #include <templates/cost_function.h>
 #include <memory>
+#include <string>
+#include <fstream>
+#include <map>
 
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
@@ -315,6 +318,29 @@ public:
       }
     }
     return acc / in.size();
+  }
+
+  inline void exportNetwork(std::string path) {
+      std::ofstream output;
+      output.open(path);
+      output << Input;
+      ((output << Outs), ...); 
+      output << 0;
+      [this, &output]<std::size_t... I>(std::index_sequence<I...>) {
+          (({
+            double *weightCoeffs = *(std::get<I>(layers_).weight_).data();
+            for (int i = 0; i < *(std::get<I>(layers_).weight_).size(); i++) {
+                output << weightCoeffs[i];
+            }
+            double *biasCoeffs = *(std::get<I>(layers_).bias_).data();
+            for (int i = 0; i < *(std::get<I>(layers_).bias_).size(); i++) {
+                output << biasCoeffs[i];
+            }
+          }), ...);
+      }
+      (std::make_index_sequence<N>{});
+
+      // no activation functions included in the export due to templatized import requiring user specification of dimensions anyway
   }
 
 private:
