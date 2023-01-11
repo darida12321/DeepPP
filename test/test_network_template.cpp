@@ -8,7 +8,7 @@
 
 using Eigen::Matrix;
 using Eigen::Vector;
-using namespace Template;
+using namespace DeepPP;
 
 // TODO use is_approx
 TEST(NetworkTemplate, SoftMax) {

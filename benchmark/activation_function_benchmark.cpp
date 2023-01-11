@@ -21,7 +21,7 @@ BENCHMARK(BM_Sigmoid);
 
 static void BM_Template_Sigmoid(benchmark::State& state) {
   Vector<double, 10> v = Vector<double, 10>::Random();
-  Template::Sigmoid<10> s;
+  DeepPP::Sigmoid<10> s;
   for (auto _ : state) {
     s.activation(v);
     s.activation_der(v);
@@ -43,7 +43,7 @@ BENCHMARK(BM_Softmax);
 
 static void BM_Template_Softmax(benchmark::State& state) {
   Vector<double, 10> v = Vector<double, 10>::Random();
-  Template::Softmax<10> s;
+  DeepPP::Softmax<10> s;
   for (auto _ : state) {
     s.activation(v);
     s.activation_der(v);
@@ -65,7 +65,7 @@ BENCHMARK(BM_Relu);
 
 static void BM_Template_Relu(benchmark::State& state) {
   Vector<double, 10> v = Vector<double, 10>::Random();
-  Template::Relu<10> r;
+  DeepPP::Relu<10> r;
   for (auto _ : state) {
     r.activation(v);
     r.activation_der(v);
@@ -87,7 +87,7 @@ BENCHMARK(BM_Linear);
 
 static void BM_Template_Linear(benchmark::State& state) {
   Vector<double, 10> v = Vector<double, 10>::Random();
-  Template::Linear<10> l;
+  DeepPP::Linear<10> l;
   for (auto _ : state) {
     l.activation(v);
     l.activation_der(v);

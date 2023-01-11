@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
 
 //TODO add other
-namespace Template {
+namespace DeepPP {
   template<size_t N>
   struct MeanSquareError {
     typedef Eigen::Vector<double, N> Vec;

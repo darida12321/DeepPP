@@ -5,7 +5,7 @@
 #include <vector>
 #include <Eigen/Dense>
 
-namespace Template {
+namespace DeepPP {
 
 const int TRAIN_SIZE = 60000;
 const int TEST_SIZE = 10000;

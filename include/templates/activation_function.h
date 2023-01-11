@@ -3,7 +3,7 @@
 
 // TODO add rest
 
-namespace Template {
+namespace DeepPP {
   template <size_t N>
   struct Linear {
     typedef Eigen::Vector<double, N> Vec;

@@ -7,7 +7,7 @@ using Eigen::Matrix;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Vector;
-using namespace Template;
+using namespace DeepPP;
 
 typedef Network<MeanSquareError, WeightRandom, BiasRandom, InputLayer<2>, Layer<2, Linear>, Layer<2, Softmax>> NetworkTemplate; 
 

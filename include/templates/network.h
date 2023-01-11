@@ -14,7 +14,7 @@
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
 
-namespace Template {
+namespace DeepPP {
 
 // USER INTERFACE
 template <size_t In>

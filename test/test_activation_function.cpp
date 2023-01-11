@@ -48,7 +48,7 @@ TEST(ActivationFunction, Sigmoid_Template) {
   for (int i = 0; i < 100; i++) {
     VectorXd in = VectorXd::Random(10);
     Vector<double, 10> in_t(in);
-    Template::Sigmoid<10> sigmoid_t;
+    DeepPP::Sigmoid<10> sigmoid_t;
 
     EXPECT_TRUE(sigmoid.function(in).isApprox(sigmoid_t.activation(in_t)));
     EXPECT_TRUE(
@@ -60,7 +60,7 @@ TEST(ActivationFunction, Softmax_Template) {
   for (int i = 0; i < 100; i++) {
     VectorXd in = VectorXd::Random(10);
     Vector<double, 10> in_t(in);
-    Template::Softmax<10> softmax_t;
+    DeepPP::Softmax<10> softmax_t;
 
     EXPECT_TRUE(softmax.function(in).isApprox(softmax_t.activation(in_t)));
     EXPECT_TRUE(
@@ -72,7 +72,7 @@ TEST(ActivationFunction, Relu_Template) {
   for (int i = 0; i < 100; i++) {
     VectorXd in = VectorXd::Random(10);
     Vector<double, 10> in_t(in);
-    Template::Relu<10> relu_t;
+    DeepPP::Relu<10> relu_t;
 
     EXPECT_TRUE(relu.function(in).isApprox(relu_t.activation(in_t)));
     EXPECT_TRUE(relu.derivative(in).isApprox(relu_t.activation_der(in_t)));
@@ -83,7 +83,7 @@ TEST(ActivationFunction, Linear_Template) {
   for (int i = 0; i < 100; i++) {
     VectorXd in = VectorXd::Random(10);
     Vector<double, 10> in_t(in);
-    Template::Linear<10> linear_t;
+    DeepPP::Linear<10> linear_t;
 
     EXPECT_TRUE(linear.function(in).isApprox(linear_t.activation(in_t)));
     EXPECT_TRUE(linear.derivative(in).isApprox(linear_t.activation_der(in_t)));

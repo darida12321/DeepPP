@@ -8,7 +8,7 @@
 
 // using Eigen::Matrix;
 // using Eigen::Vector;
-using namespace Template;
+using namespace DeepPP;
 
 const size_t IMAGESIZE = IMG_WIDTH*IMG_HEIGHT;
 
