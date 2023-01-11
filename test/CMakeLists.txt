@@ -8,6 +8,7 @@ set(Sources
     test_backprop.cpp
     test_activation_function.cpp
     test_cost_function.cpp
+    test_serialization.cpp
     test_mnist.cpp
 )
 

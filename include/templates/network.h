@@ -7,6 +7,9 @@
 #include <templates/activation_function.h>
 #include <templates/cost_function.h>
 #include <memory>
+#include <string>
+#include <fstream>
+#include <cassert>
 
 // TODO  bias and weight initializer classes
 // TODO  comment stuff
@@ -30,7 +33,7 @@ struct WeightZero {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Zero();
+    w->setZero();
     return w;
   }
 };
@@ -41,7 +44,7 @@ struct BiasZero {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Zero();
+    b->setZero();
     return b;
   }
 };
@@ -52,7 +55,7 @@ struct WeightRandom {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Random();
+    w->setRandom();
     return w;
   }
 };
@@ -63,7 +66,7 @@ struct BiasRandom {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Random();
+    b->setRandom();
     return b;
   }
 };
@@ -74,7 +77,7 @@ struct WeightOnes {
 
   inline Weight* genWeight() {
     Weight* w = new Weight;
-    *w = Weight::Ones();
+    w->setOnes();
     return w;
   }
 };
@@ -85,7 +88,7 @@ struct BiasOnes {
 
   inline Bias* genBias() {
     Bias* b = new Bias;
-    *b = Bias::Ones();
+    b->setOnes();
     return b;
   }
 };
@@ -222,21 +225,26 @@ public:
     // For each data poing, accumulate the changes
     // TODO: Use std::array for compile time size
     std::tuple<InputVector, Eigen::Vector<double, Outs>...> a;
+    std::tuple<InputVector, Eigen::Vector<double, Outs>...> z;
     for (size_t i = 0; i < in.size(); i++) {
       // Save activations
       std::get<0>(a) = in[i];
+      
+      //Save activations before applying the activation functions
+      std::get<0>(z) = in[i];
 
       // Forward propogation
-      [ this, &a]<std::size_t... I>(std::index_sequence<I...>) {
-        ((std::get<I + 1>(a) = std::get<I>(layers_).activation(
-              *(std::get<I>(layers_).bias_) +
-              *(std::get<I>(layers_).weight_) * std::get<I>(a))),
+      [ this, &a, &z]<std::size_t... I>(std::index_sequence<I...>) {
+        ((std::get<I + 1>(z) = *(std::get<I>(layers_).bias_) +
+              *(std::get<I>(layers_).weight_) * std::get<I>(a),
+          std::get<I + 1>(a) = std::get<I>(layers_).activation(
+            std::get<I + 1>(z))),
          ...);
       }
       (std::make_index_sequence<N>{});
 
       // Backward propogation
-      [ this, &i, &exp_out, &a, &weight_acc, &bias_acc, &
+      [ this, &i, &exp_out, &a, &z, &weight_acc, &bias_acc, &
         stepSize ]<size_t... I>(reverse_index_sequence<I...>) {
         std::tuple<InputVector, Eigen::Vector<double, Outs>...> dcda;
         // Calculate error as last element
@@ -245,23 +253,17 @@ public:
         // dcda[i] = act_der(b[j] + w[j] * a[j]) * dcda[i+1]
         ((std::get<I>(dcda) =
               std::get<I>(layers_).weight_->transpose() *
-              std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                                  *(std::get<I>(layers_).weight_) *
-                                                      std::get<I>(a)) *
+              std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
               std::get<I + 1>(dcda)),
          ...);
 
         // dcdz = act_der(b[i] + w[i] * a[i]) * dcda[i]
         ((std::get<I>(weight_acc) -=
-          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                              *(std::get<I>(layers_).weight_) *
-                                                  std::get<I>(a)) *
+          std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
           std::get<I + 1>(dcda) * std::get<I>(a).transpose() * stepSize,
 
           std::get<I>(bias_acc) -=
-          std::get<I>(layers_).activation_der(*(std::get<I>(layers_).bias_) +
-                                              *(std::get<I>(layers_).weight_) *
-                                                  std::get<I>(a)) *
+          std::get<I>(layers_).activation_der(std::get<I + 1>(z)) *
           std::get<I + 1>(dcda) * stepSize),
          ...);
       }
@@ -318,8 +320,65 @@ public:
     return acc / in.size();
   }
 
+  inline void exportNetwork(std::string path) {
+      std::ofstream output;
+      output.open(path);
+      output << Input << '\n';
+      ((output << Outs << '\n'), ...); 
+      output << 0 << '\n';
+      [this, &output]<std::size_t... I>(std::index_sequence<I...>) {
+          ((exportHelper<I>(output)), ...);
+      }
+      (std::make_index_sequence<N>{});
+      output.close();
+      // no activation functions included in the export due to templatized import requiring user specification of dimensions anyway
+  }
+
+  inline void importNetwork(std::string path) {
+      std::ifstream input;
+      input.open(path);
+      size_t next_size;
+      input >> next_size;
+      assert(next_size == Input);
+      (({
+        input >> next_size;
+        assert(next_size == Outs);
+        }), ...);
+      input >> next_size;
+      assert(next_size == 0);
+      [this, &input]<std::size_t... I>(std::index_sequence<I...>) {
+        ((importHelper<I>(input)), ...);
+      }
+      (std::make_index_sequence<N>{});
+      input.close();
+  }
+
 private:
   std::tuple<LayerBase<intlist_element<LayerIndices, Input, Outs...>::elem, Outs, Activations, WeightInit, BiasInit>...> layers_;
+
+  template<std::size_t I>
+  void importHelper(std::ifstream& in) {
+    for(int i=0; i < (*(std::get<I>(layers_).weight_)).cols(); i++) {
+      for(int j=0; j < (*(std::get<I>(layers_).weight_)).rows(); j++) {
+        in >> (*(std::get<I>(layers_).weight_))(j, i);
+      }
+    }
+    for(int i=0; i < (*(std::get<I>(layers_).bias_)).size(); i++) {
+      in >> (*(std::get<I>(layers_).bias_))[i];
+    }
+  } 
+
+  template<std::size_t I>
+  void exportHelper(std::ofstream& out) {
+    double *weightCoeffs = (*(std::get<I>(layers_).weight_)).data();
+    for (int i = 0; i < (*(std::get<I>(layers_).weight_)).size(); i++) {
+        out << weightCoeffs[i] << '\n';
+    }
+    double *biasCoeffs = (*(std::get<I>(layers_).bias_)).data();
+    for (int i = 0; i < (*(std::get<I>(layers_).bias_)).size(); i++) {
+        out << biasCoeffs[i] << '\n';
+    }
+  }
 };
 
 
