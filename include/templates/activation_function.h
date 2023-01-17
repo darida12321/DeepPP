@@ -110,7 +110,7 @@ namespace DeepPP {
      * @brief The RELU activation function (applied componentwise)
      *
      * @param x The input vector
-     * @return VectorXd
+     * @return Vector<double, N>
      */
     inline Vec activation(const Vec& x) {
       return x.unaryExpr([](double x) { return std::max(0.0, x); });
@@ -120,7 +120,7 @@ namespace DeepPP {
      * @brief The gradient of the RELU activation function
      *
      * @param x The input vector
-     * @return VectorXd
+     * @return Matrix<double, N, N>
      */
     inline Mat activation_der(const Vec& x) {
       Mat out = Mat::Zero();
@@ -132,3 +132,6 @@ namespace DeepPP {
   };
 
 }
+
+
+

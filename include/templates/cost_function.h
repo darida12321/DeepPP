@@ -1,6 +1,5 @@
 #include <Eigen/Dense>
 
-//TODO add other
 namespace DeepPP {
   template<size_t N>
   struct MeanSquareError {

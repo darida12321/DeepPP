@@ -403,7 +403,9 @@ private:
 
 
 template <
-  template <size_t> typename CostFunction, template <size_t, size_t> typename WeightInit, template <size_t> typename BiasInit,
+  template <size_t> typename CostFunction, 
+  template <size_t, size_t> typename WeightInit, 
+  template <size_t> typename BiasInit,
   size_t Input, size_t... Outs,
   template <size_t> typename... Activations
 >
